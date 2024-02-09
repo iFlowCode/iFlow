@@ -18,9 +18,9 @@
 *** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
 *** https://www.markdownguide.org/basic-syntax/#reference-style-links
 -->
-[![Contributors][contributors-shield]][contributors-url]
+<!--[![Contributors][contributors-shield]][contributors-url]
 [![Issues][issues-shield]][issues-url]
-[![MIT License][license-shield]][license-url]
+[![MIT License][license-shield]][license-url]-->
 <!--[![Forks][forks-shield]][forks-url]-->
 <!--[![Stargazers][stars-shield]][stars-url]-->
 <!--[![LinkedIn][linkedin-shield]][linkedin-url]-->
@@ -39,14 +39,14 @@
   <p align="center">
     iFLOW is a resource in the realm of thermal analysis, offering a sophisticated yet accessible platform for visualizing and dissecting temperature time series data. It not only provides a dynamic graphical user interface but also operates as a Python-based framework, emphasizing accessibility and versatility. Its primary functions include the visualization and analysis of temperature fluctuations over time, with a particular focus on extracting vital metrics such as one-dimensional seepage flux (q) and bulk effective thermal diffusivity (k<sub>e</sub>).
     <br />
-    <!--<a href="https://github.com/github_username/repo_name"><strong>Explore the docs »</strong></a>-->
+    <!--<a href="https://github.com/iFlowCode/repo_name"><strong>Explore the docs »</strong></a>-->
     <br />
     <br />
-    <!--<a href="https://github.com/github_username/repo_name">View Demo</a>
+    <!--<a href="https://github.com/iFlowCode/iFlow">View Demo</a>
     ·-->
-    <a href="https://github.com/github_username/repo_name/issues">Report Bug</a>
+    <a href="https://github.com/iFlowCode/iFlow/issues">Report Bug</a>
     ·
-    <a href="https://github.com/github_username/repo_name/issues">Request Feature</a>
+    <a href="https://github.com/iFlowCode/iFlow/issues">Request Feature</a>
   </p>
 </div>
 
@@ -103,9 +103,8 @@ iFLOW is a resource in the realm of thermal analysis, offering a sophisticated y
 <!-- GETTING STARTED -->
 ## Getting Started
 
-Download the lastest install release from [here]().<br>
+Download the lastest install release from [here](https://github.com/iFlowCode/iFlow/releases/).<br>
 You can whatch the video tutorial on the youtube [iFlow Channel]().<br>
-If you prefer you can download the sources file from [here]() or clone the repository.
 
 ### Prerequisites
 
