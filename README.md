@@ -37,7 +37,7 @@
 <h3 align="center">iFlow</h3>
 
   <p align="center">
-    iFLOW is a resource in the realm of thermal analysis, offering a sophisticated yet accessible platform for visualizing and dissecting temperature time series data. It not only provides a dynamic graphical user interface but also operates as a Python-based framework, emphasizing accessibility and versatility. Its primary functions include the visualization and analysis of temperature fluctuations over time, with a particular focus on extracting vital metrics such as one-dimensional seepage flux (q) and bulk effective thermal diffusivity (ke).
+    iFLOW is a resource in the realm of thermal analysis, offering a sophisticated yet accessible platform for visualizing and dissecting temperature time series data. It not only provides a dynamic graphical user interface but also operates as a Python-based framework, emphasizing accessibility and versatility. Its primary functions include the visualization and analysis of temperature fluctuations over time, with a particular focus on extracting vital metrics such as one-dimensional seepage flux (q) and bulk effective thermal diffusivity (k<sub>e</sub>).
     <br />
     <!--<a href="https://github.com/github_username/repo_name"><strong>Explore the docs »</strong></a>-->
     <br />
