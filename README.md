@@ -182,7 +182,7 @@ Contributions are **greatly appreciated**. You can contibute to this project, fo
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-Or you send an <a href="#comtact">e-mail</a> to discuss about your inclusion as a contributor to this project.
+Or you send an <a href="#contact">e-mail</a> to discuss about your inclusion as a contributor to this project.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
