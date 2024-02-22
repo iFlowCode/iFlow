@@ -191,7 +191,7 @@ Or you send an <a href="#contact">e-mail</a> to discuss about your inclusion as 
 <!-- LICENSE -->
 ## License
 
-Distributed under the GPL3 License. See [`LICENSE.txt`](https://github.com/iFlowCode/iFlow/LICENSE) for more information.
+Distributed under the GPL3 License. See [`LICENSE`](https://github.com/iFlowCode/iFlow/LICENSE) for more information.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
