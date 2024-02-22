@@ -59,12 +59,12 @@ class BREcalc(PQW.QWizard):
 
 
     def cancel_print(self):
-        print('Cancel')
+        # print('Cancel')
         #
         return
 #%%
     def finish_print(self):
-        print("Action:finish Page: " + str(self.currentId()))
+        # print("Action:finish Page: " + str(self.currentId()))
         #
         result =PQW.QMessageBox.question(self, VAR.GetSoftwareName(VAR)+' message', 'Do you want to save a report?', PQW.QMessageBox.Yes|PQW.QMessageBox.No, PQW.QMessageBox.Yes)
         if result == PQW.QMessageBox.Yes:
@@ -167,7 +167,7 @@ class Page1(PQW.QWizardPage):
         self.Update()
 
     def Update(self):
-        print('Update')
+        # print('Update')
         #
         # PhaseChart = (Page1.Phase[Page1.Combobox_Time.currentIndex()].iloc[Page1.Combobox_Freq.currentIndex()]).tolist()[1:]
         PhaseChart = ((Page1.Phase[(Page1.Phase['Time'] == Page1.df_Time.loc[Page1.Combobox_Time.currentIndex()].values[0]) & (Page1.Phase['Freq'] == 1.0/float(Page1.Combobox_Freq.currentText())/3600.0)]).values.tolist()[0])[2:]

@@ -1,93 +1,69 @@
-################################# 
-# 
-# 
-# 
-# 
-#
-#     Probe name  [STRING] -p
-#     Project name  [STRING] -j
-#     Sensors [LIST] -s
-#     Heights [LIST] -h
-#     Run [STRING] -r
-#     PeriodPos [INTEGER] -e
-#     Period [FLOAT] -f
-#     Bed Elevation [FLOAT] -z
-#     Top Sensor [STRING] -u
-#     dt [FLOAT] -d
-############################### 
+"""
+"""
 
 # Import the libraries
-import sys#os,sys
+import sys
 import getopt
-# import numpy.random.common
-# import numpy.random.bounded_integers
-# import numpy.random.entropy
 import pandas as pd
 import numpy as np
-# import glob
-# import scipy.stats
-# import pickle
+from loguru import logger
 
 class ParEstAnal:
     def __init__(self,opts, args):
         #
-        self.Sensors = []#['T0','T1','T2','T4','T6'] # Sensors List
-        self.Heights = []#['0.0','-0.15','-0.3','-0.6','-0.9'] # Sensors height
-        self.RunSP = '-9'#'0' # Signal processing run
-        self.Period = np.nan#0 # Position Period to analyze 
-        self.PeriodValue = np.nan#24.0 # Value Period to analyze
-        self.BElev = np.nan#0.0 # Bed Elevetion
-        self.TopSens = ''#'T0' # Sensor to use as water sensor
-        self.dt = np.nan#900.0 #None # dt of the data
-        self.OutputFolder = '../temp' # Output folder.
-        self.InputFolder = '../temp' # Input folder.
+        self.Sensors = ["T0","T1","T2","T3","T4","T5","T6"]#["T0","T1","T2","T4","T6"] # Sensors List
+        self.Heights = ["0.05","-0.15","-0.3","-0.45","-0.6","-0.75","-0.9"]#["0.0","-0.15","-0.3","-0.6","-0.9"] # Sensors height
+        self.RunSP = "0"#"0" # Signal processing run
+        self.Period = 0#0 # Position Period to analyze 
+        self.PeriodValue = 24.0#24.0 # Value Period to analyze
+        self.BElev = 0.0#0.0 # Bed Elevetion
+        self.TopSens = "T0"#"T0" # Sensor to use as water sensor
+        self.dt = 900.0#900.0 #None # dt of the data
+        self.OutputFolder = "../temp" # Output folder.
+        self.InputFolder = "../temp" # Input folder.
         self.Version = False # Flag display version and stop the execution.
         self.FlagUpdate = False
-        self.RunUpdate = '-9'
+        self.RunUpdate = "-9"
         #
         for opt, arg in opts:
-            if opt in ('-s'):
+            if opt in ("-s"):
                 self.Sensors = []
-                for item in arg.split(','):
+                for item in arg.split(","):
                     self.Sensors.append(item)
-            elif opt in ('-h'):
+            elif opt in ("-h"):
                 self.Heights = []
-                for item in arg.split(','):
+                for item in arg.split(","):
                     self.Heights.append(item)
-            elif opt in ('-r'):
+            elif opt in ("-r"):
                 self.RunSP = arg
-            elif opt in ('-e'):
+            elif opt in ("-e"):
                 self.Period = int(arg)
-            elif opt in ('-f'):
+            elif opt in ("-f"):
                 self.PeriodValue = float(arg)
-            elif opt in ('-z'):
+            elif opt in ("-z"):
                 self.BElev = float(arg)
-            elif opt in ('-u'):
+            elif opt in ("-u"):
                 self.TopSens = arg
-            elif opt in ('-d'):
+            elif opt in ("-d"):
                 self.dt = float(arg)
-            elif opt in ('-o'):
+            elif opt in ("-o"):
                 self.OutputFolder = arg
-            elif opt in ('-i'):
+            elif opt in ("-i"):
                 self.InputFolder = arg
-            elif opt in('--version'):
+            elif opt in("--version"):
                 self.Version = True
-            elif opt in ('-c'):
-                if arg == 'False':
+            elif opt in ("-c"):
+                if arg == "False":
                     self.FlagUpdate = False
                 else:
                     self.FlagUpdate = True
-            elif opt in ('-b'):
+            elif opt in ("-b"):
                 self.RunUpdate = arg
         return
 
     def CheckOptions(self):
-        '''CheckOptions [summary]
-        [extended_summary]
-        Returns:
-            [type]: [description]
-        '''
-        print('CheckOptions...')
+        """
+        """
         try:
             #  
             FlagPreCheck = True
@@ -114,27 +90,23 @@ class ParEstAnal:
                     break
             #
             if self.Version:
-                print('Version 0.1')
+                print("Version 0.1")
                 return False
             return FlagPreCheck
         except:
             return False
 
     def LoadData(self):
-        '''LoadData [summary]
-        [extended_summary]
-        Returns:
-            [type]: [description]
-        '''
-        print('LoadData...')
+        """
+        """
         try:
             # Load the Time
-            self.MobTimeWin = pd.read_pickle(self.InputFolder+'/MobWinTime.pkz',compression='zip').to_numpy()
+            self.MobTimeWin = pd.read_pickle(self.InputFolder+"/MobWinTime.pkz",compression="zip").to_numpy()
             #
             # Load the Amplitude
-            Amplitude = pd.read_pickle(self.InputFolder+'/Amplitude.pkz',compression='zip')
-            self.df_Amp = Amplitude[Amplitude['Freq'] == 1.0/float(self.PeriodValue)/3600.0]
-            del self.df_Amp['Freq']
+            Amplitude = pd.read_pickle(self.InputFolder+"/Amplitude.pkz",compression="zip")
+            self.df_Amp = Amplitude[Amplitude["Freq"] == 1.0/float(self.PeriodValue)/3600.0]
+            del self.df_Amp["Freq"]
             #
             for item in self.df_Amp.columns.tolist()[1:]:
                 if item in self.Sensors:
@@ -144,9 +116,9 @@ class ParEstAnal:
             #
             self.ColName = self.df_Amp.columns.tolist()
             # Load Phase
-            Phase = pd.read_pickle(self.InputFolder+'/Phase.pkz',compression='zip')
-            self.df_Phase = Phase[Phase['Freq'] == 1.0/float(self.PeriodValue)/3600.0]
-            del self.df_Phase['Freq']
+            Phase = pd.read_pickle(self.InputFolder+"/Phase.pkz",compression="zip")
+            self.df_Phase = Phase[Phase["Freq"] == 1.0/float(self.PeriodValue)/3600.0]
+            del self.df_Phase["Freq"]
             #
             for item in self.df_Phase.columns.tolist()[1:]:
                 if item in self.Sensors:
@@ -164,12 +136,8 @@ class ParEstAnal:
             return False
 
     def Processing(self):
-        '''Processing [summary]
-        [extended_summary]
-        Returns:
-            [type]: [description]
-        '''
-        print('Processing...')
+        """
+        """
         try:
             Omega = 2 * np.pi / (self.PeriodValue * 3600.0)
             #
@@ -185,7 +153,6 @@ class ParEstAnal:
             KeBase = [np.nan for i in range(0,len(self.ColName))]
             #
             for t in range(0,self.MobTimeWin.shape[0]):
-                print(t,self.MobTimeWin.shape[0])
                 if self.MobTimeWin[t] in self.MobTimeWinOld:
                     pass
                 else:
@@ -249,61 +216,74 @@ class ParEstAnal:
             return False
             
     def SaveData(self):
-        '''SaveData [summary]
-        [extended_summary]
-        Returns:
-            [type]: [description]
-        '''
-        print('SaveData...')
+        """
+        """
         try:
-#             self.MobTimeWin.to_pickle('../temp/MobWinTime.pkz', compression='zip')
-            self.df_eta.to_pickle('../temp/Eta.pkz', compression='zip')
-            self.df_ke.to_pickle('../temp/Ke.pkz', compression='zip')
+#             self.MobTimeWin.to_pickle(self.OutputFolder + "/MobWinTime.pkz", compression="zip")
+            self.df_eta.to_pickle(self.OutputFolder + "/Eta.pkz", compression="zip")
+            self.df_ke.to_pickle(self.OutputFolder + "/Ke.pkz", compression="zip")
             #
             return True
         except:
             return False
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     options = sys.argv[1:]
     #
     try:
-        opts, args = getopt.getopt(options,'p:j:s:r:e:z:u:h:f:d:o:i:',['version'])
+        opts, args = getopt.getopt(options,"p:j:s:r:e:z:u:h:f:d:o:i:",["version"])
+        logger.remove()
+        logger.add(f"../logs/ParEstAnal.log", rotation="7 days")
+        logger.info(f"ParEstAnal part1 started...")
         #
-        StringError = 'No Error'
+        StringError = "No Error"
         PE = ParEstAnal(opts, args)
+        logger.info(f"\tCheckOptions...")
         result = PE.CheckOptions()
         if result:
+            logger.info(f"\tCheckOptions ended...")
+            logger.info(f"\tLoadData...")
             result = PE.LoadData()
             if result:
+                logger.info(f"\tLoadData ended...")
+                logger.info(f"\tProcessing...")
                 result = PE.Processing()
                 if result:
+                    logger.info(f"\tProcessing ended...")
+                    logger.info(f"\tSaveData...")
                     result = PE.SaveData()
                     if result:
+                        logger.info(f"\tSaveData ended...")
                         # ImportLog
-                        HandleRiassunto = open(PE.OutputFolder+'/XXX.run','w')
-                        HandleRiassunto.write(','.join(PE.Sensors)+';SensorsKe\n')
-                        HandleRiassunto.write(','.join(PE.Heights)+';HeightsKe\n')
-                        HandleRiassunto.write(PE.RunSP+';RunSPKe\n')
-                        HandleRiassunto.write(str(PE.Period)+';PeriodKe\n')
-                        HandleRiassunto.write(str(PE.PeriodValue)+';PeriodValueKe\n')
-                        HandleRiassunto.write(str(PE.BElev)+';BElevKe\n')
-                        HandleRiassunto.write(PE.TopSens+';TopSensKe\n')
-                        HandleRiassunto.write(str(PE.dt)+';dtKe\n')
+                        HandleRiassunto = open(PE.OutputFolder+"/XXX.run","w")
+                        HandleRiassunto.write(",".join(PE.Sensors)+";SensorsKe\n")
+                        HandleRiassunto.write(",".join(PE.Heights)+";HeightsKe\n")
+                        HandleRiassunto.write(PE.RunSP+";RunSPKe\n")
+                        HandleRiassunto.write(str(PE.Period)+";PeriodKe\n")
+                        HandleRiassunto.write(str(PE.PeriodValue)+";PeriodValueKe\n")
+                        HandleRiassunto.write(str(PE.BElev)+";BElevKe\n")
+                        HandleRiassunto.write(PE.TopSens+";TopSensKe\n")
+                        HandleRiassunto.write(str(PE.dt)+";dtKe\n")
                         HandleRiassunto.close()
                     else:
-                        StringError = 'SaveData Error'
+                        StringError = "SaveData Error"
+                        logger.error("SaveData")
                 else:
-                    StringError = 'Processing Error'
+                    StringError = "Processing Error"
+                    logger.error("Processing")
             else:
-                StringError = 'LoadData Error'
+                StringError = "LoadData Error"
+                logger.error("LoadData")
         else:
-            StringError = 'CheckOptions Error'
+            StringError = "CheckOptions Error"
+            logger.error("CheckOptions")
         #
-        HandleLog = open('../temp/EtaKe.log','w')
+        HandleLog = open(PE.OutputFolder + "/EtaKe.log","w")
         HandleLog.write(StringError)
         HandleLog.close()
+        logger.info(f"ParEstAnal part1 finished")
     except getopt.GetoptError:
-        HandleLog = open('../temp/EtaKe.log','w')
-        HandleLog.write('Options error')
+        HandleLog = open(PE.OutputFolder + "/EtaKe.log","w")
+        HandleLog.write("Options error")
         HandleLog.close()
+        logger.error("Getopt")

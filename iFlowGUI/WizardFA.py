@@ -33,7 +33,8 @@ from shutil import copy
 # Import custom library
 from Variables import VAR
 # import WizEtaKeMean as WKE
-#%%
+from loguru import logger
+
 '''
 Wizzard Frequency Analisys Class
 '''
@@ -46,8 +47,8 @@ class FrequencyAnalysis(PQW.QWizard):
         height = VAR.GetWindowsSize(VAR)[1] * 2 / 3 # Height of the window
         if width > 300:
             width = 300
-        if height > 500:
-            height = 500
+        if height > 400:
+            height = 400
         self.setMinimumSize(width,height) # Set the minimun size of the wondow
         #
         self.addPage(Page1(self)) # Add Page1
@@ -55,9 +56,8 @@ class FrequencyAnalysis(PQW.QWizard):
         self.button(PQW.QWizard.FinishButton).clicked.connect(self.finish_print) # Click event on Finish the wizard
         #
 
-#%%
     def finish_print(self):
-        print("Action:finish Page: " + str(self.currentId()))
+        logger.debug("Action:finish Page: " + str(self.currentId()))
         #
         FFTWin = Page1.Combobox_WT.currentText()
         if Page1.Combobox_WT.currentText() == '':
@@ -83,7 +83,7 @@ class FrequencyAnalysis(PQW.QWizard):
         # Move Datafile
         copy('../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/data/clean.pkz','../temp/clean.pkz')
         # Call external program
-        print(stringEXE)
+        logger.debug(stringEXE)
         os.system(stringEXE)
         # # Check Run
         HandleLog = open('../temp/FrequencyAnalysis.log')
@@ -111,16 +111,15 @@ class FrequencyAnalysis(PQW.QWizard):
             PQW.QMessageBox.information(self, VAR.GetSoftwareName(VAR)+' message', 'Analysis Completed.', PQW.QMessageBox.Ok, PQW.QMessageBox.Ok)
         else:
             PQW.QMessageBox.critical(self, VAR.GetSoftwareName(VAR)+' message', Check+'. Error.', PQW.QMessageBox.Ok, PQW.QMessageBox.Ok)
-#%%
+
 '''
 Page 1 of the wizard
 '''
 class Page1(PQW.QWizardPage):
     def __init__(self, parent=None):
         super(Page1, self).__init__(parent)
-#%%
         # Create grid layot for the window
-        Layout_Page1 = PQW.QGridLayout()
+        Layout_Page1 = PQW.QVBoxLayout()
         # Load Probe Data
         df_data = pd.read_pickle('../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/data/clean.pkz', compression= 'zip')
         idx, idy = np.where(pd.isnull(df_data))
@@ -157,36 +156,42 @@ class Page1(PQW.QWizardPage):
         HandleLog.close()
         # Data
         Label_Data = PQW.QLabel('Data')
+        Layout_Page1.addWidget(Label_Data)
         dt_object = pd.Timestamp(df_data['Time'].iloc[0], unit='s').strftime('%Y-%m-%d %H:%M:%S')
         Page1.From = df_data['Time'].iloc[Starts[max_index]]
         Page1.To = df_data['Time'].iloc[Ends[max_index]]
+        Layout_Page1_1 = PQW.QHBoxLayout()
         if TimeType == 'Time':
             Label_DataFrom = PQW.QLabel('From: '+str(df_data['Time'].iloc[0])+' s')
             Label_DataTo = PQW.QLabel('To: '+str(df_data['Time'].iloc[df_data.shape[0]-1])+' s')
         else:
             Label_DataFrom = PQW.QLabel('From: '+pd.Timestamp(df_data['Time'].iloc[0], unit='s').strftime('%Y-%m-%d %H:%M:%S'))
             Label_DataTo = PQW.QLabel('To: '+pd.Timestamp(df_data['Time'].iloc[df_data.shape[0]-1], unit='s').strftime('%Y-%m-%d %H:%M:%S'))
+        Layout_Page1_1.addWidget(Label_DataFrom)
+        Layout_Page1_1.addWidget(Label_DataTo)
+        #
+        Layout_Page1.addLayout(Layout_Page1_1)
         # Longest period
         LabelLP = PQW.QLabel('Longest period')
+        Layout_Page1.addWidget(LabelLP)
+        #
+        Layout_Page1_2 = PQW.QHBoxLayout()
         if TimeType == 'Time':
             Label_LPFrom = PQW.QLabel('From: '+str(df_data['Time'].iloc[Starts[max_index]]))
             Label_LPTo = PQW.QLabel('To: '+str(df_data['Time'].iloc[Ends[max_index]]))
         else:
             Label_LPFrom = PQW.QLabel('From: '+pd.Timestamp(df_data['Time'].iloc[Starts[max_index]], unit='s').strftime('%Y-%m-%d %H:%M:%S'))
             Label_LPTo = PQW.QLabel('To: '+pd.Timestamp(df_data['Time'].iloc[Ends[max_index]], unit='s').strftime('%Y-%m-%d %H:%M:%S'))
+        Layout_Page1_2.addWidget(Label_LPFrom)
+        Layout_Page1_2.addWidget(Label_LPTo)
+        #
+        Layout_Page1.addLayout(Layout_Page1_2)
         # Window type
         LabelWT = PQW.QLabel('Window type:')
+        Layout_Page1.addWidget(LabelWT)
         Page1.Combobox_WT = PQW.QComboBox() # Combobox
         for item in VAR.GetFFTWindowfunction(VAR):
             Page1.Combobox_WT.addItem(item)
-# Insert elements in the grid
-        Layout_Page1.addWidget(Label_Data, 0, 0, 1, 2)
-        Layout_Page1.addWidget(Label_DataFrom, 1, 0, 1, 2)
-        Layout_Page1.addWidget(Label_DataTo, 2, 0, 1, 2)
-        Layout_Page1.addWidget(LabelLP, 3, 0, 1, 2)
-        Layout_Page1.addWidget(Label_LPFrom, 4, 0, 1, 2)
-        Layout_Page1.addWidget(Label_LPTo, 5, 0, 1, 2)
-        Layout_Page1.addWidget(LabelWT, 6, 0, 1, 1)
-        Layout_Page1.addWidget(Page1.Combobox_WT, 7, 0, 1, 1)
-# # Show layout
+        Layout_Page1.addWidget(Page1.Combobox_WT)
+        # Show layout
         self.setLayout(Layout_Page1)

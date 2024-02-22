@@ -33,9 +33,7 @@ Main window of iFlow
 class iFlowApp(PQW.QMainWindow):
     def __init__(self):
         super().__init__()
-        print('MainApp - Start the program')
-        logger.info("GUI started")
-#         startTime = time.time()
+        logger.debug("MainApp - Start the program")
         # Set window icon
         self.setWindowIcon(PQG.QIcon('iFlow.ico'))
         # Store class object
@@ -254,7 +252,7 @@ class iFlowApp(PQW.QMainWindow):
         Menu_PE_Export.addAction(self.Menu_PE_Export_Height)
         #
         # self.Menu_RunPE_Compare = PQW.QAction('Compare', self)
-#         # self.Menu_RunPE_Compare.triggered.connect(VAR.GetTabSignProc(VAR).on_Button_PE_Compare_clicked)
+        # self.Menu_RunPE_Compare.triggered.connect(VAR.GetTabSignProc(VAR).on_Button_PE_Compare_clicked)
         #
         Menu_Main.addAction(self.Menu_RunPE)
         Menu_Main.addMenu(Menu_PE_Export)
@@ -268,10 +266,10 @@ class iFlowApp(PQW.QMainWindow):
         #
         Menu_Main.addAction(self.Menu_RunBH)
         Menu_Main.addAction(self.Menu_BH_Export)
-#         # Menu: Functions
-#         Menu_Main = Menu.addMenu('Functions')
-#         # Menu: ?
-#         Menu_Main = Menu.addMenu('?')
+        # # Menu: Functions
+        # Menu_Main = Menu.addMenu('Functions')
+        # # Menu: ?
+        # Menu_Main = Menu.addMenu('?')
         # Status Bar
         self.statusBar = PQW.QStatusBar()
         #
@@ -288,9 +286,6 @@ class iFlowApp(PQW.QMainWindow):
         TPE.TabParEst.Update(TPE,0)
         TB.TabBrede.Update(TB,0)
 
-
-
-#%%
 if __name__ == '__main__':
     logger.remove()
     logger.add(F"../logs/GUI.log", rotation="7 days")

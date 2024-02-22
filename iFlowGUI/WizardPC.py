@@ -62,14 +62,14 @@ class Phase(PQW.QWizard):
         self.button(PQW.QWizard.FinishButton).clicked.connect(self.finish_print) # Click event on Finish the wizard
         
     def cancel_print(self):
-        print('Cancel')
+        # print('Cancel')
         #
         copyfile('../temp/'+VAR.GetTabSignProc(VAR).Combobox_Analysis.currentText().replace('Run: ','')+'_Phase.pkz','../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/SPdata/'+VAR.GetTabSignProc(VAR).Combobox_Analysis.currentText().replace('Run: ','')+'_Phase.pkz')
         os.remove('../temp/'+VAR.GetTabSignProc(VAR).Combobox_Analysis.currentText().replace('Run: ','')+'_Phase.pkz')
         return
 #%%
     def finish_print(self):
-        print("Action:finish Page: " + str(self.currentId()))
+        # print("Action:finish Page: " + str(self.currentId()))
         #
         Page1.Phase.to_pickle('../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/SPdata/'+VAR.GetTabSignProc(VAR).Combobox_Analysis.currentText().replace('Run: ','')+'_Phase.pkz',compression='zip')
         os.remove('../temp/'+VAR.GetTabSignProc(VAR).Combobox_Analysis.currentText().replace('Run: ','')+'_Phase.pkz')
@@ -152,14 +152,14 @@ class Page1(PQW.QWizardPage):
         self.Update()
 
     def Update(self):
-        print('Update')
+        # print('Update')
         #
         self.df_chart_data = Page1.Phase[Page1.Phase['Freq'] == 1.0/(float(Page1.Combobox_Freq.currentText())*3600.0)]
         # Chart
         Page1.Chart_Fig.clear()
         Page1.ax = Page1.Chart_Fig.add_subplot(111)
         #
-        print(Page1.Combobox_WorkSens.currentText())
+        # print(Page1.Combobox_WorkSens.currentText())
         # for item in self.Phase.columns.tolist()[2:]:
         #     if VAR.GetActiveParameters(VAR,2) == 'yyyy-mm-dd h24:min:sec':
         #         if self.df_chart_data.shape[0] == 1:
@@ -202,17 +202,17 @@ class Page1(PQW.QWizardPage):
 
     def on_Button_Apply_clicked(self):
         Xlim = Page1.ax.get_xlim()
-        print(Xlim)
+        # print(Xlim)
         #
         if VAR.GetActiveParameters(VAR,2) == 'yyyy-mm-dd h24:min:sec':
             # Xlim = ((Xlim[0]*24.0*3600.0)-62135683200,(Xlim[1]*24.0*3600.0)-62135683200)
             Xlim = ((Xlim[0]*24.0*3600.0),(Xlim[1]*24.0*3600.0))
-        print(Xlim)
+        # print(Xlim)
         #
         # print(Xlim)
         Time = (Page1.Phase['Time'])[(Page1.Phase['Time'] >= Xlim[0]) & (Page1.Phase['Time'] <= Xlim[1])].drop_duplicates().tolist()
-        print(Page1.Phase['Time'].iloc[0])
-        print(Page1.Phase['Time'].iloc[-1])
+        # print(Page1.Phase['Time'].iloc[0])
+        # print(Page1.Phase['Time'].iloc[-1])
         # print(type(Time))
         # StartTime = datetime.datetime.utcfromtimestamp(int(self.df_Data['Time'].iloc[0])).strftime('%Y-%m-%d %H:%M:%S')
         # EndTime = datetime.datetime.utcfromtimestamp(int(self.df_Data['Time'].iloc[self.df_Data.shape[0]-1])).strftime('%Y-%m-%d %H:%M:%S')

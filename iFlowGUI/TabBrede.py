@@ -38,7 +38,7 @@ from ScrollLabel import ScrollLabel
 # # import STabFFTAnal as STFA
 # # import STabLPMAnal as STLA
 import WizardBH as WBH
-
+from loguru import logger
 #------------------------------------------------------------------------------#
 '''
 TabBrede Class
@@ -46,52 +46,66 @@ TabBrede Class
 class TabBrede(PQW.QWidget):
     def __init__(self):
         super().__init__()
-        print('TabBrede - Start Class')
-# Set Matplotlib fonts size
+        logger.debug('TabBrede - Start Class')
+        # Set Matplotlib fonts size
         TabBrede.MPL_AxisTitle = int(VAR.GetMPLAxisTitleFontSizeReference(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR))
         TabBrede.MPL_AxisTick = int(VAR.GetMPLAxisTickFontSizeReference(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR))
         TabBrede.MPL_Legend = int(VAR.GetMPLLegendFontSizeReference(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR))
-# Store class object
+        # Store class object
         VAR.SetTabBrede(VAR, self)
-# Create grid layot for the window
-        Layout_Tab_Brede = PQW.QGridLayout()
-# Button Calculate
+        # Create grid layot for the window
+        Layout_Tab_Brede = PQW.QHBoxLayout()
+        container_left = PQW.QFrame()
+        Layout_Tab_Brede_left = PQW.QVBoxLayout()
+        # Button Calculate
         TabBrede.Button_Brede = PQW.QPushButton('Run analysis')
-        TabBrede.Button_Brede.setFixedHeight(int(VAR.GetConboBoxHeight(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR)))
-# #         TabSignProc.Button_SP.setToolTip('Launch Signal Processing Wizard') # Tooltip message
+        # TabBrede.Button_Brede.setFixedHeight(int(VAR.GetConboBoxHeight(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR)))
+        # TabSignProc.Button_SP.setToolTip('Launch Signal Processing Wizard') # Tooltip message
         TabBrede.Button_Brede.clicked.connect(self.on_Button_BH_clicked) # Button event Click on
-#
-        Lavel_Analysis = PQW.QLabel('Analysis:')
+        Layout_Tab_Brede_left.addWidget(TabBrede.Button_Brede)
+        #
+        Label_Analysis = PQW.QLabel('Analysis:')
+        Layout_Tab_Brede_left.addWidget(Label_Analysis)
+        #
         TabBrede.Analysis = PQW.QComboBox()
+        Layout_Tab_Brede_left.addWidget(TabBrede.Analysis)
         TabBrede.Analysis.currentIndexChanged.connect(self.on_Combobox_Analysis_change) # ComboBox event change item
-# Groupbox Report
+        # Groupbox Report
         self.GroupBox_Report = PQW.QGroupBox('Report:')
-# Create Layout for the Groupbox Report
+        # Create Layout for the Groupbox Report
         self.VBoxReport = PQW.QVBoxLayout()
-# Element EditLine
+        # Element EditLine
         TabBrede.Label_Report = ScrollLabel(self)
         TabBrede.Label_Report.setText('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\nUt enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\nUt enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\nUt enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. ')
-# Add elements to the Layout
+        # Add elements to the Layout
         self.VBoxReport.addWidget(TabBrede.Label_Report)
-# Add the Layout to the Groupbox Report
+        # Add the Layout to the Groupbox Report
         self.GroupBox_Report.setLayout(self.VBoxReport)
-# # FFTChart
+        #
+        Layout_Tab_Brede_left.addWidget(self.GroupBox_Report)
+        #
+        container_left.setMaximumWidth(int(VAR.GetWindowsSize(VAR)[0] * 2 / 3 / 4))
+        container_left.setLayout(Layout_Tab_Brede_left)
+        # FFTChart
+        container_right = PQW.QFrame()
+        Layout_Tab_Brede_Right = PQW.QVBoxLayout()
         TabBrede.Chart_Fig = plt.figure()
         TabBrede.Canvas = FigureCanvas(TabBrede.Chart_Fig)
         self.Toolbar = NavigationToolbar(TabBrede.Canvas, self)
         TabBrede.Canvas.draw()
-# Insert element in the grid
-        Layout_Tab_Brede.addWidget(TabBrede.Button_Brede,0,0,1,2)
-        Layout_Tab_Brede.addWidget(Lavel_Analysis,1,0,1,1)
-        Layout_Tab_Brede.addWidget(TabBrede.Analysis,1,1,1,1)
-        Layout_Tab_Brede.addWidget(self.GroupBox_Report,2,0,2,2)
-        Layout_Tab_Brede.addWidget(self.Toolbar,0,2,1,8)
-        Layout_Tab_Brede.addWidget(TabBrede.Canvas,1,2,5,8)
-# Set layout of tab
+        Layout_Tab_Brede_Right.addWidget(self.Toolbar)
+        Layout_Tab_Brede_Right.addWidget(TabBrede.Canvas)
+        #
+        container_right.setLayout(Layout_Tab_Brede_Right)
+        #
+        Layout_Tab_Brede.addWidget(container_left)
+        Layout_Tab_Brede.addWidget(container_right)
+        # Show layout
         self.setLayout(Layout_Tab_Brede)
-#%%
+
+    # @logger.catch
     def Update(self,Case):
-        print('TabBrede Update - Case',Case)
+        logger.debug(f"TabBrede Update - Case: {Case}")
         '''
         Case 0: Event generated by the starting of the GUI
         # Case 1: Event generated by on change project
@@ -204,7 +218,6 @@ class TabBrede(PQW.QWidget):
                         TabBrede.Label_Report.setText(Text)
                     if Case != -1:
                         TabBrede.df_chart_data = pd.read_pickle('../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/Bredehofet/'+TabBrede.Analysis.currentText().replace('Run: ','')+'_Velocity.pkz',compression='zip')
-                        
                     if Case != -1:
                         TabBrede.Chart_Fig.clear()
                         TabBrede.ax = TabBrede.Chart_Fig.add_subplot(111)
@@ -230,16 +243,18 @@ class TabBrede(PQW.QWidget):
         #
         return
 
+    # @logger.catch
     def on_Button_BH_clicked(self):
-        print('TabBrede - on_Button_BH_clicked')
+        logger.debug('TabBrede - on_Button_BH_clicked')
         # Lunch the wizard for importing a new probe
         WizardBred = WBH.Brede()
         WizardBred.exec_()
         # TSP.TabSignProc.Update(TSP,9)
         return
 
+    # @logger.catch
     def on_Button_BHExport_clicked(self):
-        print('TabBrede - on_Button_BHExport_clicked')
+        logger.debug('TabBrede - on_Button_BHExport_clicked')
         file_export = PQW.QFileDialog.getSaveFileName(self, 'Export Data to File', '../exports/Bredehofet_' + VAR.GetActiveProbe(VAR), 'CSV (*.csv)')
         if file_export[0]:
             # df_export = pd.read_pickle('../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/data/clean.pkz',compression='zip')
@@ -247,7 +262,8 @@ class TabBrede(PQW.QWidget):
             PQW.QMessageBox.information(self, VAR.GetSoftwareName(VAR)+' message', 'Breddhofet Export Completed.', PQW.QMessageBox.Ok, PQW.QMessageBox.Ok)
         return
 
+    # @logger.catch
     def on_Combobox_Analysis_change(self):
-        print('TabBrede - on_Combobox_Analysis_change')
+        logger.debug('TabBrede - on_Combobox_Analysis_change')
         TabBrede.Update(TabBrede,7)
         return

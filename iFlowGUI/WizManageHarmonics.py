@@ -11,67 +11,56 @@
 # Licence:     <your licence>
 #------------------------------------------------------------------------------#
 # Import standard library
-# import os,sys
 import PyQt5.QtWidgets as PQW
-# import PyQt5.QtGui as PQG
 import PyQt5.QtCore as PQC
-# from PyQt5.QtWidgets import QMessageBox
-# import numpy as np
-##from sklearn.linear_model import LinearRegression
-
-# import numpy.random.common
-# import numpy.random.bounded_integers
-# import numpy.random.entropy
-# import pandas as pd
-# import datetime
-# import shutil
-# import math
-# import glob
-# Import custom library
-
-# import TabKeMean as TKM
-
 from Variables import VAR
 from Options import OPT
-# from TabProbeVariable import TPVAR
-# from WFLVariables import WFLVAR
-# from TabKeMeanVaraibles import TKMVAR
+from loguru import logger
 
+# The `ManageHarmonics` class is a wizard that allows users to manage harmonics
+# and connects the finish button to a function called `finish_print`.
 class ManageHarmonics(PQW.QWizard):
     def __init__(self, parent=None):
+        """
+        The above function is the constructor for a class called ManageHarmonics,
+        which sets up a wizard with a single page and connects the finish button to
+        a function called finish_print.
+        
+        :param parent: The `parent` parameter is used to specify the parent widget
+        of the `ManageHarmonics` object. The parent widget is responsible for
+        managing the lifetime of its child widgets
+        """
         super(ManageHarmonics, self).__init__(parent)
         self.addPage(Page1(self))
-        #self.addPage(Page2(self))
         self.setWindowTitle('Manage Harmonics')
-
+        #
         self.resize(800,600)
-
-        # self.button(PQW.QWizard.NextButton).clicked.connect(self.next_print)
+        #
         self.button(PQW.QWizard.FinishButton).clicked.connect(self.finish_print)
 
-
-#------------------------------------------------------------------------------#
-    # def next_print(self):
-    #     print('Next',self.currentId())
-    #     #
-
-
-    #     #
-    #     return
-
-#------------------------------------------------------------------------------#
     def finish_print(self):
-        print('finish_print')
-        #TKM.TabKeMean.TKMUpdate(TKM.TabKeMean)
+        """
+        The function "finish_print" logs a debug message and returns.
+        :return: nothing, as there is no value specified after the return statement.
+        """
+        logger.debug("ManageHarmonics - finish")
         return
 
 
-#------------------------------------------------------------------------------#
 '''
 First page of the wizard
 '''
+# The `Page1` class is a GUI page that allows users to add, delete, load, and save
+# harmonic values.
 class Page1(PQW.QWizardPage):
     def __init__(self, parent=None):
+        """
+        The above function initializes a GUI page with various widgets and layouts.
+        
+        :param parent: The "parent" parameter is used to specify the parent widget
+        of the current widget. In this case, it is set to None, which means that the
+        current widget does not have a parent widget
+        """
         super(Page1, self).__init__(parent)
         # Create grid layot for the window
         Layout = PQW.QGridLayout()
@@ -124,8 +113,12 @@ class Page1(PQW.QWizardPage):
         self.Update()
 
     def Update(self):
-        #
-        print('Update')
+        """
+        The function "Update" updates the user interface by loading and displaying
+        harmonics data.
+        :return: nothing.
+        """
+        logger.debug('WizManageHarmonics - Update')
         # Load Harmonics
         Harmonics = OPT.GetHarmonics(OPT)
         # GroupBox DELETE
@@ -150,6 +143,12 @@ class Page1(PQW.QWizardPage):
         return
 
     def on_Button_AddHarm_clicked(self):
+        """
+        The function `on_Button_AddHarm_clicked` adds a new harmonic value to a list
+        and updates the user interface.
+        :return: nothing (None).
+        """
+        logger.debug('WizManageHarmonics - on_Button_AddHarm_clicked')
         # Check if number
         NewHarm = float(Page1.HarmAdd_Value.text())
         HarmList = OPT.GetHarmonics(OPT)
@@ -184,6 +183,14 @@ class Page1(PQW.QWizardPage):
         return
 
     def on_Button_DelHarm_clicked(self):
+        """
+        The function `on_Button_DelHarm_clicked` deletes a selected harmonic value
+        from a list, updates the list in memory and in a file, clears a text field,
+        and updates the user interface.
+        :return: nothing (None).
+        """
+        logger.debug('WizManageHarmonics - on_Button_DelHarm_clicked')
+        #
         HarmList = OPT.GetHarmonics(OPT)
         try:
             pos = HarmList.index(float(Page1.Combobox_HarmDel_Value.currentText()))
@@ -202,10 +209,17 @@ class Page1(PQW.QWizardPage):
             self.Update()
         except:
             pass
-        
+        #
         return
 
     def on_Button_LoadHarm_clicked(self):
+        """
+        The function `on_Button_LoadHarm_clicked` is used to load harmonics data
+        from a file and update the harmonics in the program.
+        :return: nothing (None).
+        """
+        logger.debug('WizManageHarmonics - on_Button_LoadHarm_clicked')
+        #
         file_import = PQW.QFileDialog.getOpenFileName(self, 'Select harmonics file to load', '../exports/', 'HRM (*.hrm)')
         if file_import[0]:
             Handle = open(file_import[0],'r')
@@ -222,6 +236,13 @@ class Page1(PQW.QWizardPage):
         return
 
     def on_Button_SaveHarm_clicked(self):
+        """
+        The function `on_Button_SaveHarm_clicked` saves a list of harmonics to a
+        file in the HRM format.
+        :return: nothing (None).
+        """
+        logger.debug('WizManageHarmonics - on_Button_SaveHarm_clicked')
+        #
         file_export = PQW.QFileDialog.getSaveFileName(self, 'Save harmonic to File', '../exports/harmonics', 'HRM (*.hrm)')
         if file_export[0]:
             HarmList = OPT.GetHarmonics(OPT)

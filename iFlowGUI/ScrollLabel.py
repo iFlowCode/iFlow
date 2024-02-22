@@ -1,3 +1,9 @@
+"""
+File: ScrollLabel.py
+Author: Andrea Bertagnoli
+Date: 01/10/2024
+Description: Brief description of the purpose of the file
+"""
 
 from PyQt5.QtWidgets import *
 from PyQt5 import QtCore, QtGui
@@ -27,5 +33,11 @@ class ScrollLabel(QScrollArea):
 
     # the setText method
     def setText(self, text):
+        """
+        The function sets the text of a label.
+        
+        :param text: The text parameter is a string that represents the text that
+        you want to set for the label
+        """
         # setting text to the label
         self.label.setText(text)

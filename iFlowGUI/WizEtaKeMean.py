@@ -51,7 +51,7 @@ class EtaKeMeanCalc(PQW.QWizard):
 
 #------------------------------------------------------------------------------#
     def next_print(self):
-        print('Next',self.currentId())
+        # print('Next',self.currentId())
         #
 
 
@@ -60,7 +60,7 @@ class EtaKeMeanCalc(PQW.QWizard):
 
 #------------------------------------------------------------------------------#
     def finish_print(self):
-        print('finish_print')
+        # print('finish_print')
         #TKM.TabKeMean.TKMUpdate(TKM.TabKeMean)
         return
 
@@ -136,7 +136,7 @@ class Page1(PQW.QWizardPage):
 
     def Update(self):
         #
-        print('Update')
+        # print('Update')
         Handle = open('../temp/Ke.log','w')
         Page1.Table_Stat.setRowCount(0)
         HandleLog = open('../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/probe.ini')

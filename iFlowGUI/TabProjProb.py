@@ -34,121 +34,137 @@ import TabFreqAnal as TFA
 import TabParEst as TPE
 import TabBrede as TBH
 import WizardAP as WAP
+from loguru import logger
 
-#%%
 '''
 TabProjStac Class
 '''
 class TabProjProb(PQW.QWidget):
     def __init__(self):
         super().__init__()
-        print('TabProjProb - Start Class')
-# Set Matplotlib fonts size
+        logger.debug("TabProjProb - Start Class")
+        # Set Matplotlib fonts size
         TabProjProb.MPL_AxisTitle = int(VAR.GetMPLAxisTitleFontSizeReference(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR))
         TabProjProb.MPL_AxisTick = int(VAR.GetMPLAxisTickFontSizeReference(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR))
         TabProjProb.MPL_Legend = int(VAR.GetMPLLegendFontSizeReference(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR))
-# Store class object
+        # Store class object
         VAR.SetTabProjProb(VAR, self)
-# Create grid layot for the window
-        Layout_Tab_ProjStac = PQW.QGridLayout()
-# Groupbox Project
+        # Create grid layot for the window
+        Layout_Tab_ProjStac = PQW.QHBoxLayout()
+        container_left = PQW.QFrame()
+        Layout_Tab_ProjStac_left = PQW.QVBoxLayout()
+        # Groupbox Project
         self.GroupBox_Projects = PQW.QGroupBox('Projects:')
-# Create the Layout for the Groupbox Project
+        # Create the Layout for the Groupbox Project
         self.VBoxProjects = PQW.QVBoxLayout()
-# Element ComboBox Active Project
+        # Element ComboBox Active Project
         TabProjProb.Combobox_Active_Project = PQW.QComboBox()
         # TabProjProb.Combobox_Active_Project.setFixedHeight(VAR.GetConboBoxHeight(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR))
         TabProjProb.Combobox_Active_Project.setToolTip('Choose Active Project') # Tooltip message
         TabProjProb.Combobox_Active_Project.currentIndexChanged.connect(self.on_Combobox_Active_Project_change) # ComboBox event change item
-# Element Button Create Project
+        # Element Button Create Project
         TabProjProb.Button_New_Project = PQW.QPushButton('New Project')
         # TabProjProb.Button_New_Project.setFixedHeight(VAR.GetConboBoxHeight(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR))
         TabProjProb.Button_New_Project.setToolTip('Create a New Project') # Tooltip message
         TabProjProb.Button_New_Project.clicked.connect(self.on_Button_New_Project_clicked) # Button event Click on
-# Element Button Delete Project
+        # Element Button Delete Project
         TabProjProb.Button_Del_Project = PQW.QPushButton('Delete Project')
         # TabProjProb.Button_Del_Project.setFixedHeight(VAR.GetConboBoxHeight(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR))
         TabProjProb.Button_Del_Project.setToolTip('Delete the Active Project') # Tooltip message
         TabProjProb.Button_Del_Project.clicked.connect(self.on_Button_Del_Project_clicked) # Button event Click on
-# Add elements to the Layout
+        # Add elements to the Layout
         self.VBoxProjects.addWidget(TabProjProb.Combobox_Active_Project)
         self.VBoxProjects.addWidget(TabProjProb.Button_New_Project)
         self.VBoxProjects.addWidget(TabProjProb.Button_Del_Project)
-# Add the Layout to the Groupbox Project
+        # Add the Layout to the Groupbox Project
         self.GroupBox_Projects.setLayout(self.VBoxProjects)
-# Groupbox Probes
+        #
+        Layout_Tab_ProjStac_left.addWidget(self.GroupBox_Projects)
+        # Groupbox Probes
         self.GroupBox_Probes = PQW.QGroupBox('Probes:')
-# Create the Layout for the Groupbox Probes
+        # Create the Layout for the Groupbox Probes
         self.VBoxProbes = PQW.QVBoxLayout() 
-# Element ComboBox Active Probes
+        # Element ComboBox Active Probes
         TabProjProb.Combobox_Active_Probes = PQW.QComboBox()
         # TabProjProb.Combobox_Active_Probes.setFixedHeight(VAR.GetConboBoxHeight(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR))
         TabProjProb.Combobox_Active_Probes.setToolTip('Choose Active Probes') # Tooltip message
         TabProjProb.Combobox_Active_Probes.currentIndexChanged.connect(self.on_Combobox_Active_Probes_change) # ComboBox event change item
-# Element Button Add Probes
+        # Element Button Add Probes
         TabProjProb.Button_Add_Probes = PQW.QPushButton('Add Probes')
         # TabProjProb.Button_Add_Probes.setFixedHeight(VAR.GetConboBoxHeight(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR))
         TabProjProb.Button_Add_Probes.setToolTip('Add Probes to the Project') # Tooltip message
         self.Button_Add_Probes.clicked.connect(self.on_Button_Add_Probes_clicked) # Button event Click on
-# Element Button Remove Probes
+        # Element Button Remove Probes
         TabProjProb.Button_Remove_Probes = PQW.QPushButton('Remove Probes')
         # TabProjProb.Button_Remove_Probes.setFixedHeight(VAR.GetConboBoxHeight(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR))
         TabProjProb.Button_Remove_Probes.setToolTip('Remove the Active Probes') # Tooltip message
         TabProjProb.Button_Remove_Probes.clicked.connect(self.on_Button_Remove_Probes_clicked) # Button event Click on
-# Add element to the Layout
+        # Add element to the Layout
         self.VBoxProbes.addWidget(TabProjProb.Combobox_Active_Probes)
         self.VBoxProbes.addWidget(TabProjProb.Button_Add_Probes)
         self.VBoxProbes.addWidget(TabProjProb.Button_Remove_Probes)
-# Add the Layout to the Groupbox Probes
+        # Add the Layout to the Groupbox Probes
         self.GroupBox_Probes.setLayout(self.VBoxProbes)
-# Groupbox Report
+        #
+        Layout_Tab_ProjStac_left.addWidget(self.GroupBox_Probes)
+        # Groupbox Report
         self.GroupBox_Report = PQW.QGroupBox('Report:')
-# Create Layout for the Groupbox Report
+        # Create Layout for the Groupbox Report
         self.VBoxReport = PQW.QVBoxLayout()
-# Element EditLine
+        # Element EditLine
         TabProjProb.Label_Report = ScrollLabel(self)
         TabProjProb.Label_Report.setText('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\nUt enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\nUt enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\nUt enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. ')
-# Add elements to the Layout
+        # Add elements to the Layout
         self.VBoxReport.addWidget(TabProjProb.Label_Report)
-# Add the Layout to the Groupbox Report
+        # Add the Layout to the Groupbox Report
         self.GroupBox_Report.setLayout(self.VBoxReport)
-#
-# Element Checkbox display interpolated data
+        #
+        Layout_Tab_ProjStac_left.addWidget(self.GroupBox_Report)
+        # Element Checkbox display interpolated data
         TabProjProb.CheckBox_DispInter = PQW.QCheckBox('Display interpolated data')
         TabProjProb.CheckBox_DispInter.stateChanged.connect(self.ChartChanged)
-# Groupbox Sensors
+        #
+        Layout_Tab_ProjStac_left.addWidget(TabProjProb.CheckBox_DispInter)
+        # Groupbox Sensors
         self.GroupBox_Sensors = PQW.QGroupBox("Sensors:")
         TabProjProb.VBoxSensor = PQW.QGridLayout()
         self.GroupBox_Sensors.setLayout(TabProjProb.VBoxSensor)
-# Chart
+        #
+        Layout_Tab_ProjStac_left.addWidget(self.GroupBox_Sensors)
+        #
+        container_left.setMaximumWidth(int(VAR.GetWindowsSize(VAR)[0] * 2 / 3 / 4))
+        container_left.setLayout(Layout_Tab_ProjStac_left)
+        # Chart column
+        container_right = PQW.QFrame()
+        Layout_Tab_ProjStac_Right = PQW.QVBoxLayout()
         TabProjProb.Chart_Fig = plt.figure()
         TabProjProb.Canvas = FigureCanvas(TabProjProb.Chart_Fig)
         self.Toolbar = NavigationToolbar(TabProjProb.Canvas, self)
         TabProjProb.Canvas.draw()
-# Add elements to the layout
-        Layout_Tab_ProjStac.addWidget(self.GroupBox_Projects,0,0,2,2)
-        Layout_Tab_ProjStac.addWidget(self.GroupBox_Probes,2,0,2,2)
-        Layout_Tab_ProjStac.addWidget(self.GroupBox_Report,4,0,2,2)
-        Layout_Tab_ProjStac.addWidget(TabProjProb.CheckBox_DispInter,6,0,1,2)
-        Layout_Tab_ProjStac.addWidget(self.GroupBox_Sensors,7,0,4,2)
-        Layout_Tab_ProjStac.addWidget(self.Toolbar,0,2,1,8)
-        Layout_Tab_ProjStac.addWidget(self.Canvas,1,2,10,8)
-# Set layout of tab
+        #
+        Layout_Tab_ProjStac_Right.addWidget(self.Toolbar)
+        Layout_Tab_ProjStac_Right.addWidget(TabProjProb.Canvas)
+        #
+        container_right.setLayout(Layout_Tab_ProjStac_Right)
+        #
+        Layout_Tab_ProjStac.addWidget(container_left)
+        Layout_Tab_ProjStac.addWidget(container_right)
+        # Show layout
         self.setLayout(Layout_Tab_ProjStac)
-# %%
+
+    # @logger.catch
     def on_Main_Menu_Project_Export_clicked(self):
-        print('TabProjProb - on_Main_Menu_Project_Export_clicked')
-        print('To Check')
+        logger.debug('TabProjProb - on_Main_Menu_Project_Export_clicked')
         file_export = PQW.QFileDialog.getSaveFileName(self, 'Export Project to File', '../exports/' + VAR.GetActiveProject(VAR), 'Project Export (*.pkr)')
         if file_export[0]:
             shutil.make_archive(file_export[0], 'zip', '../projects/' + str(VAR.GetActiveProject(VAR)))
             shutil.move(file_export[0] + '.zip', file_export[0])
             PQW.QMessageBox.information(self, VAR.GetSoftwareName(VAR)+' message', 'Project Export Completed.', PQW.QMessageBox.Ok, PQW.QMessageBox.Ok)
         return
-#%%
+
+    # @logger.catch
     def on_Main_Menu_Project_Import_clicked(self):
-        print('TabProjProb - on_Main_Menu_Project_Import_clicked')
-        print('To Check')
+        logger.debug('TabProjProb - on_Main_Menu_Project_Import_clicked')
         file_import = PQW.QFileDialog.getOpenFileName(self, 'Select project file to import...', '../exports/', 'Project Import(*.pkr)')
         if file_import[0]:
             if os.path.isdir('../projects/' +(file_import[0].split('/')[-1]).replace('.pkr','')):
@@ -202,10 +218,10 @@ class TabProjProb(PQW.QWidget):
             TBH.TabBrede.Update(TBH,2)
         #
         return
-#%%
+
+    # @logger.catch
     def on_Main_Menu_Project_Rename_clicked(self):
-        print('TabProjProb - on_Main_Menu_Project_Rename_clicked')
-        print('To Check')
+        logger.debug('TabProjProb - on_Main_Menu_Project_Rename_clicked')
         new_name, okPressed = PQW.QInputDialog.getText(None,'Rename Project','Project Name:',PQW.QLineEdit.Normal,'')
         if okPressed and new_name != '':
             if os.path.isdir('../projects/'+new_name):
@@ -229,17 +245,17 @@ class TabProjProb(PQW.QWidget):
                 TBH.TabBrede.Update(TBH,2)
         #
         return
-#%%
+
+    # @logger.catch
     def on_Main_Menu_Probe_Rename_clicked(self):
-        print('TabProjProb - on_Main_Menu_Probe_Rename_clicked')
-        print('To Check')
+        logger.debug('TabProjProb - on_Main_Menu_Probe_Rename_clicked')
         new_name, okPressed = PQW.QInputDialog.getText(None,'Rename Probe','Probe Name:',PQW.QLineEdit.Normal,'')
         if okPressed and new_name != '':
             if os.path.isdir('../projects/'+VAR.GetActiveProject(VAR)+'/'+new_name):
                 PQW.QMessageBox.information(None, VAR.GetSoftwareName(VAR)+' message', 'Probe already exixst.', PQW.QMessageBox.Ok, PQW.QMessageBox.Ok)
             else:
                 List = VAR.GetProbesList(VAR)
-                # print(List)
+                #
                 pos = List.index(VAR.GetActiveProbe(VAR))
                 List[pos] = new_name
                 VAR.SetProbesList(VAR,List)
@@ -257,21 +273,22 @@ class TabProjProb(PQW.QWidget):
                 TBH.TabBrede.Update(TBH,4)
         #
         return
-#%%
+
+    # @logger.catch
     def ChartChanged(self):
-        print('TabProjProb - ChartChanged')
-        print('To Check')
+        logger.debug('TabProjProb - ChartChanged')
         TPP.TabProjProb.Update(TPP,6)
         return
-#%%
+
+    # @logger.catch
     def SensorActiveChange(self):
-        print('TabProjProb - SensorActiveChange')
-        print('To Check')
+        logger.debug('TabProjProb - SensorActiveChange')
         TPP.TabProjProb.Update(TPP,7)
         return
-#%%
+
+    # @logger.catch
     def Update(self,Case):
-        print('TabProjProb Update - Case',Case)
+        logger.debug(f"TabProjProb Update - Case: {Case}")
         '''
         Case 0: Event generated by the starting of the GUI
         Case 1: Event generated by Combobox Active Project
@@ -541,9 +558,7 @@ class TabProjProb(PQW.QWidget):
                         TabProjProb.ax.set_xlabel('Date',fontsize=TabProjProb.MPL_AxisTitle)
                     elif VAR.GetActiveParameters(VAR,2) == 'Time':
                         TabProjProb.ax.set_xlabel('Time (s)',fontsize=TabProjProb.MPL_AxisTitle)
-                    
                     #
-                    # print(Xlim)
                     # if Case == 7:
                     #     if VAR.GetActiveParameters(VAR,2) == 'yyyy-mm-dd h24:min:sec':
                     #         Xlim = ((Xlim[0]-719165) * 24.0 * 3600.0,(Xlim[1]-719165) * 24.0 * 3600.0)
@@ -574,12 +589,12 @@ class TabProjProb(PQW.QWidget):
         TabProjProb.Button_Add_Probes.clicked.connect(TabProjProb.on_Button_Add_Probes_clicked) # Button event Click on
         TabProjProb.Button_Remove_Probes.clicked.connect(TabProjProb.on_Button_Remove_Probes_clicked) # Button event Click on
         VAR.GetiFlowSelf(VAR).progress.setValue(0)
-#
+        #
         return
-#%%
+
+    # @logger.catch
     def on_Combobox_Active_Project_change(self):
-        print('TabProjProb - on_Combobox_Active_Project_change')
-        print('To Check')
+        logger.debug('TabProjProb - on_Combobox_Active_Project_change')
         # Set the choosed project as active
         VAR.SetActiveProject(VAR,TabProjProb.Combobox_Active_Project.currentText())
         # Load probes list of the new active project
@@ -612,9 +627,10 @@ class TabProjProb(PQW.QWidget):
         TBH.TabBrede.Update(TBH,1)
         #
         return
-#%%
+
+    # @logger.catch
     def on_Button_New_Project_clicked(self):
-        print('TabProjProb - on_Button_New_Project_clicked')
+        logger.debug('TabProjProb - on_Button_New_Project_clicked')
         new_project, okPressed = PQW.QInputDialog.getText(None,'Create New Project','Project Name:',PQW.QLineEdit.Normal,'')
         if okPressed and new_project != '':
             # Check if the name of new project already exist
@@ -646,10 +662,10 @@ class TabProjProb(PQW.QWidget):
                 TBH.TabBrede.Update(TBH,2)
         # 
         return
-#%%
+
+    # @logger.catch
     def on_Button_Del_Project_clicked(self):
-        print('TabProjProb - on_Button_Del_Project_clicked')
-        print('To Check')
+        logger.debug('TabProjProb - on_Button_Del_Project_clicked')
         # Get the project to delete
         active_project = VAR.GetActiveProject(VAR)
         # Get the list of projects created
@@ -712,12 +728,12 @@ class TabProjProb(PQW.QWidget):
                 TBH.TabBrede.Update(TBH,3)
             except:
                 PQW.QMessageBox.information(None, VAR.GetSoftwareName(VAR) + ' message', 'Error while deleting project.', PQW.QMessageBox.Ok, PQW.QMessageBox.Ok)
-#
+        #
         return
-#%%
+
+    # @logger.catch
     def on_Combobox_Active_Probes_change(self):
-        print('TabProjProb - on_Combobox_Active_Probes_change')
-        print('To Check')
+        logger.debug('TabProjProb - on_Combobox_Active_Probes_change')
         if(os.path.isdir('../projects/'+VAR.GetActiveProject(VAR)+'/'+TabProjProb.Combobox_Active_Probes.currentText())):
             # Set the choosed probe as active
             VAR.SetActiveProbe(VAR,TabProjProb.Combobox_Active_Probes.currentText())
@@ -731,11 +747,11 @@ class TabProjProb(PQW.QWidget):
         TPE.TabParEst.Update(TPE,6)
         TBH.TabBrede.Update(TBH,6)
         return
-#%%
+
+    # @logger.catch
     def on_Button_Add_Probes_clicked(self):
-        print('TabProjProb - on_Button_Add_Probes_clicked')
-        print('To Check')
-# Lunch the wizard for importing a new probe
+        logger.debug('TabProjProb - on_Button_Add_Probes_clicked')
+        # Lunch the wizard for importing a new probe
         WizardAddProbe = WAP.AddProbe()
         WizardAddProbe.exec_()
         TPP.TabProjProb.Update(TPP,4)
@@ -745,10 +761,10 @@ class TabProjProb(PQW.QWidget):
         TBH.TabBrede.Update(TBH,4)
         TFA.TabFreqAnal.Button_FA.setEnabled(True)
         return
-#%%
+
+    # @logger.catch
     def on_Button_Remove_Probes_clicked(self):
-        print('TabProjProb - on_Button_Remove_Probes_clicked')
-        print('To Check')
+        logger.debug('TabProjProb - on_Button_Remove_Probes_clicked')
         # Delete Check
         string = 'You are deleting the probe: ' + VAR.GetActiveProbe(VAR) + ' from the project '+VAR.GetActiveProject(VAR)+'. Continue?'
         Reply = PQW.QMessageBox.warning(None, VAR.GetSoftwareName(VAR)+' message', string, PQW.QMessageBox.Yes|PQW.QMessageBox.No, PQW.QMessageBox.Yes)
@@ -786,20 +802,20 @@ class TabProjProb(PQW.QWidget):
         TPE.TabParEst.Update(TSP,5)
         TBH.TabBrede.Update(TBH,5)
         return
-#%%
+
+    # @logger.catch
     def on_Main_Menu_Probe_Export_clicked(self):
-        print('TabProjProb - on_Main_Menu_Probe_Export_clicked')
-        print('To Check')
+        logger.debug('TabProjProb - on_Main_Menu_Probe_Export_clicked')
         file_export = PQW.QFileDialog.getSaveFileName(self, 'Export Probe to File', '../exports/' + VAR.GetActiveProbe(VAR), 'Probe Export (*.pbr)')
         if file_export[0]:
             shutil.make_archive(file_export[0], 'zip', '../projects/' + str(VAR.GetActiveProject(VAR))+'/'+str(VAR.GetActiveProbe(VAR)))
             shutil.move(file_export[0] + '.zip', file_export[0])
             PQW.QMessageBox.information(self, VAR.GetSoftwareName(VAR)+' message', 'Project Export Completed.', PQW.QMessageBox.Ok, PQW.QMessageBox.Ok)
         return
-#%%
+
+    # @logger.catch
     def on_Main_Menu_Probe_Import_clicked(self):
-        print('TabProjProb - on_Main_Menu_Probe_Import_clicked')
-        print('To Check')
+        logger.debug('TabProjProb - on_Main_Menu_Probe_Import_clicked')
         file_import = PQW.QFileDialog.getOpenFileName(self, 'Select probe file to import...', '../exports/', 'File Probe(*.pbr)')
         if file_import[0]:
             if os.path.isdir('../projects/' + VAR.GetActiveProject(VAR) + '/' + (file_import[0].split('/')[-1]).replace('.pbr','')):
@@ -836,10 +852,10 @@ class TabProjProb(PQW.QWidget):
             TBH.TabBrede.Update(TBH,4)
         #
         return
-#%%
+
+    # @logger.catch
     def on_Main_Menu_Probe_ExportData_clicked(self):
-        print('TabProjProb - on_Main_Menu_Probe_ExportData_clicked')
-        print('To Check')
+        logger.debug('TabProjProb - on_Main_Menu_Probe_ExportData_clicked')
         file_export = PQW.QFileDialog.getSaveFileName(self, 'Export Data to File', '../exports/' + VAR.GetActiveProbe(VAR), 'CSV (*.csv)')
         if file_export[0]:
             df_export = pd.read_pickle('../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/data/clean.pkz',compression='zip')

@@ -1,17 +1,11 @@
-#-----------------------------------------------------------------------------#
-# Name:        module1
-# Purpose:
-#
-# Author:      user
-#
-# Created:     02/18/2021
-# Copyright:   (c) user 2021
-#              Center for Ecohydraulics
-#              University of Idaho
-# Licence:     <your licence>
-#-----------------------------------------------------------------------------#
+"""
+File: Options.py
+Author: Andrea Bertagnoli
+Date: 01/10/2024
+Description: Brief description of the purpose of the file
+"""
+
 class OPT():
-#-----------------------------------------------------------------------------#
     '''
     '''
     def SetHarmonicFlag(self,Flag):
@@ -19,7 +13,7 @@ class OPT():
         return
     def GetHarmonicFlag(self):
         return self.TFAHarmFlag
-#-----------------------------------------------------------------------------#
+
     '''
     '''
     def SetTFAxAxisUnit(self,unit):
@@ -27,7 +21,7 @@ class OPT():
         return
     def GetTFAxAxisUnit(self):
         return self.TFAxAxisUnit
-#-----------------------------------------------------------------------------#
+
     '''
     '''
     def SetHarmonics(self,ListHarmonics):
@@ -35,7 +29,7 @@ class OPT():
         return
     def GetHarmonics(self):
         return self.ListHarmonics
-#-----------------------------------------------------------------------------#
+
     '''
     '''
     def SetFFTcorAMP(self,List):
@@ -59,7 +53,7 @@ class OPT():
             return self.CorrHamm
         elif Case == 5:
             return self.CorrFlat
-#-----------------------------------------------------------------------------#
+
     '''
     '''
     def SetBasicPeriod(self,Value):

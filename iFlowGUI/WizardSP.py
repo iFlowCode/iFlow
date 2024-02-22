@@ -31,8 +31,8 @@ import glob
 
 # Import custom library
 from Variables import VAR
+from loguru import logger
 
-#%%
 '''
 Wizzard Add Probe Class
 '''
@@ -48,15 +48,14 @@ class SignalProcessing(PQW.QWizard):
         self.button(PQW.QWizard.FinishButton).clicked.connect(self.finish_print) # Click event on Finish the wizard
         
     def next_print(self):
-        print('Next',self.currentId())
         # Check Mobile Window Lenght
-        WinLenght = Page1.WinLen.text()
-        try:
-            float(WinLenght)
-        except:
-            PQW.QMessageBox.critical(self, VAR.GetSoftwareName(VAR)+' message', 'The Mobile Window lenght is\'t a number.', PQW.QMessageBox.Ok, PQW.QMessageBox.Ok)
-            self.back()
-            return
+        if Page1.Checkbox_MobWin:
+            try:
+                float(Page1.WinLen.text())
+            except:
+                PQW.QMessageBox.critical(self, VAR.GetSoftwareName(VAR)+' message', 'The Mobile Window lenght is\'t a number.', PQW.QMessageBox.Ok, PQW.QMessageBox.Ok)
+                self.back()
+                return
         #
         if Page1.Combobox_Method.currentText() == 'FFT':
             # Check FFT Window
@@ -117,7 +116,7 @@ class SignalProcessing(PQW.QWizard):
         elif Page1.Combobox_Method.currentText() == 'LPM':
             stringEXE = 'SignalProcessingLPM.exe'
         # Mobile Window [BOOLEAN] -f
-        if Page1.Combobox_MobWin.currentText() == 'Yes':
+        if Page1.Checkbox_MobWin:
             stringEXE = stringEXE + ' -f True'
             # Mobile Window lenght [FLOAT] -s
             stringEXE = stringEXE + ' -s "' + Page1.WinLen.text() +'"'
@@ -127,10 +126,6 @@ class SignalProcessing(PQW.QWizard):
         if Page1.Combobox_Method.currentText() == 'LPM':
             # SensorRef [STRING] -q
             stringEXE = stringEXE + ' -q "' + Page1.Combobox_Tref.currentText() +'"'
-            # # SensorUP [STRING] -w
-            # stringEXE = stringEXE + ' -w "' + SensorUP +'"'
-            # # SensorDOWN [STRING] -e
-            # stringEXE = stringEXE + ' -e "' + SensorDOWN +'"'
             # Degree of freedom
             stringEXE = stringEXE + ' -o "' + Page1.dof.text() +'"'
             # Order
@@ -148,7 +143,7 @@ class SignalProcessing(PQW.QWizard):
         # dt [FLOAT] -d
         stringEXE = stringEXE + ' -d "' + VAR.GetActiveParameters(VAR,3) +'"'
         # Call external program
-        print(stringEXE)
+        logger.debug(stringEXE)
         os.system(stringEXE)
         # Check Run
         HandleLog = open('../temp/SignalProcessing.log','r')
@@ -192,77 +187,41 @@ class SignalProcessing(PQW.QWizard):
             PQW.QMessageBox.critical(self, VAR.GetSoftwareName(VAR)+' message', Check, PQW.QMessageBox.Ok, PQW.QMessageBox.Ok)
         return
 
-#%%
     def finish_print(self):
-        print("Action:finish Page: " + str(self.currentId()))
+        logger.debug("Signal processing End")
         #
         return
-        
-#%%
+
 '''
 Page 1 of the wizard
 '''
 class Page1(PQW.QWizardPage):
     def __init__(self, parent=None):
         super(Page1, self).__init__(parent)
-        # Create grid layot for the window
-        Layout_Page1 = PQW.QGridLayout()
         #
         Page1.Sensors = (VAR.GetActiveParameters(VAR,6)).split(',')
         Page1.Heights = (VAR.GetActiveParameters(VAR,7)).split(',')
-        # Method
-        Label_Method = PQW.QLabel('Method:')
-        Page1.Combobox_Method = PQW.QComboBox() # Combobox probe name
+        # Create grid layot for the window
+        Layout_Page1 = PQW.QHBoxLayout()
+        container_left = PQW.QFrame()
+        Layout_Page1_Left = PQW.QVBoxLayout()
         #
+        Layout_Page1_Left_1 = PQW.QHBoxLayout()
+        #
+        Label_Method = PQW.QLabel('Method:')
+        Layout_Page1_Left_1.addWidget(Label_Method)
+        Page1.Combobox_Method = PQW.QComboBox() # Combobox probe name
         for item in VAR.GetProcessingMethod(VAR):
             if item != '':
                 Page1.Combobox_Method.addItem(item)
         # Page1.Combobox_Method.setFixedHeight(VAR.GetConboBoxHeight(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR))
         Page1.Combobox_Method.currentIndexChanged.connect(self.on_Combobox_Method_change) # ComboBox event change item
-        # Groupbox Mobile Window
-        self.GroupBox_MobWin = PQW.QGroupBox('Mobile Window:')
-        self.HBoxMobWin = PQW.QHBoxLayout() # Create the Layout for the Groupbox 
-        # Mobile Window
-        Label_MobWin = PQW.QLabel('Mobile window:')
-        # Label_MobWin.setFixedWidth(110) #!
-        Page1.Combobox_MobWin = PQW.QComboBox() # Combobox probe name
-        # Page1.Combobox_MobWin.setFixedWidth(110) #!
-        Page1.Combobox_MobWin.addItem('Yes')
-        Page1.Combobox_MobWin.addItem('No')
-        # Page1.Combobox_MobWin.setFixedHeight(VAR.GetConboBoxHeight(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR))
-        Page1.Combobox_MobWin.currentIndexChanged.connect(self.on_Combobox_MobWin_change) # ComboBox event change item
-        self.HBoxMobWin.addWidget(Label_MobWin) # Add element to the Layout
-        self.HBoxMobWin.addWidget(Page1.Combobox_MobWin) # Add element to the Layout
-        # Lenght
-        Label_MobWinLenght = PQW.QLabel('Lenght (hr):')
-        # Label_MobWinLenght.setFixedWidth(110) #!
-        Page1.WinLen = PQW.QLineEdit(self)
-        # Page1.WinLen.setFixedWidth(110) #!
-        Page1.WinLen.setText('96')
-        # Page1.WinLen.setFixedHeight(VAR.GetConboBoxHeight(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR))
-        self.HBoxMobWin.addWidget(Label_MobWinLenght) # Add element to the Layout
-        self.HBoxMobWin.addWidget(Page1.WinLen) # Add element to the Layout
-        # Slider
-        Label_Slider = PQW.QLabel('Slider (s):')
-        # Label_Slider.setFixedWidth(110) #!
-        Page1.Slider = PQW.QLineEdit(self)
-        # Page1.Slider.setFixedWidth(110) #!
-        Page1.Slider.setText(str(VAR.GetActiveParameters(VAR,3)))
-        # Page1.Slider.setFixedHeight(VAR.GetConboBoxHeight(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR))
-        self.HBoxMobWin.addWidget(Label_Slider) # Add element to the Layout
-        self.HBoxMobWin.addWidget(Page1.Slider) # Add element to the Layout
-        self.GroupBox_MobWin.setLayout(self.HBoxMobWin) # Add the Layout to the Groupbox 
-        # Update
-        Page1.Check_Update = PQW.QCheckBox('Update Run:')
-        Page1.Check_Update.toggled.connect(self.UpdateChange) #!
-        Page1.Combox_RunToUpdate = PQW.QComboBox()
-        UpdateRuns = glob.glob('../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/SPdata/*.run')
-        for UpdateRun in UpdateRuns:
-            Page1.Combox_RunToUpdate.addItem(UpdateRun.split('\\')[1].replace('.run','')) #!
-        Page1.Combox_RunToUpdate.setEnabled(False)
+        Layout_Page1_Left_1.addWidget(Page1.Combobox_Method)
+        #
+        Layout_Page1_Left.addLayout(Layout_Page1_Left_1)
         # FFT
         self.GroupBox_FFT = PQW.QGroupBox('FFT:')
-        # self.GroupBox_FFT.setFixedWidth(120)
+#         # self.GroupBox_FFT.setFixedWidth(120)
         self.VBoxFFT = PQW.QVBoxLayout() # Create the Layout for the Groupbox
         Label_Detrending = PQW.QLabel('Detrending:')
         Page1.Combobox_Detrending = PQW.QComboBox()
@@ -285,7 +244,6 @@ class Page1(PQW.QWizardPage):
         Page1.SavePer.setText('24')
         Page1.SavePer.setToolTip('Period to extract') # Tooltip message
         # Page1.SavePer.setFixedHeight(VAR.GetConboBoxHeight(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR))
-
         #
         self.VBoxFFT.addWidget(Label_Detrending)
         self.VBoxFFT.addWidget(Page1.Combobox_Detrending)
@@ -294,6 +252,7 @@ class Page1(PQW.QWizardPage):
         self.VBoxFFT.addWidget(Label_SavePer)
         self.VBoxFFT.addWidget(Page1.SavePer)
         self.GroupBox_FFT.setLayout(self.VBoxFFT) # Add the Layout to the Groupbox 
+        Layout_Page1_Left.addWidget(self.GroupBox_FFT)
         # LPM
         self.GroupBox_LPM = PQW.QGroupBox('LPM:')
         # self.GroupBox_LPM.setFixedWidth(120)
@@ -308,27 +267,6 @@ class Page1(PQW.QWizardPage):
         #
         Page1.Combobox_Tref.setEnabled(False)
         # Page1.Combobox_Tref.setFixedHeight(VAR.GetConboBoxHeight(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR))
-        # # Top sensors
-        # Label_SensorUP = PQW.QLabel('Sensor UP:')
-        # Page1.Combobox_SensorUP = PQW.QComboBox()
-        # # Page1.Combobox_FFTwin.setToolTip('Filter results by FFT window') # Tooltip message
-        # #
-        # for item in Page1.Sensors:
-        #     Page1.Combobox_SensorUP.addItem(item)
-        # Page1.Combobox_SensorUP.setEnabled(False)
-        # Page1.Combobox_SensorUP.setFixedHeight(VAR.GetConboBoxHeight(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR))
-        # Page1.Combobox_SensorUP.currentIndexChanged.connect(self.on_Combobox_SensorUP_change) # ComboBox event change item
-        # # Bottom sensor
-        # Label_SensorDOWN = PQW.QLabel('Sensor DOWN:')
-        # Page1.Combobox_SensorDOWN = PQW.QComboBox()
-        # # Page1.Combobox_FFTwin.setToolTip('Filter results by FFT window') # Tooltip message
-        # #
-        # for item in Page1.Sensors:
-        #     Page1.Combobox_SensorDOWN.addItem(item)
-        # Page1.Combobox_SensorDOWN.setCurrentText(item)
-        # Page1.Combobox_SensorDOWN.setEnabled(False)
-        # Page1.Combobox_SensorDOWN.setFixedHeight(VAR.GetConboBoxHeight(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR))
-        # Page1.Combobox_SensorDOWN.currentIndexChanged.connect(self.on_Combobox_SensorDOWN_change) # ComboBox event change item
         # dof
         Label_dof = PQW.QLabel('Degree of freedom:')
         Page1.dof = PQW.QLineEdit(self)
@@ -343,100 +281,67 @@ class Page1(PQW.QWizardPage):
         Page1.order.setEnabled(False)
         # Page1.order.setFixedHeight(VAR.GetConboBoxHeight(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR))
         # LPM
-        self.GroupBox_Sensors = PQW.QGroupBox('Sensors:')
-        # self.GroupBox_Sensors.setFixedWidth(200)
-        Page1.VBoxSensor = PQW.QGridLayout()
-        self.GroupBox_Sensors.setLayout(Page1.VBoxSensor)
-        print(VAR.GetActiveParameters(VAR,6))
-        for Sensor in VAR.GetActiveParameters(VAR,6).split(','):
-            CheckBox = PQW.QCheckBox(Sensor)
-            CheckBox.setChecked(True)
-            Page1.VBoxSensor.addWidget(CheckBox)
-        #
         self.VBoxLPM.addWidget(Label_Tref)
         self.VBoxLPM.addWidget(Page1.Combobox_Tref)
-        # self.VBoxLPM.addWidget(Label_SensorUP)
-        # self.VBoxLPM.addWidget(Page1.Combobox_SensorUP)
-        # self.VBoxLPM.addWidget(Label_SensorDOWN)
-        # self.VBoxLPM.addWidget(Page1.Combobox_SensorDOWN)
         self.VBoxLPM.addWidget(Label_dof)
         self.VBoxLPM.addWidget(Page1.dof)
         self.VBoxLPM.addWidget(Label_order)
         self.VBoxLPM.addWidget(Page1.order)
         self.GroupBox_LPM.setLayout(self.VBoxLPM) # Add the Layout to the Groupbox 
-        # Insert elements in the grid
-        Layout_Page1.addWidget(Label_Method, 0, 0, 1, 1)
-        Layout_Page1.addWidget(Page1.Combobox_Method, 0, 1, 1, 1)
-        Layout_Page1.addWidget(Page1.Check_Update,0,2,1,1)
-        Layout_Page1.addWidget(Page1.Combox_RunToUpdate,0,3,1,1)
-        Layout_Page1.addWidget(self.GroupBox_MobWin, 1, 0, 1, 4)
-        Layout_Page1.addWidget(self.GroupBox_FFT, 3, 0, 1, 1)
-        Layout_Page1.addWidget(self.GroupBox_LPM, 3, 1, 1, 1)
-        Layout_Page1.addWidget(self.GroupBox_Sensors, 3, 2, 1, 2)
-        # Show layout
+        #
+        Layout_Page1_Left.addWidget(self.GroupBox_LPM)
+        #
+        container_left.setLayout(Layout_Page1_Left)
+        #
+        container_right = PQW.QFrame()
+        Layout_Page1_Right = PQW.QVBoxLayout()
+        #
+        Layout_Page1_Right_1 = PQW.QHBoxLayout()
+        #
+        Page1.Checkbox_MobWin = PQW.QCheckBox("Mobile window lenght (hr):")
+        Page1.Checkbox_MobWin.toggled.connect(self.UpdateMobWin)
+        Layout_Page1_Right_1.addWidget(Page1.Checkbox_MobWin)
+        Page1.WinLen = PQW.QLineEdit(self)
+        # Page1.WinLen.setFixedWidth(110) #!
+        Page1.WinLen.setText('96')
+        Page1.WinLen.setEnabled(False)
+        Layout_Page1_Right_1.addWidget(Page1.WinLen)
+        #
+        Layout_Page1_Right.addLayout(Layout_Page1_Right_1)
+        #
+        self.GroupBox_Sensors = PQW.QGroupBox('Sensors:')
+        # self.GroupBox_Sensors.setFixedWidth(200)
+        Page1.VBoxSensor = PQW.QGridLayout()
+        self.GroupBox_Sensors.setLayout(Page1.VBoxSensor)
+        #
+        for Sensor in VAR.GetActiveParameters(VAR,6).split(','):
+            CheckBox = PQW.QCheckBox(Sensor)
+            CheckBox.setChecked(True)
+            Page1.VBoxSensor.addWidget(CheckBox)
+        #
+        Layout_Page1_Right.addWidget(self.GroupBox_Sensors)
+        #
+        container_right.setLayout(Layout_Page1_Right)
+        #
+        Layout_Page1.addWidget(container_left)
+        Layout_Page1.addWidget(container_right)
+        #
         self.setLayout(Layout_Page1)
 
-    def UpdateChange(self):
-        print('UpdateChange')
-        if Page1.Check_Update.isChecked():
-            Page1.Combox_RunToUpdate.setEnabled(True)
-            Page1.Combobox_Method.setEnabled(False)
-            Page1.Combobox_MobWin.setEnabled(False)
-            Page1.WinLen.setEnabled(False)
-            Page1.Slider.setEnabled(False)
-            Page1.Combobox_Detrending.setEnabled(False)
-            Page1.Combobox_FFTwin.setEnabled(False)
-            Page1.SavePer.setEnabled(False)
-            Page1.Combobox_Tref.setEnabled(False)
-            Page1.dof.setEnabled(False)
-            Page1.order.setEnabled(False)
-            print(Page1.Combox_RunToUpdate.currentText())
-            print('../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/SPdata/'+Page1.Combox_RunToUpdate.currentText()+'.run')
-            HandleRun = open('../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/SPdata/'+Page1.Combox_RunToUpdate.currentText()+'.run','r')
-            Run_AnalysisType = HandleRun.readline().replace('\n','').split(';')[0]
-            if Run_AnalysisType == 'FFT':
-                Run_MobileWin = HandleRun.readline().replace('\n','').split(';')[0]
-                Run_MobileWinLenght = HandleRun.readline().replace('\n','').split(';')[0]
-                Run_FFTwin = HandleRun.readline().replace('\n','').split(';')[0]
-                Run_Detrending = HandleRun.readline().replace('\n','').split(';')[0]
-                Run_Periods = HandleRun.readline().replace('\n','').split(';')[0]
-            elif Run_AnalysisType == 'LPM':
-                Run_MobWin = HandleRun.readline().replace('\n','').split(';')[0]
-                Run_MobWinLen = HandleRun.readline().replace('\n','').split(';')[0]
-                Run_SensorRef = HandleRun.readline().replace('\n','').split(';')[0]
-                Run_SensorUP = HandleRun.readline().replace('\n','').split(';')[0]
-                Run_SensorDOWN = HandleRun.readline().replace('\n','').split(';')[0]
-                Run_dt = HandleRun.readline().replace('\n','').split(';')[0]
-                Run_dof = HandleRun.readline().replace('\n','').split(';')[0]
-                Run_order = HandleRun.readline().replace('\n','').split(';')[0]
-                Run_Sensors = HandleRun.readline().replace('\n','').split(';')[0]
-                Run_slider = HandleRun.readline().replace('\n','').split(';')[0]
-            HandleRun.close()
-        else:
-            Page1.Combox_RunToUpdate.setEnabled(False)
-            Page1.Combobox_Method.setEnabled(True)
-            Page1.Combobox_MobWin.setEnabled(True)
+    def UpdateMobWin(self, state):
+        if state:
             Page1.WinLen.setEnabled(True)
-            Page1.Slider.setEnabled(True)
-            if Page1.Combobox_Method.currentText() == 'FFT':
-                Page1.Combobox_Detrending.setEnabled(True)
-                Page1.Combobox_FFTwin.setEnabled(True)
-                Page1.SavePer.setEnabled(True)
-            elif Page1.Combobox_Method.currentText() == 'LPM':
-                Page1.Combobox_Tref.setEnabled(True)
-                Page1.dof.setEnabled(True)
-                Page1.order.setEnabled(True)
+        else:
+            Page1.WinLen.setEnabled(False)
         return
 
     def on_Combobox_Method_change(self):
-        print('Page1 - on_Combobox_Method_change')
+        logger.debug('Page1 - on_Combobox_Method_change')
         if Page1.Combobox_Method.currentText() == 'LPM':
             Page1.Combobox_Detrending.setEnabled(False)
             Page1.Combobox_FFTwin.setEnabled(False)
             Page1.SavePer.setEnabled(False)
             Page1.Combobox_Tref.setEnabled(True)
-            # Page1.Combobox_SensorUP.setEnabled(True)
-            # Page1.Combobox_SensorDOWN.setEnabled(True)
             Page1.dof.setEnabled(True)
             Page1.order.setEnabled(True)
         elif Page1.Combobox_Method.currentText() == 'FFT':
@@ -444,29 +349,10 @@ class Page1(PQW.QWizardPage):
             Page1.Combobox_FFTwin.setEnabled(True)
             Page1.SavePer.setEnabled(True)
             Page1.Combobox_Tref.setEnabled(False)
-            # Page1.Combobox_SensorUP.setEnabled(False)
-            # Page1.Combobox_SensorDOWN.setEnabled(False)
             Page1.dof.setEnabled(False)
             Page1.order.setEnabled(False)
         return
 
-    def on_Combobox_MobWin_change(self):
-        print('Page1 - on_Combobox_MobWin_change')
-        if Page1.Combobox_MobWin.currentText() == 'Yes':
-            Page1.WinLen.setEnabled(True)
-        else:
-            Page1.WinLen.setEnabled(False)
-        return
-
-    # def on_Combobox_SensorUP_change(self):
-    #     Page1.dof.setText(str(Page1.Combobox_SensorDOWN.currentIndex()-Page1.Combobox_SensorUP.currentIndex()+2))
-    #     return
-
-    # def on_Combobox_SensorDOWN_change(self):
-    #     Page1.dof.setText(str(Page1.Combobox_SensorDOWN.currentIndex()-Page1.Combobox_SensorUP.currentIndex()+2))
-    #     return
-
-#%%
 '''
 Page 2 of the wizard
 '''

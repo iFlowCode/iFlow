@@ -36,6 +36,7 @@ import TabFreqAnal as TFA
 # # import STabFFTAnal as STFA
 # # import STabLPMAnal as STLA
 import WizManageHarmonics as WMH
+from loguru import logger
 
 import WizardFA as WFA
 #------------------------------------------------------------------------------#
@@ -45,116 +46,134 @@ TabFreqAnal Class
 class TabFreqAnal(PQW.QWidget):
     def __init__(self):
         super().__init__()
-        print('TabFreqAnal - Start Class')
-# Set Matplotlib fonts size
+        logger.debug('TabFreqAnal - Start Class')
+        # Set Matplotlib fonts size
         TabFreqAnal.MPL_AxisTitle = int(VAR.GetMPLAxisTitleFontSizeReference(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR))
         TabFreqAnal.MPL_AxisTick = int(VAR.GetMPLAxisTickFontSizeReference(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR))
         TabFreqAnal.MPL_Legend = int(VAR.GetMPLLegendFontSizeReference(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR))
-# Store class object
+        # Store class object
         VAR.SetTabFreqAnal(VAR, self)
-# Create grid layot for the window
-        Layout_Tab_FreqAnal = PQW.QGridLayout()
-# Button Calculate
+        # Create grid layot for the window
+        Layout_Tab_FreqAnal = PQW.QHBoxLayout()
+        # Layout_Tab_FreqAnal = PQW.QGridLayout()
+        # Left collumn
+        container_left = PQW.QFrame()
+        Layout_Tab_FreqAnal_Left = PQW.QVBoxLayout()
+        # Button Calculate
         TabFreqAnal.Button_FA = PQW.QPushButton('Frequency analysis')
-        # TabFreqAnal.Button_FA.setFixedHeight(int(VAR.GetConboBoxHeight(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR)))
-# #         TabFreqAnal.Button_FA.setToolTip('Launch Frequency analysis Wizard') # Tooltip message
+        TabFreqAnal.Button_FA.setFixedHeight(int(VAR.GetConboBoxHeight(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR)))
+        # #         TabFreqAnal.Button_FA.setToolTip('Launch Frequency analysis Wizard') # Tooltip message
         TabFreqAnal.Button_FA.clicked.connect(self.on_Button_FA_clicked) # Button event Click on
-# Groupbox Filter
+        Layout_Tab_FreqAnal_Left.addWidget(TabFreqAnal.Button_FA)
+        # Groupbox Filter
         self.GroupBox_Filter = PQW.QGroupBox('Filter:')
-# Create the Layout for the Groupbox Filter
+        # Create the Layout for the Groupbox Filter
         self.VBoxFilter = PQW.QVBoxLayout()
-# Label
+        # Label
         Label_FFTWin = PQW.QLabel('FFTWin:')
-# Element ComboBox FFTWin
+        # Element ComboBox FFTWin
         TabFreqAnal.Combobox_FFTWin = PQW.QComboBox()
-        # TabFreqAnal.Combobox_FFTWin.setFixedHeight(int(VAR.GetConboBoxHeight(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR)))
-# #         TabFreqAnal.Combobox_FFTWin.setToolTip('Filter results by FTTwin') # Tooltip message
+        TabFreqAnal.Combobox_FFTWin.setFixedHeight(int(VAR.GetConboBoxHeight(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR)))
+        #         TabFreqAnal.Combobox_FFTWin.setToolTip('Filter results by FTTwin') # Tooltip message
         #
         for item in VAR.GetFFTWindowfunction(VAR):
             TabFreqAnal.Combobox_FFTWin.addItem(item)
         #
         TabFreqAnal.Combobox_FFTWin.currentIndexChanged.connect(self.on_Combobox_FFTWin_change) # ComboBox event change item
-# Add elements to the Layout
+        # Add elements to the Layout
         self.VBoxFilter.addWidget(Label_FFTWin)
         self.VBoxFilter.addWidget(TabFreqAnal.Combobox_FFTWin)
-# Add the Layout to the Groupbox Filter
+        # Add the Layout to the Groupbox Filter
         self.GroupBox_Filter.setLayout(self.VBoxFilter)
-# Groupbox Chart
+
+        Layout_Tab_FreqAnal_Left.addWidget(self.GroupBox_Filter)
+        #
+        # Groupbox Chart
         self.GroupBox_Chart = PQW.QGroupBox('Chart:')
-# Create the lyout for the Groupbox Chart
+        # Create the lyout for the Groupbox Chart
         self.VBoxChart = PQW.QVBoxLayout()
-# Label
+        # Label
         Label_Analysis = PQW.QLabel('Analysis:')
-# Element ComboBox Analysis
+        # Element ComboBox Analysis
         TabFreqAnal.Combobox_Analysis = PQW.QComboBox()
         # TabFreqAnal.Combobox_Analysis.setFixedHeight(int(VAR.GetConboBoxHeight(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR)))
-# #         TabFreqAnal.Combobox_Analysis.setToolTip('Choose analysis to show') # Tooltip message
+        # #         TabFreqAnal.Combobox_Analysis.setToolTip('Choose analysis to show') # Tooltip message
         TabFreqAnal.Combobox_Analysis.currentIndexChanged.connect(self.on_Combobox_Analysis_change) # ComboBox event change item
-# Label
+        # Label
         Label_ChartType = PQW.QLabel('Chart type:')
-# Element Combobox ChartType
+        # Element Combobox ChartType
         TabFreqAnal.Combobox_ChartType = PQW.QComboBox()
         # TabFreqAnal.Combobox_ChartType.setFixedHeight(int(VAR.GetConboBoxHeight(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR)))
-# #         TabFreqAnal.Combobox_ChartType.setToolTip('Choose the data to display') # Tooltip message
+        # #         TabFreqAnal.Combobox_ChartType.setToolTip('Choose the data to display') # Tooltip message
         #
         for item in VAR.GetChartTypeFrequecyAnalysis(VAR):
             TabFreqAnal.Combobox_ChartType.addItem(item)
         #
         TabFreqAnal.Combobox_ChartType.currentIndexChanged.connect(self.on_Combobox_ChartType_change) # ComboBox event change item
-# Label
+        # Label
         Label_TopSensor = PQW.QLabel('TopSensor:')
-# Element Combobox TopSensor
+        # Element Combobox TopSensor
         TabFreqAnal.Combobox_TopSensor = PQW.QComboBox()
         # TabFreqAnal.Combobox_TopSensor.setFixedHeight(int(VAR.GetConboBoxHeight(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR)))
-# #         TabFreqAnal.Combobox_TopSensor.setToolTip('Choose the TopSensor') # Tooltip message
-#         #
+        # #         TabFreqAnal.Combobox_TopSensor.setToolTip('Choose the TopSensor') # Tooltip message
+        #         #
         TabFreqAnal.Combobox_TopSensor.currentIndexChanged.connect(self.on_Combobox_TopSensor_change) # ComboBox event change item
-# Add elements to the Layout
+        # Add elements to the Layout
         self.VBoxChart.addWidget(Label_Analysis)
         self.VBoxChart.addWidget(TabFreqAnal.Combobox_Analysis)
         self.VBoxChart.addWidget(Label_ChartType)
         self.VBoxChart.addWidget(TabFreqAnal.Combobox_ChartType)
         self.VBoxChart.addWidget(Label_TopSensor)
         self.VBoxChart.addWidget(TabFreqAnal.Combobox_TopSensor)
-# Add the Layout to the Groupbox Chart
+        # Add the Layout to the Groupbox Chart
         self.GroupBox_Chart.setLayout(self.VBoxChart)
-# Groupbox Report
+        #
+        Layout_Tab_FreqAnal_Left.addWidget(self.GroupBox_Chart)
+        # Groupbox Report
         self.GroupBox_Report = PQW.QGroupBox('Report:')
-# Create Layout for the Groupbox Report
+        # Create Layout for the Groupbox Report
         self.VBoxReport = PQW.QVBoxLayout()
-# Element EditLine
+        # Element EditLine
         TabFreqAnal.Label_Report = ScrollLabel(self)
         TabFreqAnal.Label_Report.setText('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\nUt enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\nUt enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\nUt enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. ')
-# #         TabFreqAnal.Label_Report = PQW.QLabel('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\nUt enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.')
-# #         TabFreqAnal.Label_Report.setWordWrap(True)
-# Add elements to the Layout
+        # Add elements to the Layout
         self.VBoxReport.addWidget(TabFreqAnal.Label_Report)
-# Add the Layout to the Groupbox Report
+        # Add the Layout to the Groupbox Report
         self.GroupBox_Report.setLayout(self.VBoxReport)
-# Groupbox Sensors
+        #
+        Layout_Tab_FreqAnal_Left.addWidget(self.GroupBox_Report)
+        # Groupbox Sensors
         self.GroupBox_Sensors = PQW.QGroupBox("Sensors:")
-# Create Layout for the Groupbox Sensor
+        # Create Layout for the Groupbox Sensor
         TabFreqAnal.VBoxSensor = PQW.QGridLayout()
-# #         TabFreqAnal.VBoxSensor = PQW.QVBoxLayout()
+        # #         TabFreqAnal.VBoxSensor = PQW.QVBoxLayout()
         self.GroupBox_Sensors.setLayout(TabFreqAnal.VBoxSensor)
-# Chart
+        #
+        Layout_Tab_FreqAnal_Left.addWidget(self.GroupBox_Sensors)
+        #
+        container_left.setMaximumWidth(int(VAR.GetWindowsSize(VAR)[0] * 2 / 3 / 4))
+        container_left.setLayout(Layout_Tab_FreqAnal_Left)
+        # Chart column
+        container_right = PQW.QFrame()
+        Layout_Tab_FreqAnal_Right = PQW.QVBoxLayout()
         TabFreqAnal.Chart_Fig = plt.figure()
         TabFreqAnal.Canvas = FigureCanvas(TabFreqAnal.Chart_Fig)
         self.Toolbar = NavigationToolbar(TabFreqAnal.Canvas, self)
         TabFreqAnal.Canvas.draw()
-# Insert element in the grid
-        Layout_Tab_FreqAnal.addWidget(TabFreqAnal.Button_FA,0,0,1,2)
-        Layout_Tab_FreqAnal.addWidget(self.GroupBox_Filter,2,0,1,2)
-        Layout_Tab_FreqAnal.addWidget(self.GroupBox_Chart,3,0,2,2)
-        Layout_Tab_FreqAnal.addWidget(self.GroupBox_Report,5,0,2,2)
-        Layout_Tab_FreqAnal.addWidget(self.GroupBox_Sensors,7,0,4,2)
-        Layout_Tab_FreqAnal.addWidget(self.Toolbar,0,2,1,8)
-        Layout_Tab_FreqAnal.addWidget(TabFreqAnal.Canvas,1,2,10,8)
-# Set layout of tab
+        #
+        Layout_Tab_FreqAnal_Right.addWidget(self.Toolbar)
+        Layout_Tab_FreqAnal_Right.addWidget(TabFreqAnal.Canvas)
+        #
+        container_right.setLayout(Layout_Tab_FreqAnal_Right)
+        #
+        Layout_Tab_FreqAnal.addWidget(container_left)
+        Layout_Tab_FreqAnal.addWidget(container_right)
+        # Set layout of tab
         self.setLayout(Layout_Tab_FreqAnal)
-#%%
+
+    # @logger.catch
     def Update(self,Case):
-        print('TabFreqAnal Update - Case',Case)
+        logger.debug(f"TabFreqAnal Update - Case: {Case}")
         '''
         Case 0: Event generated by the starting of the GUI
         Case 1: Event generated by on change project #TODO
@@ -170,7 +189,7 @@ class TabFreqAnal(PQW.QWidget):
         Case 11: FFTwin filter Change
         # Case 12: #!
         # Case 13: #!
-#         '''
+        '''
         VAR.GetiFlowSelf(VAR).progress.setValue(0)
         # Disconect all the internal events
         TabFreqAnal.Combobox_FFTWin.currentIndexChanged.disconnect()
@@ -258,7 +277,7 @@ class TabFreqAnal(PQW.QWidget):
                 VAR.GetiFlowSelf(VAR).Menu_FA_Export_PDA.setEnabled(False)
                 VAR.GetiFlowSelf(VAR).Menu_FA_Export_Amplitude.setEnabled(False)
                 VAR.GetiFlowSelf(VAR).Menu_FA_Export_Phase.setEnabled(False)
-                # print(OPT.GetHarmonicFlag(OPT))
+                #
                 if OPT.GetHarmonicFlag(OPT) == 'True':
                     VAR.GetiFlowSelf(VAR).Menu_FA_Harmonics_Show.setText('Hide Harmonics')
                 else:
@@ -304,7 +323,7 @@ class TabFreqAnal(PQW.QWidget):
                     VAR.GetiFlowSelf(VAR).Menu_FA_Export_PDA.setEnabled(False)
                     VAR.GetiFlowSelf(VAR).Menu_FA_Export_Amplitude.setEnabled(False)
                     VAR.GetiFlowSelf(VAR).Menu_FA_Export_Phase.setEnabled(False)
-                    # print(OPT.GetHarmonicFlag(OPT))
+                    #
                     if OPT.GetHarmonicFlag(OPT) == 'True':
                         VAR.GetiFlowSelf(VAR).Menu_FA_Harmonics_Show.setText('Hide Harmonics')
                     else:
@@ -385,7 +404,7 @@ class TabFreqAnal(PQW.QWidget):
                             VAR.GetiFlowSelf(VAR).Menu_FA_Export_PDA.setEnabled(False)
                             VAR.GetiFlowSelf(VAR).Menu_FA_Export_Amplitude.setEnabled(False)
                             VAR.GetiFlowSelf(VAR).Menu_FA_Export_Phase.setEnabled(False)
-                            # print(OPT.GetHarmonicFlag(OPT))
+                            #
                             if OPT.GetHarmonicFlag(OPT) == 'True':
                                 VAR.GetiFlowSelf(VAR).Menu_FA_Harmonics_Show.setText('Hide Harmonics')
                             else:
@@ -608,43 +627,47 @@ class TabFreqAnal(PQW.QWidget):
         VAR.GetiFlowSelf(VAR).progress.setValue(0)
         #
         return
-#%%
+
+    # @logger.catch
     def on_Button_FA_clicked(self):
-        print('TabFreqAnal - on_Button_PE_clicked')
+        logger.debug('TabFreqAnal - on_Button_PE_clicked')
         # Lunch the wizard for Frequency analysis
         WizardFreqAnal = WFA.FrequencyAnalysis()
         WizardFreqAnal.exec_()
-
-
-
+        #
         return
-#%%
+
+    # @logger.catch
     def on_Combobox_FFTWin_change(self):
-        print('TabFreqAnal - on_Combobox_FFTWin_change')
+        logger.debug('TabFreqAnal - on_Combobox_FFTWin_change')
         TFA.TabFreqAnal.Update(TFA,11)
         return
-#%%
+
+    # @logger.catch
     def on_Combobox_Analysis_change(self):
-        print('TabFreqAnal - on_Combobox_Analysis_change')
+        logger.debug('TabFreqAnal - on_Combobox_Analysis_change')
         TFA.TabFreqAnal.Update(TFA,8)
         return
-#%%
+    
+    # @logger.catch
     def on_Combobox_ChartType_change(self):
-        print('TabFreqAnal - on_Combobox_ChartType_change')
+        logger.debug('TabFreqAnal - on_Combobox_ChartType_change')
         TFA.TabFreqAnal.Update(TFA,9)
         return
-#%%
+
+    # @logger.catch
     def SensorActiveChange(self):
-        print('TabFreqAnal - SensorActiveChange')
+        logger.debug('TabFreqAnal - SensorActiveChange')
         TFA.TabFreqAnal.Update(TFA,10)
         return
-#%%
+
+    # @logger.catch
     def on_Combobox_TopSensor_change(self):
-        print('TabFreqAnal - on_Combobox_TopSensor_change')
+        logger.debug('TabFreqAnal - on_Combobox_TopSensor_change')
         TFA.TabFreqAnal.Update(TFA,10)
         return
 
-
+    # @logger.catch
     def on_Button_FA_Harmonics_Show_clicked(self):
         if OPT.GetHarmonicFlag(OPT) == 'True':
             OPT.SetHarmonicFlag(OPT,'False')
@@ -657,6 +680,7 @@ class TabFreqAnal(PQW.QWidget):
         #
         return
 
+    # @logger.catch
     def on_Button_FA_Export_PDA_clicked(self):
         file_export = PQW.QFileDialog.getSaveFileName(self, 'Export PSD to File', '../exports/' + TabFreqAnal.Combobox_Analysis.currentText().replace('Run: ','')+'_PSD_' +VAR.GetActiveProbe(VAR), 'CSV (*.csv)')
         if file_export[0]:
@@ -676,6 +700,7 @@ class TabFreqAnal(PQW.QWidget):
             PQW.QMessageBox.information(self, VAR.GetSoftwareName(VAR)+' message', 'PSD Export Completed.', PQW.QMessageBox.Ok, PQW.QMessageBox.Ok)
         return
 
+    # @logger.catch
     def on_Button_FA_Export_Amplitude_clicked(self):
         file_export = PQW.QFileDialog.getSaveFileName(self, 'Export Amplitude to File', '../exports/' + TabFreqAnal.Combobox_Analysis.currentText().replace('Run: ','')+'_Amplitude_' +VAR.GetActiveProbe(VAR), 'CSV (*.csv)')
         if file_export[0]:
@@ -715,6 +740,7 @@ class TabFreqAnal(PQW.QWidget):
             PQW.QMessageBox.information(self, VAR.GetSoftwareName(VAR)+' message', 'Amplitude Export Completed.', PQW.QMessageBox.Ok, PQW.QMessageBox.Ok)
         return
 
+    # @logger.catch
     def on_Button_FA_Export_Phase_clicked(self):
         file_export = PQW.QFileDialog.getSaveFileName(self, 'Export Phase to File', '../exports/' + TabFreqAnal.Combobox_Analysis.currentText().replace('Run: ','')+'_Phase_' +VAR.GetActiveProbe(VAR), 'CSV (*.csv)')
         if file_export[0]:
@@ -734,6 +760,7 @@ class TabFreqAnal(PQW.QWidget):
             PQW.QMessageBox.information(self, VAR.GetSoftwareName(VAR)+' message', 'Phase Export Completed.', PQW.QMessageBox.Ok, PQW.QMessageBox.Ok)
         return
 
+    # @logger.catch
     def on_Button_FA_Harmonics_Manage_clicked(self):
         WizardHamonics = WMH.ManageHarmonics()
         WizardHamonics.exec_()

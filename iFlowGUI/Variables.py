@@ -1,33 +1,17 @@
-#-----------------------------------------------------------------------------#
-# Name:        module1
-# Purpose:
-#
-# Author:      user
-#
-# Created:     02/18/2021
-# Copyright:   (c) user 2021
-#              Center for Ecohydraulics
-#              University of Idaho
-# Licence:     <your licence>
-#-----------------------------------------------------------------------------#
+"""
+File: Variables.py
+Author: Andrea Bertagnoli
+Date: 01/10/2024
+Description: Brief description of the purpose of the file
+"""
+
 class VAR():
-
-    # def SetLoguru(self, object):
-    #     self.loguru_log = object
-    #     return
-    
-    # def GetLoguru(self):
-    #     return self.loguru_log
-
-
-
-#-----------------------------------------------------------------------------#
     '''
     Name of software
     '''
     def GetSoftwareName(self):
         return 'iFLOW' #Ondo kara no nagare - Flusso della temperatura
-#-----------------------------------------------------------------------------#
+
     '''
     Monitor resolution in pixels - Set and Get procedure
     '''
@@ -41,7 +25,7 @@ class VAR():
         return self.WidthPX
     def GetWindowsHeight(self):
         return self.HeightPX
-#-----------------------------------------------------------------------------#
+
     '''
     Projects List
     Empty list if there is not project created 
@@ -51,7 +35,7 @@ class VAR():
         return
     def GetProjectsList(self):
         return self.ProjectsList
-#-----------------------------------------------------------------------------#
+
     '''
     Active Project
     None if there is not an active project
@@ -61,7 +45,7 @@ class VAR():
         return
     def GetActiveProject(self):
         return self.ActiveProject
-#-----------------------------------------------------------------------------#
+
     '''
     Probes List
     Empty list if there is not probe in the active project
@@ -71,7 +55,7 @@ class VAR():
         return
     def GetProbesList(self):
         return self.ProbesList
-#-----------------------------------------------------------------------------#
+
     '''
     Active Probe
     None if there is not an active probe
@@ -81,7 +65,7 @@ class VAR():
         return
     def GetActiveProbe(self):
         return self.ActiveProbe
-#-----------------------------------------------------------------------------#
+
     '''
     Active probe's parameters
     '''
@@ -100,7 +84,6 @@ class VAR():
         self.FlagTimeSerie = List[11]
         self.FlagHeader = List[12]
         return
-
     def GetActiveParameters(self,Code):
         if Code == 0:
             return self.LastFile
@@ -129,8 +112,6 @@ class VAR():
         elif Code == 12:
             return self.FlagHeader
 
-
-#%%-----------------------------------------------------------------------------#
     '''
     Main self
     '''
@@ -139,7 +120,7 @@ class VAR():
         return
     def GetiFlowSelf(self):
         return self.iFlow_self 
-#-----------------------------------------------------------------------------#
+
     '''
     TabBrede self
     '''
@@ -148,7 +129,7 @@ class VAR():
         return
     def GetTabBrede(self):
         return self.TabBrede_self 
-#-----------------------------------------------------------------------------#
+
     '''
     TabProjProb self
     '''
@@ -157,7 +138,7 @@ class VAR():
         return
     def GetTabProjProb(self):
         return self.TabProjProb_self 
-#-----------------------------------------------------------------------------#
+
     '''
     TabFreqAnal self
     '''
@@ -166,7 +147,7 @@ class VAR():
         return
     def GetTabFreqAnal(self):
         return self.TabFreqAnal_self 
-#-----------------------------------------------------------------------------#
+
     '''
     TabSignProc self
     '''
@@ -175,7 +156,7 @@ class VAR():
         return
     def GetTabSignProc(self):
         return self.TabSignProc_self 
-#-----------------------------------------------------------------------------#
+
     '''
     TabParEst self
     '''
@@ -185,109 +166,100 @@ class VAR():
     def GetTabParEst(self):
         return self.TabParEst_self 
 
-
-
-
-
-
-#-----------------------------------------------------------------------------#   
     '''
     List of time format
     '''
     def GetTimeserieTypeString(self):
         self.types = ['','Time', 'yyyy-mm-dd h24:min:sec']
         return self.types
-#-----------------------------------------------------------------------------#
+
     '''
     Windows function for FFT
     '''
     def GetFFTWindowfunction(self):
         return ['','Rectangular','Triangular','Bartlett','Hanning','Hamming','FlatTop']
-#-----------------------------------------------------------------------------#
+
     '''
     Processing Methods
     '''
     def GetProcessingMethod(self):
         return ['','FFT','LPM']
-#-----------------------------------------------------------------------------#
+
     '''
     Processing Methods
     '''
     def GetEstimationMethod(self):
         return ['','Analytical','MLEn']
-#-----------------------------------------------------------------------------#
+
     '''
     Detrending Methods
     '''
     def GetDetrending(self):
         return ['','Yes','No']
-#-----------------------------------------------------------------------------#
+
     '''
     Chart Type Signal Processing
     '''
     def GetChartTypeSignalProcessin(self):
         return ['SNR heatmap','SNR vs Time','Phase vs Time','Amplitude vs Time','Amplitude vs Frequency','Phase vs Frequency']
-#-----------------------------------------------------------------------------#
+
     '''
     Chart Type Parameter Estimation
     '''
     def GetChartTypeParameterEstimation(self):
-        return ['Eta','Ke','Heights','Flux','K','Q']
-#-----------------------------------------------------------------------------#
+        return ['\u03B7',f'ke','vt','k','q','Heights']
+
     '''
     Chart Type Frequency Analysis
     '''
     def GetChartTypeFrequecyAnalysis(self):
         return ['Frequecies vs PSD','Frequecies vs Amplitude','Frequecies vs LogAmpRatio','Frequecies vs DiffPhase']
-#-----------------------------------------------------------------------------#   
+
     '''
     Default folder for file dialog
     '''
     def DefaultFolderFileDialog(self):
         return '../'
-#------------------------------------------------------------------------------#
+
     '''
     Data chart colors
     '''
     def SetChartColors(self, colors):
         self.chart_colors = colors
         return
-
     def GetChartColors(self):
         return self.chart_colors
-#%% 
+
     '''
     Window height reference 
     '''
     def GetWindowHeightReference(self):
         return 1080
-#------------------------------------------------------------------------------#
+
     '''
     Window width reference 
     '''
     def GetWindowWidthReference(self):
         return 1920
-#------------------------------------------------------------------------------#
+
     '''
     Font Titles size for Matplotlib
     '''
     def GetMPLAxisTitleFontSizeReference(self):
         return 12
-#------------------------------------------------------------------------------#
+
     '''
     Font Axis size for Matplotlib
     '''
     def GetMPLAxisTickFontSizeReference(self):
         return 10
 
-#------------------------------------------------------------------------------#
     '''
     Font Legend size for Matplotlib
     '''
     def GetMPLLegendFontSizeReference(self):
         return 10
 
-#------------------------------------------------------------------------------#
     '''
     Height of Comboboxs
     '''

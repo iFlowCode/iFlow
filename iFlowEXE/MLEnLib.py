@@ -1,8 +1,10 @@
-# from black import T
+"""
+"""
 import numpy as np
 from numpy.linalg import inv
 # import cmath
 from scipy.linalg import sqrtm
+from loguru import logger
 #
 def ac2qk(PBest, CovP, c_x_rho, cw_x_rhow):
     '''
@@ -91,18 +93,12 @@ def G_and_J_G_analytic_slab_abcd_n(P,x,omega):
     # This file extends the constant parameter slab-gemometry to multiple
     # channels.
     if x.shape[1] == 1:
-        Handle = open('../temp/MLEn2.log','a')
-        Handle.write('Error_Only one spatial point available, impossible. Check input spatial x vector\n')
-        Handle.close()
+        logger.error(f"Only one spatial point available, impossible. Check input spatial x vector")
         return        
     elif x.shape[1] == 2: # semi-infinite solution
-        Handle = open('../temp/MLEn2.log','a')
-        Handle.write('Warning_Not sufficient spatial points switch to semi-infinite domain solution (note this is entirely different solution)\n')
-        Handle.close()
+        logger.warning(f"Not sufficient spatial points switch to semi-infinite domain solution (note this is entirely different solution)")
         if P(3) != 0:
-            Handle = open('../temp/MLEn2.log','a')
-            Handle.write('Error_This (semi-infinite) analytic solution does not exist for non-zero power (length of x is only two)\n')
-            Handle.close()
+            logger.error(f"This (semi-infinite) analytic solution does not exist for non-zero power (length of x is only two)")
             return 
         # Note the change in order of [dGp,dG1,dG2,Gp,G1,G2]  ~= [G1,G2,Gp,dG1,dG2,Gp] 
         # Calculate semi-infinite domain
@@ -210,9 +206,7 @@ def idxFreeDVKP(options):
         idxFree.append(4)
     #
     if not idxFree:
-        Handle = open('../temp/MLEn2.log','a')
-        Handle.write('Error_no or wrong parameter to be estimated defined\n')
-        Handle.close()
+        logger.error(f"no or wrong parameter to be estimated defined")
         return
     #
     return np.array(idxFree)
@@ -396,15 +390,11 @@ def G_and_J_G_analytic_slab_inf_n(P,x,omega):
     # This file extends the constant parameter slab-gemometry to multiple
     # channels.
     if x.shape[1] == 1 or x.shape[1] == 2:
-        Handle = open('../temp/MLEn2.log','a')
-        Handle.write('Error_Only one spatial point available, impossible. Check input spatial x vector\n')
-        Handle.close()
+        logger.error(f"Only one spatial point available, impossible. Check input spatial x vector")
         return
     elif x.shape[1] == 3: # semi-infinite solution
         if P[3] != 0: # should not be called upon
-            Handle = open('../temp/MLEn2.log','a')
-            Handle.write('Error_This (semi-infinite) analytic solution does not exist for non-zero power\n')
-            Handle.close()
+            logger.error(f"This (semi-infinite) analytic solution does not exist for non-zero power")
             return
         # Note the change in order of [dGp,dG1,dG2,Gp,G1,G2]  ~= [G1,G2,Gp,dG1,dG2,Gp] 
         # Calculate semi-infinite domain
@@ -447,49 +437,41 @@ def MLEn_select_geometry(P,x,omega,options):
         if options['geometry'] == 'slab': # Analytic solutions check which geometry
             G1,G2,Gp,dG1,dG2,dGp = G_and_J_G_analytic_slab_inf_n(P,x,omega)
         elif options['geometry'] == 'cyl':
-            print('Ciccio')
-            pass
+            logger.debug(f"MLEn_select_geometry1")
 #!            [G1,G2,Gp,dG1,dG2,dGp] = G_and_J_G_analytic_cyl_inf_n(P,x,omega)
     # source-less solutions
     #        
     elif options['method'] == 'boundaries': # source-less domains
         if options['solution'] == 'numeric': # Numeric solutions geometry is encompased in the state-space matrices
-            print('Ciccio')
-            pass
+            logger.debug(f"MLEn_select_geometry2")
 #!                [G1,G2,Gp,dG1,dG2,dGp] = G_and_J_G_num_bothgeom_abcd(P,omega,options) # Generates the Transfer function and the Jacobian
         elif options['solution'] == 'analytic': # Select geometry        
             if options['geometry'] == 'slab': # Analytic solutions check which geometry
                 G1,G2,Gp,dG1,dG2,dGp = G_and_J_G_analytic_slab_abcd_n(P,x,omega)
             elif options['geometry'] == 'cyl':
-                print('Ciccio')
-                pass
+                logger.debug(f"MLEn_select_geometry3")
 #!                [G1,G2,Gp,dG1,dG2,dGp] = G_and_J_G_analytic_cyl_abcd_n(P,x,omega)
             # Special case for cylindrical coordinates (should only be called by users knowing what they are doing)
         elif options['solution'] == 'analyticJY': # suffers often from numerical errors
-            print('Ciccio')
-            pass
+            logger.debug(f"MLEn_select_geometry4")
 #!            [G1,G2,Gp,dG1,dG2,dGp] = G_and_J_G_analytic_cyl_abcdJY(P,x,omega)
     # including source solutions
     #        
     elif options['method'] == 'source': # source-less domains            
         if options['solution'] == 'numeric': # Numeric solutions geometry is encompased in the state-space matrices
-            print('Ciccio')
-            pass
+            logger.debug(f"MLEn_select_geometry5")
 #!            [G1,G2,Gp,dG1,dG2,dGp] = G_and_J_G_num_bothgeom_abcd(P,omega,options);# Generates the Transfer function and the Jacobian
         elif options['solution'] == 'analytic':
             # Select geometry        
             if options['geometry'] == 'slab': # Analytic solutions check which geometry
-                print('Ciccio')
-                pass
+                logger.debug(f"MLEn_select_geometry6")
 #!                [G1,G2,Gp,dG1,dG2,dGp] = G_and_J_G_analytic_slab_abcd_n(P,x,omega)
             if options['geometry'] == 'cyl':
-                print('Ciccio')
-                pass
+                logger.debug(f"MLEn_select_geometry7")
 #!                [G1,G2,Gp,dG1,dG2,dGp] = G_and_J_G_analytic_cyl_abcd_n(P,x,omega)
             # Special case for cylindrical coordinates (should only be called by users knowing what they are doing)
         elif options['solution'] == 'analyticJY': # suffers often from numerical errors
-            print('Ciccio')
-            pass
+            logger.debug(f"MLEn_select_geometry8")
 #!            [G1,G2,Gp,dG1,dG2,dGp] = G_and_J_G_analytic_cyl_abcdJY(P,x,omega)
     #
     return G1,G2,Gp,dG1,dG2,dGp
@@ -520,20 +502,15 @@ def MLEn_cost(P,x,omega,U,Cov_m,options):
     #       
     # Choose Least Square Estimator or Maximum Likelihood Estimator
     if options['estimation'] == 'LSE':
-        print('Ciccio')
-        pass
+        logger.debug(f"MLEn_cost")
 #!        Eps,dEpsda,dEpsdb,dEpsdc,dEpsdp = Cost_Func_LSE(G1,G2,Gp,dG1,dG2,dGp,U) # Generates cost and Jacobian of cost for LSE
     elif options['estimation'] == 'WLSE':
-        Handle = open('../temp/MLEn2.log','a')
-        Handle.write('Error_The options.estimation = WLSE has not been implemented\n')
-        Handle.close()
+        logger.error(f"The options.estimation = WLSE has not been implemented")
     elif options['estimation'] == 'MLE':
         Eps,dEpsda,dEpsdb,dEpsdc,dEpsdp = Cost_Func_MLE(G1,G2,Gp,dG1,dG2,dGp,U,Cov_m,options)  # Generates cost and Jacobian of cost for MLE
     else:
-        Handle = open('../temp/MLEn2.log','a')
-        Handle.write('Warning_No type of estimator chosen options.estimation = LSE or WLSE or MLE default choice MLE\n')
-        Handle.close()
-    # Output cost-function
+        logger.warning(f"No type of estimator chosen options.estimation = LSE or WLSE or MLE default choice MLE")
+        # Output cost-function
     e = Eps[:] # Cost function
     # Output Jacobian
     J = np.zeros((dEpsdp.shape[0],4), dtype = complex)
@@ -663,43 +640,32 @@ def MLEn_check_geometry(P0,x,omega,U,Cov_m,idxFree,options):
         if options['solution'] == 'analytic':
             pass
         elif options['solution'] == 'numeric':
-            Handle = open('../temp/MLEn2.log','a')
-            Handle.write('Error_not implemented options in FDSL slab, choose either numeric or analytic\n')
-            Handle.close()
+            logger.error(f"not implemented options in FDSL slab, choose either numeric or analytic")
             return
 # #!            # [~,~,~,~,options] = FDSL_diriclet(1,1,1,1,x,options); # generate static state-space matrices 
         else:
-            Handle = open('../temp/MLEn2.log','a')
-            Handle.write('Error_no calculation method selected in slab choose either numeric or analytic\n')
-            Handle.close()
+            logger.error(f"Error_no calculation method selected in slab choose either numeric or analytic")
             return
     # cylindrical
     elif options['geometry']  == 'cyl':
         # analytic solutions cannot deal with non-zero convective V contributions
         if (P0[0] != 0.0 and options['solution'] !='numeric' and options['mapping'] == 'abcd') or (P0[1] != 0.0 and options['solution'] !='numeric' and options['mapping'] == 'DVKP'):
             options['solution'] = 'numeric'
-            Handle = open('../temp/MLEn2.log','a')
-            Handle.write('Warning_V is non-zero in cylindrical domain (convection) switch to numerical solution\n')
-            Handle.close()
-        # choose calculation method
+            logger.warning(f"V is non-zero in cylindrical domain (convection) switch to numerical solution")
+            # choose calculation method
         if options['solution'] == 'analyticJY': # see lower level 
             pass
         elif options['solution'] == 'analytic': # see lower level
             pass
         elif options['solution'] == 'numeric':
-            print('Ciccio')
-            pass
+            logger.warning(f"MLEn_check_geometry")
 #!            #[~,~,~,~,options] = FDCL_diriclet(1,1,1,1,x,options); # generate static state-space matrices (1,1,1,1) 
         else:
-            Handle = open('../temp/MLEn2.log','a')
-            Handle.write('Error_no calculation method selected in cyl, choose either numeric,analytic,  or analyticJY\n')
-            Handle.close()
+            logger.error(f"no calculation method selected in cyl, choose either numeric,analytic,  or analyticJY")
             return
     # no geometry
     else:
-        Handle = open('../temp/MLEn2.log','a')
-        Handle.write('Error_no geometry selected or incorrect geometry selected choose either slab or cyl\n')
-        Handle.close()
+        logger.error(f"no geometry selected or incorrect geometry selected choose either slab or cyl")
         return
     # start optimization
     PBest,CostBest,CovP,G1,G2,Gp,exitflag,Phist = MLEn_optimization(P0,x,omega,U,Cov_m,idxFree,options) # Estimates parameters for each sub-domain
@@ -724,9 +690,7 @@ def idxFreeDVKP2abcd(options):
     if 'P' in options['parameters']: # d
         idxFree.append(4)
     if not idxFree:
-        Handle = open('../temp/MLEn2.log','a')
-        Handle.write('Error_no or wrong parameter to be estimated defined\n')
-        Handle.close()
+        logger.error(f"no or wrong parameter to be estimated defined")
         return
     #
     return np.array(idxFree)
@@ -743,9 +707,7 @@ def MLEn_check_partially_fixed_divisions(DVKP0_,options):
     'abcd' to 'DVKP'
     '''
     if ('D' in options['parameters'] and options['mapping'] == 'abcd') and (('V' not in options['parameters'] and DVKP0_[1] != 0.0 ) or ('K' not in options['parameters'] and DVKP0_[2] != 0.0) or ('P' not in options['parameters'] and DVKP0_[3] != 0.0)):
-        Handle = open('../temp/MLEn2.log','a')
-        Handle.write('Warning_switched to optimization in terms of DVKP parameter set instead of abcd in options.parametersetoptimize to avoid errors due to constants in estimates\n')
-        Handle.close()
+        logger.warning(f"switched to optimization in terms of DVKP parameter set instead of abcd in options.parametersetoptimize to avoid errors due to constants in estimates")
         options['mapping'] = 'DVKP' # set DVKP
     return options
 #%%
@@ -768,9 +730,7 @@ def MLEn_check_input(DVKP0,x,w,U,Cov_m,options):
     # Check if proper input is generated
     if options['method'] == 'infinite' or options['method'] == 'boundaries':
         if options['parameters'] == 'P':
-            Handle = open('../temp/MLEn2.log','a')
-            Handle.write('Error_options.method = contains P, P cannot be estimated for options.method = infinite or options.method = boundaries\n')
-            Handle.close()
+            logger.error(f"options.method = contains P, P cannot be estimated for options.method = infinite or options.method = boundaries")
             return
     elif options['method'] == 'source':
         if options['parameters'] == 'P' and DVKP0[3] == 0.0: # P is being estimated
@@ -780,86 +740,56 @@ def MLEn_check_input(DVKP0,x,w,U,Cov_m,options):
         elif options['parameters'] != 'P' and DVKP0[3] != 0.0: # P is not being estimated but is non-zero
             pass
         else:
-            Handle = open('../temp/MLEn2.log','a')
-            Handle.write('Warning_source is set to zero and is not varied, defacto this is the options.method = boundaries case\n')
-            Handle.close()
+            logger.warning(f"source is set to zero and is not varied, defacto this is the options.method = boundaries case")
     else:
-        Handle = open('../temp/MLEn2.log','a')
-        Handle.write('Error_incorrect or undefined options.method: choose from infinite, boundaries, source\n')
-        Handle.close()
+        logger.error(f"incorrect or undefined options.method: choose from infinite, boundaries, source")
         return
     # Check that there are not too many dimensions
     if len(U.shape) > 2:
-        Handle = open('../temp/MLEn2.log','a')
-        Handle.write('Error_Input error: too many input dimensions U = [number of frequencies x number of inputs]\n')
-        Handle.close()
+        logger.error(f"Input error: too many input dimensions U = [number of frequencies x number of inputs]")
         return
     elif len(Cov_m.shape) > 3: # should not exist
-        Handle = open('../temp/MLEn2.log','a')
-        Handle.write('Error_Input error: too many input dimensions Cov_m =  [number of inputs x number of inputs x number of frequencies]\n')
-        Handle.close()
+        logger.error(f"Input error: too many input dimensions Cov_m =  [number of inputs x number of inputs x number of frequencies]")
         return
     # Verify if frequency dimensions match
     if nw != nu1:
-        Handle = open('../temp/MLEn2.log','a')
-        Handle.write('Error_Input error: number of frequencies (omega) does not match input dimensions U = [number of frequencies x number of inputs]\n')
-        Handle.close()
+        logger.error(f"Input error: number of frequencies (omega) does not match input dimensions U = [number of frequencies x number of inputs]")
         return
     elif nw != ncov3  and options['estimation'] == 'MLE':
-        Handle = open('../temp/MLEn2.log','a')
-        Handle.write('Error_Input error: number of frequencies (omega) does not match input dimensions Cov_m =  [number of inputs x number of inputs x number of frequencies]\n')
-        Handle.close()
+        logger.error(f"Input error: number of frequencies (omega) does not match input dimensions Cov_m =  [number of inputs x number of inputs x number of frequencies]")
         return
     elif nu1 != ncov3 and options['estimation'] == 'MLE':
-        Handle = open('../temp/MLEn2.log','a')
-        Handle.write('Error_Input error: number of frequencies input dimensions U = [number of frequencies x number of inputs] does not match input dimensions Cov_m =  [number of inputs x number of inputs x number of frequencies]\n')
-        Handle.close()
+        logger.error(f"Input error: number of frequencies input dimensions U = [number of frequencies x number of inputs] does not match input dimensions Cov_m =  [number of inputs x number of inputs x number of frequencies]")
         return
     #  Verify if initial guess is correct length
     if npt == 1:
-        Handle = open('../temp/MLEn2.log','a')
-        Handle.write('Warning_Only initial guess for ''D'' is given the rest will be set to zero DVKP0 = [D,0,0,(0)]\n')
-        Handle.close()
+        logger.warning(f"Only initial guess for ''D'' is given the rest will be set to zero DVKP0 = [D,0,0,(0)]")
     elif npt == 2:
-        Handle = open('../temp/MLEn2.log','a')
-        Handle.write('Warning_Only initial guess for [D,V] is given the rest will be set to zero DVKP0 = [D,V,0,(0)]\n')
-        Handle.close()
+        logger.warning(f"Only initial guess for [D,V] is given the rest will be set to zero DVKP0 = [D,V,0,(0)]")
     elif npt == 3:
         if options['method'] == 'infinite' or options['method'] == 'boundaries': # correct choice
             pass
         else: 
-            Handle = open('../temp/MLEn2.log','a')
-            Handle.write('Warning_Only initial guess for ''[D,V,K]'' is given the rest will be set to zero inclusive P, DVKP0 = [D,V,K,(0)]\n')
-            Handle.close()
+            logger.warning(f"Only initial guess for ''[D,V,K]'' is given the rest will be set to zero inclusive P, DVKP0 = [D,V,K,(0)]")
     elif npt == 4: # Correct choice
         if options['method'] == 'infinite' and DVKP0[3] != 0.0:
-            Handle = open('../temp/MLEn2.log','a')
-            Handle.write('Error_Source P initial guess is non-zero (impossible) set DVKP0(4) to zero or switch to different method\n') 
-            Handle.close()
+            logger.error(f"Source P initial guess is non-zero (impossible) set DVKP0(4) to zero or switch to different method")
             return
     else:
-        Handle = open('../temp/MLEn2.log','a')
-        Handle.write('Error_DVKP0 = [D,V,K,P] is too long reduce to at least 4\n')
-        Handle.close()
+        logger.error(f"DVKP0 = [D,V,K,P] is too long reduce to at least 4")
         return
     # Verify if spatial points match input dimensions
     # two cases possible nx + 1 or nx matches dimensions
     if ncov1 != ncov2:
-            Handle = open('../temp/MLEn2.log','a')
-            Handle.write('Error_Input error: first two input dimensions are not square Cov_m =  [number of inputs x number of inputs x number of frequencies]\n')
-            Handle.close()
+            logger.error(f"Input error: first two input dimensions are not square Cov_m =  [number of inputs x number of inputs x number of frequencies]")
             return
     elif nu2 != ncov1 and options['estimation'] == 'MLE':
-            Handle = open('../temp/MLEn2.log','a')
-            Handle.write('Error_Input error: number of inputs in U = [number of frequencies x number of inputs] does not match input dimensions Cov_m =  [number of inputs x number of inputs x number of frequencies]\n')
-            Handle.close()
+            logger.error(f"Input error: number of inputs in U = [number of frequencies x number of inputs] does not match input dimensions Cov_m =  [number of inputs x number of inputs x number of frequencies]")
             return
     elif nx == nu2 or (nx + 1) == nu2: # do nothing
         pass
     else:
-        Handle = open('../temp/MLEn2.log','a')
-        Handle.write('Error_Input error: number of spatial points (x) does not match input dimensions U = [number of frequencies x number of inputs ( + 1)]\n')
-        Handle.close()
+        logger.error(f"Input error: number of spatial points (x) does not match input dimensions U = [number of frequencies x number of inputs ( + 1)]")
         return
     # Check if the method chosen matches input data
     # Case one U = [T1,T2]
@@ -867,9 +797,7 @@ def MLEn_check_input(DVKP0,x,w,U,Cov_m,options):
         if  options['method'] == 'infinite': # correct choice
             pass
         else:
-            Handle = open('../temp/MLEn2.log','a')
-            Handle.write('Error_Combination method choice options.method and input dimension U and/or x is incorrect, probably should be  options.method = infinite\n')
-            Handle.close()
+            logger.error(f"Combination method choice options.method and input dimension U and/or x is incorrect, probably should be  options.method = infinite")
             return
     # Case two U = [T1,T2,T3] and x = [x1,x2,x3];
     elif nx == 3 and nu2 == 3:
@@ -879,47 +807,33 @@ def MLEn_check_input(DVKP0,x,w,U,Cov_m,options):
         elif options['method'] == 'boundaries': # best choice
             pass
         else:
-            Handle = open('../temp/MLEn2.log','a')
-            Handle.write('Error_Combination method choice options.method and input dimension U is incorrect, probably should be  options.method = boundaries\n')
-            Handle.close()
+            logger.error(f"Combination method choice options.method and input dimension U is incorrect, probably should be  options.method = boundaries")
             return
     # Case three U = [T1,T2,T3,P] and x = [x1,x2,x3];
     elif nx == 3 and nu2 == 4:
         if options['method'] == 'source': # ok choice
             pass
         else:
-            Handle = open('../temp/MLEn2.log','a')
-            Handle.write('Warning_Fourth dimension U ignored consider using options.method = source\n')
-            Handle.close()
+            logger.warning(f"Fourth dimension U ignored consider using options.method = source")
     # Case four LPMn for semi-infinite and case five LPMn for 3-point;
     elif nx == nu2:
         if options['method'] == 'infinite': # ok choice
-            Handle = open('../temp/MLEn2.log','a')
-            Handle.write('Warning_Consider using options.method = boundaries for more reliable results (U(:,1) used as boundary, U(:,2:'+str(nx)+') used for estimation)\n')
-            Handle.close() 
+            logger.warning(f"Consider using options.method = boundaries for more reliable results (U(:,1) used as boundary, U(:,2:'+str(nx)+') used for estimation)")
         elif options['method'] == 'boundaries': # best choice
             pass
         else:
-            Handle = open('../temp/MLEn2.log','a')
-            Handle.write('Error_Combination method choice options.method = source and input dimension U is incorrect (should be one longer than x with one), probably should be options.method = boundaries\n')
-            Handle.close()
+            logger.error(f"Combination method choice options.method = source and input dimension U is incorrect (should be one longer than x with one), probably should be options.method = boundaries")
             return
     # Case six LPMn for 3-point + source;
     elif nx + 1 == nu2:
         if options['method'] == 'source': # correct choice
             pass
         elif options['method'] == 'infinite':
-            Handle = open('../temp/MLEn2.log','a')
-            Handle.write('Warning_'+str(nu2)+'-dimension of input U is ignored (U(:,1) used as boundary, U(:,2:'+str(nx)+') used for estimation) consider using options.method = source\n')
-            Handle.close()
+            logger.warning(f"{nu2}-dimension of input U is ignored (U(:,1) used as boundary, U(:,2:{nx}) used for estimation) consider using options.method = source")
         elif options['method'] == 'boundaries': 
-            Handle = open('../temp/MLEn2.log','a')
-            Handle.write('Warning_Dimension'+str(nu2)+' of input U is ignored options.method = boundaries is used, consider using options.method = source\n')
-            Handle.close()
+            logger.warning(f"Dimension{nu2} of input U is ignored options.method = boundaries is used, consider using options.method = source")
         else:
-            Handle = open('../temp/MLEn2.log','a')
-            Handle.write('Error_huh, how did you end up here :(\n')
-            Handle.close()
+            logger.error(f"huh, how did you end up here :(")
             return
     # Transform input data to standard format
     # Transform in correct dimension (forgiving form)
@@ -964,9 +878,7 @@ def MLEn_check_input(DVKP0,x,w,U,Cov_m,options):
         U_ = U  
         Cov_m_ = Cov_m
     else:
-        Handle = open('../temp/MLEn2.log','a')
-        Handle.write('Error_U and x are not matching up (you should not be seeing this error)\n')
-        Handle.close()
+        logger.error(f"U and x are not matching up (you should not be seeing this error)")
         return
     # Transform U to one-dimensional format sum([G11, G12; G21, G22]*[U1;U2])
     # --> [G11*U1 + G21*U2; G12*U1 + G22*U2] --> [G11*U1, G12*U1, G21*U2,
@@ -989,9 +901,7 @@ def MLEn_check_input(DVKP0,x,w,U,Cov_m,options):
     elif npt == 4: 
         DVKP0_= DVKP0
     else:
-        Handle = open('../temp/MLEn2.log','a')
-        Handle.write('Error_DVKP0 = [D,V,K,P] is too long reduce to at least 4\n')
-        Handle.close()
+        logger.error(f"DVKP0 = [D,V,K,P] is too long reduce to at least 4")
         return
     #
     return DVKP0_,x_,w_,U_,Cov_m_,options

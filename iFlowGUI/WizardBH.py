@@ -15,15 +15,15 @@ import os#,sys
 import PyQt5.QtWidgets as PQW
 # import PyQt5.QtGui as PQG
 # import PyQt5.QtCore as PQC
-# import matplotlib.pyplot as plt
-# from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-# from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 # import numpy.random.common
 # import numpy.random.bounded_integers
 # import numpy.random.entropy
-# import pandas as pd
+import pandas as pd
 # import datetime
-# import numpy as np
+import numpy as np
 # from pandas.plotting import register_matplotlib_converters
 # register_matplotlib_converters()
 # import subprocess
@@ -32,8 +32,8 @@ from shutil import copyfile
 
 # Import custom library
 from Variables import VAR
+from loguru import logger
 
-#%%
 '''
 Wizzard Add Probe Class
 '''
@@ -47,11 +47,10 @@ class Brede(PQW.QWizard):
         self.button(PQW.QWizard.FinishButton).clicked.connect(self.finish_print) # Click event on Finish the wizard
         
     def next_print(self):
-        print('Next',self.currentId())
         return
 
     def finish_print(self):
-        print("Action:finish Page: " + str(self.currentId()))
+        logger.debug("Bred End")
         # Input Files
         FileDel = glob.glob('../temp/*.*')
         for File in FileDel:
@@ -77,7 +76,7 @@ class Brede(PQW.QWizard):
         # dt [FLOAT] -d
         stringEXE = stringEXE + ' -d "' + VAR.GetActiveParameters(VAR,3) +'"'
         # Call external program
-        print(stringEXE)
+        logger.debug(stringEXE)
         os.system(stringEXE)
         # Check Run
         HandleLog = open('../temp/BDH.log','r')
@@ -106,35 +105,65 @@ class Brede(PQW.QWizard):
             PQW.QMessageBox.information(self, VAR.GetSoftwareName(VAR)+' message', 'Bredehofet Completed.', PQW.QMessageBox.Ok, PQW.QMessageBox.Ok)
         else:
             PQW.QMessageBox.critical(self, VAR.GetSoftwareName(VAR)+' message', Check, PQW.QMessageBox.Ok, PQW.QMessageBox.Ok)
-#%%
+
 '''
 Page 1 of the wizard
 '''
 class Page1(PQW.QWizardPage):
     def __init__(self, parent=None):
         super(Page1, self).__init__(parent)
-        # Create grid layot for the window
-        Layout_Page1 = PQW.QGridLayout()
+        # Load Probe.init
+        HandleProbIni = open('../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/probe.ini','r')
+        HandleProbIni.readline()
+        HandleProbIni.readline()
+        Page1.TimeType = HandleProbIni.readline().split(';')[0]
+        HandleProbIni.readline()
+        HandleProbIni.readline()
+        HandleProbIni.readline()
+        Page1.Sensors = (HandleProbIni.readline().split(';')[0]).split(',')
+        Page1.SensorsHeight = (HandleProbIni.readline().split(';')[0]).split(',')
+        HandleProbIni.readline()
+        HandleProbIni.readline()
+        HandleProbIni.readline()
+        HandleProbIni.readline()
+        HandleProbIni.readline()
+        HandleProbIni.close()
         #
         Page1.Sensors = (VAR.GetActiveParameters(VAR,6)).split(',')
         Page1.Heights = (VAR.GetActiveParameters(VAR,7)).split(',')
+        # Create grid layot for the window
+        Layout_Page1 = PQW.QHBoxLayout()
+        container_left = PQW.QFrame()
+        Layout_Page1_Left = PQW.QVBoxLayout()
         # Top Sensor
+        Layout_Page1_Left_1 = PQW.QHBoxLayout()
         Label_TopSensor = PQW.QLabel('Top Sensor:')
+        Layout_Page1_Left_1.addWidget(Label_TopSensor)
         Page1.Combobox_TopSensor = PQW.QComboBox() # Combobox probe name
         for item in Page1.Sensors:
             Page1.Combobox_TopSensor.addItem(item)
+        Layout_Page1_Left_1.addWidget(Page1.Combobox_TopSensor)
+        Layout_Page1_Left.addLayout(Layout_Page1_Left_1)
         #
-        Label_Threshold = PQW.QLabel('Threshold:')
+        Layout_Page1_Left_2 = PQW.QHBoxLayout()
+        Label_Threshold = PQW.QLabel("Threshold ()"+u"\N{DEGREE SIGN}"+"C):")
+        Layout_Page1_Left_2.addWidget(Label_Threshold)
         Page1.Threshold = PQW.QLineEdit(self)
         Page1.Threshold.setText('0.0')
-        Label_Threshold_unit = PQW.QLabel(u"\N{DEGREE SIGN}"+'C')
+        Layout_Page1_Left_2.addWidget(Page1.Threshold)
+        Layout_Page1_Left.addLayout(Layout_Page1_Left_2)
         #
-        Label_k = PQW.QLabel('k:')
+        Layout_Page1_Left_3 = PQW.QHBoxLayout()
+        Label_k = PQW.QLabel('k (m<sup>2</sup> s<sup>-1</sup>):')
+        Layout_Page1_Left_3.addWidget(Label_k)
         Page1.k = PQW.QLineEdit(self)
         Page1.k.setText('0.002')
-        Label_k_unit = PQW.QLabel('m<sup>2</sup> s<sup>-1</sup>')
+        Layout_Page1_Left_3.addWidget(Page1.k)
+        Layout_Page1_Left.addLayout(Layout_Page1_Left_3)
         #
-        Label_WinMean = PQW.QLabel('Mean window:')
+        Layout_Page1_Left_4 = PQW.QHBoxLayout()
+        Label_WinMean = PQW.QLabel('Mean window (d):')
+        Layout_Page1_Left_4.addWidget(Label_WinMean)
         Page1.WinMean = PQW.QComboBox()
         Page1.WinMean.addItem('1')
         Page1.WinMean.addItem('2')
@@ -143,28 +172,60 @@ class Page1(PQW.QWizardPage):
         Page1.WinMean.addItem('5')
         Page1.WinMean.addItem('6')
         Page1.WinMean.addItem('7')
-        Label_WinMean_unit = PQW.QLabel('days')
-        # Insert elements in the grid
-        Layout_Page1.addWidget(Label_TopSensor, 0, 0, 1, 1)
-        Layout_Page1.addWidget(Page1.Combobox_TopSensor, 0, 1, 1, 2)
-        Layout_Page1.addWidget(Label_Threshold, 1, 0, 1, 1)
-        Layout_Page1.addWidget(Page1.Threshold, 1, 1, 1, 1)
-        Layout_Page1.addWidget(Label_Threshold_unit, 1, 2, 1, 1)
-
-        Layout_Page1.addWidget(Label_k, 2, 0, 1, 1)
-        Layout_Page1.addWidget(Page1.k, 2, 1, 1, 1)
-        Layout_Page1.addWidget(Label_k_unit, 2, 2, 1, 1)
-
-        Layout_Page1.addWidget(Label_WinMean, 4, 0, 1, 1)
-        Layout_Page1.addWidget(Page1.WinMean, 4, 1, 1, 1)
-        Layout_Page1.addWidget(Label_WinMean_unit, 4, 2, 1, 1)
-
+        Layout_Page1_Left_4.addWidget(Page1.WinMean)
+        Layout_Page1_Left.addLayout(Layout_Page1_Left_4)
+        # Chart column
+        container_right = PQW.QFrame()
+        Layout_Page1_Right = PQW.QVBoxLayout()
+        Page1.Chart_Fig = plt.figure()
+        Page1.Canvas = FigureCanvas(self.Chart_Fig)
+        self.Toolbar = NavigationToolbar(self.Canvas, self)
+        Layout_Page1_Right.addWidget(self.Toolbar)
+        Layout_Page1_Right.addWidget(Page1.Canvas)
+        #
+        container_left.setMaximumWidth(int(VAR.GetWindowsSize(VAR)[0] * 2 / 3 / 4))
+        container_left.setLayout(Layout_Page1_Left)
+        container_right.setLayout(Layout_Page1_Right)
+        #
+        Layout_Page1.addWidget(container_left)
+        Layout_Page1.addWidget(container_right)
         # Show layout
         self.setLayout(Layout_Page1)
-# #%%
-# '''
-# Page 2 of the wizard
-# '''
-# class Page2(PQW.QWizardPage):
-#     def __init__(self, parent=None):
-#         super(Page2, self).__init__(parent)
+        #
+        df_Clean = pd.read_pickle('../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/data/clean.pkz',compression='zip')
+        ChartColumns = (df_Clean.columns).tolist()
+        Page1.Chart_Fig.clear()
+        Page1.ax = Page1.Chart_Fig.add_subplot(111)
+        #
+        VAR.SetChartColors(VAR,None)
+        if(VAR.GetChartColors(VAR) is None):
+            Colors = []
+        else:
+            Colors = VAR.GetChartColors(VAR)
+        #
+        for i in range(1,len(ChartColumns)): #!
+            if(VAR.GetChartColors(VAR) == None):
+                if Page1.TimeType == 'yyyy-mm-dd h24:min:sec':
+                    plot = Page1.ax.plot(pd.to_datetime(df_Clean['Time'],unit='s').to_numpy(), df_Clean[ChartColumns[i]].to_numpy(), '-', label = ChartColumns[i])
+                elif Page1.TimeType == 'Time':
+                    plot = Page1.ax.plot(df_Clean['Time'].to_numpy(), df_Clean[ChartColumns[i]].to_numpy(), '-', label = ChartColumns[i])
+                Colors.append(plot[0].get_color())
+            else:
+                if Page1.TimeType == 'yyyy-mm-dd h24:min:sec':
+                    plot = Page1.ax.plot(pd.to_datetime(df_Clean['Time'],unit='s').to_numpy(), df_Clean[ChartColumns[i]].to_numpy(), '-', label = ChartColumns[i], color=Colors[i])
+                elif Page1.TimeType == 'Time':
+                    plot = Page1.ax.plot(df_Clean['Time'].to_numpy(), df_Clean[ChartColumns[i]].to_numpy(), '-', label = ChartColumns[i], color=Colors[i])
+        #
+        if(VAR.GetChartColors(VAR) is None):
+            VAR.SetChartColors(VAR, Colors)
+        #
+        Page1.ax.legend(loc=9, ncol=len(ChartColumns)) # Add legend to the chart
+        #
+        Page1.ax.grid(True, which='both', axis='both', linestyle='--')
+        Page1.ax.set_ylabel('Temperature')
+        #
+        if Page1.TimeType == 'Time':
+            Page1.ax.set_xlabel('Time (s)')
+        else:
+            pass
+        Page1.Canvas.draw()

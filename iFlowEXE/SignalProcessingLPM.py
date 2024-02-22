@@ -1,16 +1,14 @@
+"""
+"""
+
 import os, sys
 import getopt
-
-# import numpy.random.common
-# import numpy.random.bounded_integers
-# import numpy.random.entropy
 import pandas as pd
 import numpy as np
 import numpy.matlib
 import math
 import pickle
-
-# import datetime
+from loguru import logger
 from scipy import linalg
 
 # np.savetxt('../temp/SNRFinalPython.csv', SRN, delimiter=',')
@@ -69,9 +67,7 @@ def LocalPolyAnal(Data_Y, Data_U, Data_freq, method):
             Data_freq = np.array([t for t in range(1, F + 1)])  # TODO
         else:
             Data_freq = Data_freq  #! Transpose removed to keep the shape
-            Data_freq = Data_freq / np.min(
-                np.diff(Data_freq)
-            )  # normalisation for improving the numerical conditioning
+            Data_freq = Data_freq / np.min(np.diff(Data_freq))  # normalisation for improving the numerical conditioning
     except:
         Data_freq = np.array([t for t in range(1, F + 1)])  # TODO
     #
@@ -127,16 +123,10 @@ def LocalPolyAnal(Data_Y, Data_U, Data_freq, method):
         NoiseCov = 0
     #
     R = method["order"]  # order polynomial method
-    transient = method[
-        "transient"
-    ]  # if 1 then transient is estimated (default); otherwise 0
+    transient = method["transient"]  # if 1 then transient is estimated (default); otherwise 0
     Fstep = method["step"]  # frequency step
-    SelectFreq = np.array(
-        [[i + 1] for i in range(0, F, Fstep)]
-    )  # entries of data.freq at which the output parameters are calculated
-    Fselect = SelectFreq.shape[
-        0
-    ]  # number of frequencies at which the output parameters are calculated
+    SelectFreq = np.array([[i + 1] for i in range(0, F, Fstep)])  # entries of data.freq at which the output parameters are calculated
+    Fselect = SelectFreq.shape[0]  # number of frequencies at which the output parameters are calculated
     nu = Data_U.shape[0]  # number of inputs nu
     #
     if transient == 1:
@@ -170,7 +160,7 @@ def LocalPolyAnal(Data_Y, Data_U, Data_freq, method):
         CvecG_NL = np.zeros((ny * nu, ny * nu, Fselect), dtype=complex)  # TODO
         CvecG_n = np.zeros((ny * nu, ny * nu, Fselect), dtype=complex)  # TODO
     #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    #% Calculation of the regressor matrix Kn %
+    # Calculation of the regressor matrix Kn %
     #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     # regressor matrix
     Kn = np.zeros(((R + 1) * nu1, 2 * nn + 1), dtype=complex)
@@ -182,17 +172,11 @@ def LocalPolyAnal(Data_Y, Data_U, Data_freq, method):
         fk += 1
         # range of DFT frequencies around kk
         if kk <= nn:
-            r_index = np.array(
-                [[item for item in range(-kk + 1, 2 * nn - kk + 1 + 1, 1)]], dtype=int
-            )
+            r_index = np.array([[item for item in range(-kk + 1, 2 * nn - kk + 1 + 1, 1)]], dtype=int)
         if (kk >= nn + 1) and (kk <= F - nn):
-            r_index = np.array(
-                [[item for item in range(-nn, nn + 1, 1)]], dtype=int
-            )  # TODO
+            r_index = np.array([[item for item in range(-nn, nn + 1, 1)]], dtype=int)  # TODO
         if kk >= F - nn + 1:
-            r_index = np.array(
-                [[item for item in range(-2 * nn + F - kk, F - kk + 1, 1)]], dtype=int
-            )  # TODO
+            r_index = np.array([[item for item in range(-2 * nn + F - kk, F - kk + 1, 1)]], dtype=int)  # TODO
         # intermediate variable: powers of r
         r_power = np.zeros((r_index.shape))
         for i, item in enumerate(r_index[0]):
@@ -207,11 +191,9 @@ def LocalPolyAnal(Data_Y, Data_U, Data_freq, method):
                 Ukr[0, i] = Data_U[:, kk + item - 1]
             if 1:  # Speed improvement by Gerd
                 for jj in range(1, 2 * nn + 1 + 1):
-                    Kn[0 : (R + 1) * nu, jj - 1] = np.kron(
-                        Power_r[:, jj - 1], Ukr[:, jj - 1]
-                    )
+                    Kn[0 : (R + 1) * nu, jj - 1] = np.kron(Power_r[:, jj - 1], Ukr[:, jj - 1])
             else:
-                print("Qui non entrera mai")  # TODO
+                logger.critical("Qui non entrera mai")  # TODO
                 # for jj = 1:(R+1)
                 #     for ii=1:nu
                 #         idx=nu*(ii-1)+jj;
@@ -222,15 +204,11 @@ def LocalPolyAnal(Data_Y, Data_U, Data_freq, method):
         # normalise the rows of Kn for improving the numerical stability of
         # the calculations
         Scale = np.power(np.sum(np.abs(np.power(Kn, 2)), axis=1), 0.5)  # 2-norm rows Kn
-        Scale = (np.where(Scale == 0.0, 1.0, Scale)).reshape(
-            Scale.shape[0], 1
-        )  # if the input is exactly zero in the band kk-n:kk+n then the scaling is set equal to one   2*nn+1
+        Scale = (np.where(Scale == 0.0, 1.0, Scale)).reshape(Scale.shape[0], 1)  # if the input is exactly zero in the band kk-n:kk+n then the scaling is set equal to one   2*nn+1
         #
         Kn = np.divide(Kn, np.matlib.repmat(Scale, 1, 2 * nn + 1))
         # numerical stable LS estimate output (= "sample mean")
-        Un, SnTemp, VnTemp = linalg.svd(
-            np.conj(Kn.T), compute_uv=True, full_matrices=False, lapack_driver="gesvd"
-        )
+        Un, SnTemp, VnTemp = linalg.svd(np.conj(Kn.T), compute_uv=True, full_matrices=False, lapack_driver="gesvd")
         # Un, SnTemp, VnTemp = np.linalg.svd(np.conj(Kn.T), full_matrices=False)
         Vn = np.conj(VnTemp).T  #! PYTHON
         Sn = np.diag(SnTemp)  #! PYTHON
@@ -260,84 +238,55 @@ def LocalPolyAnal(Data_Y, Data_U, Data_freq, method):
         #
         if transient:
             # LS estimate transient contribution at output
-            IndexTrans = (
-                nu * (R + 1) + 1
-            )  # position transient parameters in Theta matrix
-            TY[:, fk - 1] = (
-                Theta[:, IndexTrans - 1] / Scale[IndexTrans - 1]
-            )  # denormalisation parameters
+            IndexTrans = (nu * (R + 1) + 1)  # position transient parameters in Theta matrix
+            TY[:, fk - 1] = (Theta[:, IndexTrans - 1] / Scale[IndexTrans - 1])  # denormalisation parameters
             Y_m_nt = Y_m - TY  # output without transient
             # covariance matrix Ym-TY
             # qkk = Un * Un[Index_kk, :].T
             # bmm = Un * (diag(ss) .* Vn(IndexTrans, :)') / Scale(IndexTrans);  % denormalisation parameters
             # difference qkk - bmm
             if Index_kk.shape[0] > 1:
-                print("Problema")  # TODO
-            qkk_bmm = Un.dot(
-                np.conj(Un[Index_kk[0], :].T)
-                - np.conj((np.multiply(np.diag(ss), Vn[IndexTrans - 1, :])).T)
-                / Scale[IndexTrans - 1]
-            )
+                logger.critical("Problema")  # TODO
+            qkk_bmm = Un.dot(np.conj(Un[Index_kk[0], :].T)- np.conj((np.multiply(np.diag(ss), Vn[IndexTrans - 1, :])).T)/ Scale[IndexTrans - 1])
             # CY_m_nt[:,:,fk-1] = (np.linalg.norm(qkk_bmm, 2)**2 * CY_n[:,:,fk-1])
-            CY_m_nt[:, :, fk - 1] = (np.linalg.norm(qkk_bmm, 2) ** 2) * (
-                CY_n[:, :, fk - 1]
-            )
+            CY_m_nt[:, :, fk - 1] = (np.linalg.norm(qkk_bmm, 2) ** 2) * (CY_n[:, :, fk - 1])
         #
         if nu > 0:
             # estimate FRM
-            IndexFRM = [
-                t for t in range(1, nu + 1)
-            ]  # position FRM parameters in Theta matrix
-
+            IndexFRM = [t for t in range(1, nu + 1)]  # position FRM parameters in Theta matrix
             for i in range(0, (Theta[:, IndexFRM[0] - 1]).shape[0]):
-                G[i, :, fk - 1] = (Theta[:, IndexFRM[0] - 1])[i] / np.matlib.repmat(
-                    Scale[IndexFRM[0] - 1].T, ny, 1
-                )[i]
+                G[i, :, fk - 1] = (Theta[:, IndexFRM[0] - 1])[i] / np.matlib.repmat(Scale[IndexFRM[0] - 1].T, ny, 1)[i]
             # G[:, :, fk-1] = np.divide(Theta[:, IndexFRM[0]-1].T, np.matlib.repmat(Scale[IndexFRM[0]-1].T, ny, 1))
             # covariance matrix vec(G)
             dimVn = Vn.shape[1]
             Temp = []
             for t in range(0, (Vn[IndexFRM[0] - 1, :]).shape[0]):
-                Temp.append(
-                    Vn[IndexFRM[0] - 1, t]
-                    / np.matlib.repmat(Scale[IndexFRM[0] - 1], 1, dimVn)[0, t]
-                )
+                Temp.append(Vn[IndexFRM[0] - 1, t]/ np.matlib.repmat(Scale[IndexFRM[0] - 1], 1, dimVn)[0, t])
             Temp = np.array(Temp, dtype=complex)
             VV = Temp.dot(ss)  # intermediate variable
             if NoiseCov == 0:
-                CvecG[:, :, fk - 1] = np.kron(
-                    np.conj(VV.dot(np.conj(VV.T))), CY_n[:, :, fk - 1]
-                )
+                CvecG[:, :, fk - 1] = np.kron(np.conj(VV.dot(np.conj(VV.T))), CY_n[:, :, fk - 1])
             else:
-                CvecG_NL[:, :, fk - 1] = np.kron(
-                    np.conj(VV * np.conj(VV.T)), CY_n[:, :, fk - 1]
-                )  # TODO
-                CvecG_n[:, :, fk - 1] = np.kron(
-                    np.conj(VV * np.conj(VV.T)), data_CY[:, :, fk - 1]
-                )  # TODO
+                CvecG_NL[:, :, fk - 1] = np.kron(np.conj(VV * np.conj(VV.T)), CY_n[:, :, fk - 1])  # TODO
+                CvecG_n[:, :, fk - 1] = np.kron( np.conj(VV * np.conj(VV.T)), data_CY[:, :, fk - 1])  # TODO
     #
     return CY_n, CY_m, CY_m_nt, Y_m, Y_m_nt, TY, G, CvecG, dof, CL
-
 
 class SignalProcessingLPM:
     def __init__(self, opts, args):
         #
         self.MobWin = True  # False#
-        self.MobWinLen = 48.0
+        self.MobWinLen = 96.0
         self.SensorRef = "T0"  # None
-        #         # self.SensorUP = ''#None
-        #         # self.SensorDOWN = ''#None
         self.dt = 900.0  # np.nan
         self.FlagUpdate = False
         self.RunUpdate = "-9"
-        #         self.Run = '-9'
         self.dof = 8
         self.order = 2
         self.OutputFolder = "../temp"  # Output folder.
         self.Version = False  # Flag display version and stop the execution.
         self.InputFolder = "../temp"  # Input folder.
-        #         # self.slider = self.dt
-        #         #
+        # 
         for opt, arg in opts:
             if opt in ("-f"):
                 if arg == "False":
@@ -348,10 +297,6 @@ class SignalProcessingLPM:
                 self.MobWinLen = float(arg)
             elif opt in ("-q"):
                 self.SensorRef = arg
-            #             # elif opt in ('-w'):
-            #             #     self.SensorUP = arg
-            #             # elif opt in ('-e'):
-            #             #     self.SensorDOWN = arg
             elif opt in ("-d"):
                 self.dt = float(arg)
             elif opt in ("-u"):
@@ -371,12 +316,9 @@ class SignalProcessingLPM:
                 self.InputFolder = arg
             elif opt in ("--version"):
                 self.Version = True
-        #             # elif opt in ('-l'):
-        #             #     self.slider = float(arg)
         return
 
     def CheckOptions(self):
-        print("CheckOptions...")
         try:
             #
             FlagPreCheck = True
@@ -387,8 +329,6 @@ class SignalProcessingLPM:
                 FlagPreCheck = False
             if type(self.SensorRef) != str:
                 FlagPreCheck = False
-            # if type(self.SensorUP) != str : FlagPreCheck = False
-            # if type(self.SensorDOWN) != str : FlagPreCheck = False
             if type(self.dt) != float:
                 FlagPreCheck = False
             if type(self.FlagUpdate) != bool:
@@ -403,7 +343,6 @@ class SignalProcessingLPM:
                 FlagPreCheck = False
             if type(self.InputFolder) != str:
                 FlagPreCheck = False
-            # if type(self.slider) != float : FlagPreCheck = False
             #
             if self.Version:
                 print("Version 0.1")
@@ -413,12 +352,9 @@ class SignalProcessingLPM:
             return False
 
     def LoadData(self):
-        print("LoadData...")
         try:
             # Load the dataset
-            self.df_Sensors = pd.read_pickle(
-                self.InputFolder + "/clean.pkz", compression="zip"
-            )
+            self.df_Sensors = pd.read_pickle(self.InputFolder + "/clean.pkz", compression="zip")
             self.ProcSensors = (self.df_Sensors.columns.tolist())[1:]
             # Load or create old processing
             if self.FlagUpdate:
@@ -434,7 +370,6 @@ class SignalProcessingLPM:
             return False
 
     def WindowsTime(self):
-        print("WindowsTime...")
         try:
             self.nStepData = self.df_Sensors.shape[0]
             #
@@ -446,8 +381,8 @@ class SignalProcessingLPM:
                 EndTemp = StartTemp + self.dt * self.nStepMWin
                 while EndTemp <= self.EndTime:
                     self.MobWinTime.append((EndTemp - StartTemp) / 2 + StartTemp)
-                    StartTemp = StartTemp + self.dt  # slider
-                    EndTemp = EndTemp + self.dt  # slider
+                    StartTemp = StartTemp + self.dt
+                    EndTemp = EndTemp + self.dt
                 #
                 del StartTemp
                 del EndTemp
@@ -461,7 +396,6 @@ class SignalProcessingLPM:
             return False
 
     def Processing(self):
-        print("Processing...")
         try:
             # Lists initialization
             self.List_SRN = []
@@ -471,7 +405,6 @@ class SignalProcessingLPM:
             Flag = True
             # Windows loop
             for t in range(0, len(self.MobWinTime)):
-                print(t, len(self.MobWinTime))
                 # for t in range (0,100):
                 if self.MobWinTime[t] in self.MobWinTimeOld:
                     # Window already processed
@@ -538,18 +471,7 @@ class SignalProcessingLPM:
                         #
                         method = {"transient": 1, "dof": self.dof, "order": self.order}
                         #
-                        (
-                            CY_n,
-                            CY_m,
-                            CY_m_nt,
-                            Y_m,
-                            Y_m_nt,
-                            TY,
-                            G,
-                            CvecG,
-                            dof,
-                            CL,
-                        ) = LocalPolyAnal(Yin, Uin, freq, method)
+                        (CY_n,CY_m,CY_m_nt,Y_m,Y_m_nt,TY,G,CvecG,dof,CL) = LocalPolyAnal(Yin, Uin, freq, method)
                         #
                         Y = Y_m_nt.T
                         #
@@ -566,12 +488,8 @@ class SignalProcessingLPM:
                         df_Amplitude = pd.DataFrame()
                         df_Phase = pd.DataFrame()
                         #
-                        df_Amplitude["Time"] = [
-                            self.MobWinTime[t] for i in range(0, len(freq[0, :]))
-                        ]
-                        df_Phase["Time"] = [
-                            self.MobWinTime[t] for i in range(0, len(freq[0, :]))
-                        ]
+                        df_Amplitude["Time"] = [self.MobWinTime[t] for i in range(0, len(freq[0, :]))]
+                        df_Phase["Time"] = [self.MobWinTime[t] for i in range(0, len(freq[0, :]))]
                         #
                         df_Amplitude["Freq"] = freq[0, :]
                         df_Phase["Freq"] = freq[0, :]
@@ -581,9 +499,7 @@ class SignalProcessingLPM:
                             Phasetemp = []
                             for i in range(0, Y.shape[0]):
                                 Amptemp.append(np.abs(Y[i, j]) / (1.0 / 2.0))
-                                Phasetemp.append(
-                                    np.arctan2(-np.imag(Y[i, j]), np.real(Y[i, j]))
-                                )
+                                Phasetemp.append(np.arctan2(-np.imag(Y[i, j]), np.real(Y[i, j])))
                             df_Amplitude[self.Columns_OK[j]] = Amptemp
                             df_Phase[self.Columns_OK[j]] = Phasetemp
                         #
@@ -591,60 +507,37 @@ class SignalProcessingLPM:
                             self.AmplitudeDB = pd.DataFrame()
                             self.PhaseDB = pd.DataFrame()
                             #
-                            self.AmplitudeDB = self.AmplitudeDB.append(
-                                df_Amplitude, ignore_index=True
-                            )
-                            self.PhaseDB = self.PhaseDB.append(
-                                df_Phase, ignore_index=True
-                            )
+                            self.AmplitudeDB = self.AmplitudeDB.append(df_Amplitude, ignore_index=True)
+                            self.PhaseDB = self.PhaseDB.append(df_Phase, ignore_index=True)
                             Flag = False
                         else:
-                            self.AmplitudeDB = self.AmplitudeDB.append(
-                                df_Amplitude, ignore_index=True
-                            )
-                            self.PhaseDB = self.PhaseDB.append(
-                                df_Phase, ignore_index=True
-                            )
+                            self.AmplitudeDB = self.AmplitudeDB.append(df_Amplitude, ignore_index=True)
+                            self.PhaseDB = self.PhaseDB.append(df_Phase, ignore_index=True)
                         #
                         self.List_SRN.append(SRN)
                         self.List_Y.append(Y)
                         #
-                        CY_m_nt.tofile(
-                            self.OutputFolder
-                            + "/"
-                            + str(self.MobWinTime[t])
-                            + ".CY_m_nt"
-                        )
+                        CY_m_nt.tofile(self.OutputFolder+ "/"+ str(self.MobWinTime[t])+ ".CY_m_nt")
                     else:
                         if Flag:
-                            print("BIG ERROR")
+                            logger.critical("BIG ERROR")
                         else:
                             df_Amplitude.iloc[:, 2 : df_Amplitude.shape[1]] = np.nan
-                            self.AmplitudeDB = self.AmplitudeDB.append(
-                                df_Amplitude, ignore_index=True
-                            )
+                            self.AmplitudeDB = self.AmplitudeDB.append(df_Amplitude, ignore_index=True)
                             df_Phase.iloc[:, 2 : df_Phase.shape[1]] = np.nan
-                            self.PhaseDB = self.PhaseDB.append(
-                                df_Phase, ignore_index=True
-                            )
+                            self.PhaseDB = self.PhaseDB.append(df_Phase, ignore_index=True)
                             SRN[:] = np.nan
                             self.List_SRN.append(SRN)
                             Y[:] = complex(np.nan, np.nan)
                             self.List_Y.append(Y)
                             CY_m_nt[:, :, :] = complex(np.nan, np.nan)
-                            CY_m_nt.tofile(
-                                self.OutputFolder
-                                + "/"
-                                + str(self.MobWinTime[t])
-                                + ".CY_m_nt"
-                            )
+                            CY_m_nt.tofile(self.OutputFolder+ "/"+ str(self.MobWinTime[t])+ ".CY_m_nt")
             #
             return True
         except:
             return False
 
     def PostPhase(self):
-        print("PostPhase...")
         try:
             #             # StartTime = self.PhaseDB['Time'].min()
             #             # # print(self.PhaseDB)
@@ -673,18 +566,13 @@ class SignalProcessingLPM:
             return False
 
     def SaveData(self):
-        print("SaveData...")
         try:
             df_MobWinTime = pd.DataFrame()
             df_MobWinTime["Time"] = self.MobWinTime
             #
-            df_MobWinTime.to_pickle(
-                self.OutputFolder + "/MobWinTime.pkz", compression="zip"
-            )
+            df_MobWinTime.to_pickle(self.OutputFolder + "/MobWinTime.pkz", compression="zip")
             #
-            self.AmplitudeDB.to_pickle(
-                self.OutputFolder + "/Amplitude.pkz", compression="zip"
-            )
+            self.AmplitudeDB.to_pickle(self.OutputFolder + "/Amplitude.pkz", compression="zip")
             #
             self.PhaseDB.to_pickle(self.OutputFolder + "/Phase.pkz", compression="zip")
             #
@@ -701,64 +589,78 @@ class SignalProcessingLPM:
 
 if __name__ == "__main__":
     options = sys.argv[1:]
+    logger.remove()
+    logger.add(f"../logs/SignalProcessingLP.log", rotation="7 days")
+    logger.info(f"SignalProcessingLP started...")
     #
     try:
         opts, args = getopt.getopt(options, "f:s:q:w:e:d:u:r:o:m:c:i:l:", ["version"])
         #
         StringError = "No Error"
         LPM = SignalProcessingLPM(opts, args)
+        logger.info(f"CheckOptions...")
         result = LPM.CheckOptions()
         if result:
+            logger.info(f"\tCheckOptions ended...")
+            logger.info(f"\tLoadData...")
             result = LPM.LoadData()
             if result:
+                logger.info(f"\tLoadData ended...")
+                logger.info(f"\tWindowsTime...")
                 result = LPM.WindowsTime()
                 if result:
+                    logger.info(f"\tWindowsTime ended...")
+                    logger.info(f"\tProcessing...")
                     result = LPM.Processing()
                     if result:
+                        logger.info(f"\tProcessing ended...")
+                        logger.info(f"\tPostPhase...")
                         result = LPM.PostPhase()
                         if result:
+                            logger.info(f"\tPostPhase ended...")
+                            logger.info(f"\tSaveData...")
                             result = LPM.SaveData()
                             if result:
+                                logger.info(f"\tSaveData ended...")
                                 # ImportLog
-                                HandleRiassunto = open(
-                                    LPM.OutputFolder + "/XXX.run", "w"
-                                )
+                                HandleRiassunto = open(LPM.OutputFolder + "/XXX.run", "w")
                                 HandleRiassunto.write("LPM;AnalysisType\n")
                                 if LPM.MobWin:
                                     HandleRiassunto.write("Yes;MobWin\n")
                                 else:
                                     HandleRiassunto.write("No;MobWin\n")
-                                HandleRiassunto.write(
-                                    str(LPM.MobWinLen) + ";MobWinLen\n"
-                                )
+                                HandleRiassunto.write(str(LPM.MobWinLen) + ";MobWinLen\n")
                                 HandleRiassunto.write(LPM.SensorRef + ";SensorRef\n")
-                                #                                 # HandleRiassunto.write(LPM.SensorUP+';SensorUP\n')
-                                #                                 # HandleRiassunto.write(LPM.SensorDOWN+';SensorDOWN\n')
                                 HandleRiassunto.write(str(LPM.dt) + ";dt\n")
                                 HandleRiassunto.write(str(LPM.dof) + ";dof\n")
                                 HandleRiassunto.write(str(LPM.order) + ";order\n")
-                                HandleRiassunto.write(
-                                    ",".join(LPM.ProcSensors) + ";ProcSens\n"
-                                )
-                                #                                 # HandleRiassunto.write(str(LPM.slider)+';slider\n')
+                                HandleRiassunto.write(",".join(LPM.ProcSensors) + ";ProcSens\n")
                                 HandleRiassunto.close()
                             else:
                                 StringError = "SaveData Error"
+                                logger.error("SaveData")
                         else:
                             StringError = "PostPhase Error"
+                            logger.error("PostPhase")
                     else:
                         StringError = "Processing Error"
+                        logger.error("Processing")
                 else:
                     StringError = "Windows Time Error"
+                    logger.error("WindowsTime")
             else:
                 StringError = "LoadData Error"
+                logger.error("LoadData")
         else:
             StringError = "CheckOptions Error"
+            logger.error("CheckOptions")
         #
         HandleLog = open(LPM.OutputFolder + "/SignalProcessing.log", "w")
         HandleLog.write(StringError)
         HandleLog.close()
+        logger.info(f"SignalProcessingLP finished")
     except getopt.GetoptError:
         HandleLog = open(LPM.OutputFolder + "/SignalProcessing.log", "w")
         HandleLog.write("Options error")
         HandleLog.close()
+        logger.error("Getopt")

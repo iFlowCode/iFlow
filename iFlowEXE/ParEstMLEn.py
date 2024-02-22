@@ -1,77 +1,54 @@
-###############################################################################
-#
-# 
-# 
-# Options:
-# Probe name  [STRING] -p
-# Project name  [STRING] -j
-# Sensors [LIST] -s
-# Heights [LIST] -h
-# FreqType [INTEGER] -f
-# Run [STRING] -r
-# MethodDV [STRING] -t
-# D [FLOAT] - d
-# V [FLOAT] - v
-# Method [STRING] -m
-# SRNLimit [FLOAT] -n
-# FreqLimit [FLOAT] -l
-# MinMaxSRN [INTEGER] -a
-# cw_x_rhow [FLOAT] -x
-# c_x_rho [FLOAT] -z
-# Init [INTEGER] -i
-# OutputFolder [STRING] -o
-###############################################################################
+"""
+"""
 
 # Import the libraries
-# from _typeshed import Self
 import cmath
 import os,sys
 import getopt
-# import numpy.random.common
-# import numpy.random.bounded_integers
-# import numpy.random.entropy
 import pandas as pd
 import numpy as np
 import pickle
 from numpy.linalg import pinv
 from scipy import special
-
+from loguru import logger
 import MLEnLib as Lib
 
-# np.savetxt('../temp/DVKPBestPython.csv', DVKPBest, delimiter=',')
+# np.savetxt("../temp/DVKPBestPython.csv", DVKPBest, delimiter=",")
 
 def MLEn(DVKP0,xTemp,w,U,Cov_m,options):
+    """
+    """
     x = np.zeros((1,len(xTemp)))
     for i,item in enumerate(xTemp):
         # x[0,i] = float(xTemp[0]) - float(item)
         x[0,i] = -float(item)
     # Check of set has been selected for estimation if not
-    if options['parameters'] == '':
-        if options['method'] == 'infinite': # semi-infinite case
-            options['parameters'] = 'DVK'
-        elif options['method'] == 'boundaries': # source-less domains
-            options['parameters'] = 'DVK'
-        elif options['method'] == 'source': # source-less domains
-            options['parameters'] = 'DVKP'
+    if options["parameters"] == "":
+        if options["method"] == "infinite": # semi-infinite case
+            options["parameters"] = "DVK"
+        elif options["method"] == "boundaries": # source-less domains
+            options["parameters"] = "DVK"
+        elif options["method"] == "source": # source-less domains
+            options["parameters"] = "DVKP"
     # Check and modify inputs where necessary
     DVKP0,x,w,U,Cov_m,options = Lib.MLEn_check_input(DVKP0,x,w,U,Cov_m,options)
     ## Check if a switch to 'DVKP' is necessary
     # Check if the parameter set in which to optimize has been defined
     # if not set options.parametersetoptimize set to 'abcd'
-    if 'mapping' in options:
+    if "mapping" in options:
         pass
     else:
-        options['mapping'] = 'abcd'
-    if 'maxNbfOfSteps' in options:
+        options["mapping"] = "abcd"
+    if "maxNbfOfSteps" in options:
         pass
     else:
-        options['maxNbfOfSteps'] = 100
+        options["maxNbfOfSteps"] = 100
     # Check for a special case in which the estimation goes wrong for a,b,c,d
     options = Lib.MLEn_check_partially_fixed_divisions(DVKP0,options)
     # Check if the optimization will be performed directly in DVKP or the more
     # reliable abcd parameter set (preferred)
 
-    if options['mapping'] == 'abcd':
+    if options["mapping"] == "abcd":
         # Translate 'DVKP' in terms of idxFree for abcd
         idxFree = Lib.idxFreeDVKP2abcd(options)
         # Transform to 'DVKP' into 'abcd'
@@ -80,7 +57,7 @@ def MLEn(DVKP0,xTemp,w,U,Cov_m,options):
         CostBest,abcdBest,Cov_abcd,G1,G2,Gp,exitflag,Phist = Lib.MLEn_check_geometry(abcd0,x,w,U,Cov_m,idxFree,options)
         # Converting the parameters from abcd back to DVKP 
         DVKPBest, Cov_DVKP = Lib.P2DVKP(abcdBest, Cov_abcd)
-    elif options['mapping'] == 'DVKP': 
+    elif options["mapping"] == "DVKP": 
         # Define 'DVKP' in terms of idxFree
         idxFree = Lib.idxFreeDVKP(options) 
         # optimization in terms of DVKP (internally evaluated in [G1,G2,Gp,dG1,dG2,dGp] = MLEn_select_geometry(P,x,omega,options))
@@ -207,79 +184,78 @@ def LAS_V(Y,Freq,Heights):
 class ParEstMLEn:
     def __init__(self,opts, args):
         #
-        self.Sensors = []
-        self.Heights =[]
+        self.Sensors = ["T0","T1","T2","T3","T4","T5","T6"]
+        self.Heights =["0.0","-0.15","-0.3","-0.45","-0.6","-0.75","-0.9"]
         self.FreqOK = 2#0
-        self.RunSP = '-9'
-        self.MethodDV = 'DV'
+        self.RunSP = "1"
+        self.MethodDV = "DV"
         self.D = 5e-07
         self.V = 6e-06
-        self.Method = 'boundaries' # infinite,boundaries
+        self.Method = "infinite" # infinite,boundaries
         self.SRNLimit = 0.0
         self.FreqLimit = 5.0
         self.MinMaxSRN = 1  # 0>Max, 1>Min
-        self.cw_x_rhow = 4.18e6
-        self.c_x_rho = 4.18e6
+        self.cw_x_rhow = 4174634.0
+        self.c_x_rho = 2777482.88
         self.IniFlag = 1
-        self.OutputFolder = '../temp' # Output folder.
-        self.InputFolder = '../temp' # Input folder.
+        self.OutputFolder = "../temp" # Output folder.
+        self.InputFolder = "../temp" # Input folder.
         self.Version = False # Flag display version and stop the execution.
 #         self.Slider = 1
         self.FlagUpdate = False
-        self.RunUpdate = '-9'
+        self.RunUpdate = "-9"
         #
         for opt, arg in opts:
-            if opt in ('-s'):
+            if opt in ("-s"):
                 self.Sensors = []
-                for item in arg.split(','):
+                for item in arg.split(","):
                     self.Sensors.append(item)
-            elif opt in ('-h'):
+            elif opt in ("-h"):
                 self.Heights = []
-                for item in arg.split(','):
+                for item in arg.split(","):
                     self.Heights.append(item)
-            elif opt in ('-f'):
+            elif opt in ("-f"):
                 self.FreqOK = int(arg)
-            elif opt in ('-r'):
+            elif opt in ("-r"):
                 self.RunSP = arg
-            elif opt in ('-t'):
+            elif opt in ("-t"):
                 self.MethodDV = arg
-            elif opt in ('-d'):
+            elif opt in ("-d"):
                 self.D = float(arg)
-            elif opt in ('-v'):
+            elif opt in ("-v"):
                 self.V = float(arg)
-            elif opt in ('-m'):
+            elif opt in ("-m"):
                 self.Method = arg
-            elif opt in ('-n'):
+            elif opt in ("-n"):
                 self.SRNLimit = float(arg)
-            elif opt in ('-l'):
+            elif opt in ("-l"):
                 self.FreqLimit = float(arg)
-            elif opt in ('-a'):
+            elif opt in ("-a"):
                 self.MinMaxSRN = int(arg)
-            elif opt in ('-x'):
+            elif opt in ("-x"):
                 self.cw_x_rhow = float(arg)
-            elif opt in ('-z'):
+            elif opt in ("-z"):
                 self.c_x_rho = float(arg)
-            elif opt in ('-i'):
+            elif opt in ("-i"):
                 self.IniFlag = int(arg)
-            elif opt in ('-o'):
+            elif opt in ("-o"):
                 self.OutputFolder = arg
-            elif opt in ('-b'):
+            elif opt in ("-b"):
                 self.InputFolder = arg
-            elif opt in('--version'):
+            elif opt in("--version"):
                 self.Version = True
-            elif opt in ('-c'):
-                if arg == 'False':
+            elif opt in ("-c"):
+                if arg == "False":
                     self.FlagUpdate = False
                 else:
                     self.FlagUpdate = True
-            elif opt in ('-b'):
+            elif opt in ("-b"):
                 self.RunUpdate = arg
-#             elif opt in ('-c'):
-#                 self.Slider = int(arg)
         return
 
     def CheckOptions(self):
-        print('CheckOptions...')
+        """
+        """
         try:
             #  
             FlagPreCheck = True
@@ -318,7 +294,7 @@ class ParEstMLEn:
                 self.FreqLimit = self.FreqLimit/24.0/3600.0
             #
             if self.Version:
-                print('Version 0.1')
+                print("Version 0.1")
                 return False
             #
             return FlagPreCheck
@@ -326,21 +302,22 @@ class ParEstMLEn:
             return False
 
     def LoadData(self):
-        print('LoadData...')
+        """
+        """
         try:
             # Load the Time
-            self.MobWinTime = (pd.read_pickle(self.InputFolder+'/MobWinTime.pkz',compression='zip'))['Time'].to_numpy()
+            self.MobWinTime = (pd.read_pickle(self.InputFolder+"/MobWinTime.pkz",compression="zip"))["Time"].to_numpy()
             # Load the SRN
-            with open(self.InputFolder+'/SRN.PdList','rb') as f:
+            with open(self.InputFolder+"/SRN.PdList","rb") as f:
                 self.SRNList = pickle.load(f)
             f.close()
             # Load Y
-            with open(self.InputFolder+'/Y.PdList','rb') as f:
+            with open(self.InputFolder+"/Y.PdList","rb") as f:
                 self.YList = pickle.load(f)
             f.close()
             # Load Freq
-            dfx = pd.read_pickle(self.InputFolder+'/Amplitude.pkz',compression='zip')
-            self.Freq = dfx['Freq'].drop_duplicates().to_numpy()
+            dfx = pd.read_pickle(self.InputFolder+"/Amplitude.pkz",compression="zip")
+            self.Freq = dfx["Freq"].drop_duplicates().to_numpy()
             self.Columns = (dfx.columns.tolist())[2:]
             #
             if self.FlagUpdate:
@@ -353,10 +330,11 @@ class ParEstMLEn:
             return False
 
     def Processing(self):
-        print('Processing...')
+        """
+        """
         try:
-            Handle = open(self.OutputFolder + '/MLEn2.log','w')
-            Handle.close()
+            # Handle = open(self.OutputFolder + "/MLEn2.log","w")
+            # Handle.close()
             #
             self.Diffusivity = []
             self.Velocity = []
@@ -402,27 +380,23 @@ class ParEstMLEn:
             #
             Dini = -9999
             Vini = -9999
-            # zSoil = self.Zuser
             # Layers = [float(item) for item in self.Heights]
             #
             for t in range(0,self.MobWinTime.shape[0]):
-                print(t,self.MobWinTime.shape[0])
                 if self.MobWinTime[t] in self.MobWinTimeOld:
                     pass
                 else:
                     item3 = self.MobWinTime[t]
-                    Handle = open(self.OutputFolder + '/MLEn.log','a')
-                    Handle.write('Time:'+str(item3)+'\n')
+                    Handle = open(self.OutputFolder + "/MLEn.log","a")
+                    Handle.write("Time:"+str(item3)+"\n")
                     Handle.close()
                     #
-                    Cov_Temp = (np.fromfile(self.OutputFolder+'/'+str(self.MobWinTime[t])+'.CY_m_nt', dtype=complex)).reshape((len(self.Columns),len(self.Columns),self.Freq.shape[0]))
+                    Cov_Temp = (np.fromfile(self.OutputFolder+"/"+str(self.MobWinTime[t])+".CY_m_nt", dtype=complex)).reshape((len(self.Columns),len(self.Columns),self.Freq.shape[0]))
                     #
-                    # np.savetxt('Test.csv',Cov_Temp[:,:,0],delimiter=',')
                     for i in range(Cov_Temp.shape[0]-1,-1,-1):
                         if Flags[i] == 0:
                             Cov_Temp = np.delete(Cov_Temp,i,1)
                             Cov_Temp = np.delete(Cov_Temp,i,0)
-                    # np.savetxt('Test2.csv',Cov_Temp[:,:,0],delimiter=',')
                     #
                     if np.isnan(Cov_Temp).any():
                         self.Diffusivity.append(np.nan)
@@ -504,14 +478,14 @@ class ParEstMLEn:
                         pos = np.argmin((self.Freq-(1/24.0/3600.))**2)
                         #
                         if self.IniFlag == 0:
-                            if self.MethodDV == 'DV':
+                            if self.MethodDV == "DV":
                                 D,V = LAS_DV((self.YList[t])[Highest],self.Freq[Highest],self.Heights)
                                 # D,V = LAS_DV((self.YList[t])[pos],self.Freq[pos],self.Heights)
-                            elif self.MethodDV == 'D':
+                            elif self.MethodDV == "D":
                                 D,V = LAS_D((self.YList[t])[Highest],self.Freq[Highest],self.Heights)
                                 # D,V = LAS_D((self.YList[t])[pos],self.Freq[pos],self.Heights)
                                 V = self.V
-                            elif self.MethodDV == 'V':
+                            elif self.MethodDV == "V":
                                 D,V = LAS_V((self.YList[t])[Highest],self.Freq[Highest],self.Heights)
                                 # D,V = LAS_V((self.YList[t])[pos],self.Freq[pos],self.Heights)
                                 D = self.D
@@ -519,14 +493,14 @@ class ParEstMLEn:
                             self.VelocityL.append(V)
                         elif self.IniFlag == 1:
                             if Dini == -9999 or Vini == -9999:
-                                if self.MethodDV == 'DV':
+                                if self.MethodDV == "DV":
                                     # D,V = LAS_DV((self.YList[t])[Highest],self.Freq[Highest],self.Heights)
                                     D,V = LAS_DV((self.YList[t])[pos],self.Freq[pos],self.Heights)
-                                elif self.MethodDV == 'D':
+                                elif self.MethodDV == "D":
                                     # D,V = LAS_D((self.YList[t])[Highest],self.Freq[Highest],self.Heights)
                                     D,V = LAS_D((self.YList[t])[pos],self.Freq[pos],self.Heights)
                                     V = self.V
-                                elif self.MethodDV == 'V':
+                                elif self.MethodDV == "V":
                                     # D,V = LAS_V((self.YList[t])[Highest],self.Freq[Highest],self.Heights)
                                     D,V = LAS_V((self.YList[t])[pos],self.Freq[pos],self.Heights)
                                     D = self.D
@@ -540,7 +514,7 @@ class ParEstMLEn:
                         # Call MLEn
                         DVKP0 = [D,V,0.0,0.0]
                         try:
-                            options = {'geometry': 'slab', 'solution': 'analytic', 'estimation': 'MLE', 'parameters': self.MethodDV, 'method': self.Method, 'hist': False}
+                            options = {"geometry": "slab", "solution": "analytic", "estimation": "MLE", "parameters": self.MethodDV, "method": self.Method, "hist": False}
                             CostBest,DVKPBest,Cov_DVKP,abcdBest,Cov_abcd,abcd0,G1,G2,Gp,exitflag,Phist = MLEn(DVKP0,self.Heights,w_sel,Y_sel,Cov_m_sel,options)
                             #
                             qk, Cvk = Lib.ac2qk(abcdBest, Cov_abcd, self.c_x_rho, self.cw_x_rhow)
@@ -549,7 +523,7 @@ class ParEstMLEn:
                             self.k.append(qk[1])
                             self.PearsonQK.append(pearson_qk)
                             #
-                            if self.MethodDV == 'DV':
+                            if self.MethodDV == "DV":
                                 self.Diffusivity.append(DVKPBest[0][0])
                                 self.Velocity.append(DVKPBest[1][0])
                                 Dini = DVKPBest[0][0]
@@ -595,102 +569,120 @@ class ParEstMLEn:
             return False
             
     def SaveData(self):
-        print('SaveData...')
+        """
+        """
         try:
             #
             df_Diffusivity = pd.DataFrame()
-            df_Diffusivity['Time'] = (self.MobWinTime.tolist())
-            df_Diffusivity['DifL'] = self.DiffusivityL
-            df_Diffusivity['Dif'] = self.Diffusivity
-            df_Diffusivity['DifI'] = self.DiffusivityInc
+            df_Diffusivity["Time"] = (self.MobWinTime.tolist())
+            df_Diffusivity["DifL"] = self.DiffusivityL
+            df_Diffusivity["Dif"] = self.Diffusivity
+            df_Diffusivity["DifI"] = self.DiffusivityInc
             #
             df_Velocity = pd.DataFrame()
-            df_Velocity['Time'] = self.MobWinTime.tolist()
-            df_Velocity['VelL'] = self.VelocityL
-            df_Velocity['Vel'] = self.Velocity
-            df_Velocity['VelI'] = self.VelocityInc
+            df_Velocity["Time"] = self.MobWinTime.tolist()
+            df_Velocity["VelL"] = self.VelocityL
+            df_Velocity["Vel"] = self.Velocity
+            df_Velocity["VelI"] = self.VelocityInc
             #
             df_Pearson = pd.DataFrame()
-            df_Pearson['Time'] = self.MobWinTime.tolist()
-            df_Pearson['Pearson'] = self.Pearson
+            df_Pearson["Time"] = self.MobWinTime.tolist()
+            df_Pearson["Pearson"] = self.Pearson
             #
             df_Q = pd.DataFrame()
-            df_Q['Time'] = self.MobWinTime.tolist()
-            df_Q['Vel'] = self.q
-            df_Q['VelI'] = self.qInc
+            df_Q["Time"] = self.MobWinTime.tolist()
+            df_Q["Vel"] = self.q
+            df_Q["VelI"] = self.qInc
             #
             df_K = pd.DataFrame()
-            df_K['Time'] = self.MobWinTime.tolist()
-            df_K['K'] = self.k
-            df_K['KI'] = self.kInc
+            df_K["Time"] = self.MobWinTime.tolist()
+            df_K["K"] = self.k
+            df_K["KI"] = self.kInc
             #
             df_PearsonQ = pd.DataFrame()
-            df_PearsonQ['Time'] = self.MobWinTime.tolist()
-            df_PearsonQ['Pearson'] = self.PearsonQK
+            df_PearsonQ["Time"] = self.MobWinTime.tolist()
+            df_PearsonQ["Pearson"] = self.PearsonQK
             #
             df_CostBest = pd.DataFrame()
-            df_CostBest['Time'] = self.MobWinTime.tolist()
-            df_CostBest['Cost'] = self.Cost
+            df_CostBest["Time"] = self.MobWinTime.tolist()
+            df_CostBest["Cost"] = self.Cost
             #
-            df_Diffusivity.to_pickle(self.OutputFolder + '/Diffusivity.pkz', compression='zip')
-            df_Velocity.to_pickle(self.OutputFolder + '/Velocity.pkz', compression='zip')
-            df_Pearson.to_pickle(self.OutputFolder + '/Pearson.pkz', compression='zip')
-            df_Q.to_pickle(self.OutputFolder + '/Q.pkz', compression='zip')
-            df_K.to_pickle(self.OutputFolder + '/K.pkz', compression='zip')
-            df_PearsonQ.to_pickle(self.OutputFolder + '/PearsonQ.pkz', compression='zip')
-            df_CostBest.to_pickle(self.OutputFolder + '/CostBest.pkz', compression='zip')
+            df_Diffusivity.to_pickle(self.OutputFolder + "/Diffusivity.pkz", compression="zip")
+            df_Velocity.to_pickle(self.OutputFolder + "/Velocity.pkz", compression="zip")
+            df_Pearson.to_pickle(self.OutputFolder + "/Pearson.pkz", compression="zip")
+            df_Q.to_pickle(self.OutputFolder + "/Q.pkz", compression="zip")
+            df_K.to_pickle(self.OutputFolder + "/K.pkz", compression="zip")
+            df_PearsonQ.to_pickle(self.OutputFolder + "/PearsonQ.pkz", compression="zip")
+            df_CostBest.to_pickle(self.OutputFolder + "/CostBest.pkz", compression="zip")
             #
             return True
         except:
             return False
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     options = sys.argv[1:]
+    logger.remove()
+    logger.add(f"../logs/ParEstMLEn.log", rotation="7 days")
+    logger.info(f"ParEstMLEn started...")
     #
     try:
-        opts, args = getopt.getopt(options,'s:h:f:r:t:d:v:m:n:l:z:x:a:i:o:b:c:',['version'])
+        opts, args = getopt.getopt(options,"s:h:f:r:t:d:v:m:n:l:z:x:a:i:o:b:c:",["version"])
         #
-        StringError = 'No Error'
+        StringError = "No Error"
         MLE = ParEstMLEn(opts, args)
+        logger.info(f"\tCheckOptions...")
         result = MLE.CheckOptions()
         if result:
+            logger.info(f"\tCheckOptions ended...")
+            logger.info(f"\tLoadData...")
             result = MLE.LoadData()
             if result:
+                logger.info(f"\tLoadData ended...")
+                logger.info(f"\tProcessing...")
                 result = MLE.Processing()
                 if result:
+                    logger.info(f"\tProcessing ended...")
+                    logger.info(f"\tSaveData...")
                     result = MLE.SaveData()
                     if result:
+                        logger.info(f"\tSaveData ended...")
                         # ImportLog
-                        HandleRiassunto = open(MLE.OutputFolder+'/XXX.run','w')
-                        HandleRiassunto.write('MLEn;Analysis\n')
-                        HandleRiassunto.write(str(MLE.RunSP)+';LPMRun\n')
-                        HandleRiassunto.write(','.join(MLE.Sensors)+';Sensors\n')
-                        HandleRiassunto.write(','.join(MLE.Heights)+';Heights\n')
-                        HandleRiassunto.write(str(MLE.FreqOK)+';FreqOK\n')
-                        HandleRiassunto.write(str(MLE.MethodDV)+';MethodDV\n')
-                        HandleRiassunto.write(str(MLE.D)+';D\n')
-                        HandleRiassunto.write(str(MLE.V)+';V\n')
-                        HandleRiassunto.write(str(MLE.Method)+';Method\n')
-                        HandleRiassunto.write(str(MLE.SRNLimit)+';SRNLimit\n')
-                        HandleRiassunto.write(str(MLE.FreqLimit)+';FreqLimit\n')
-                        HandleRiassunto.write(str(MLE.MinMaxSRN)+';MinMaxSRN\n')
-                        HandleRiassunto.write(str(MLE.cw_x_rhow)+';cw_x_rhow\n')
-                        HandleRiassunto.write(str(MLE.c_x_rho)+';c_x_rho\n')
-                        HandleRiassunto.write(str(MLE.IniFlag)+';IniFlag\n')
+                        HandleRiassunto = open(MLE.OutputFolder+"/XXX.run","w")
+                        HandleRiassunto.write("MLEn;Analysis\n")
+                        HandleRiassunto.write(str(MLE.RunSP)+";LPMRun\n")
+                        HandleRiassunto.write(",".join(MLE.Sensors)+";Sensors\n")
+                        HandleRiassunto.write(",".join(MLE.Heights)+";Heights\n")
+                        HandleRiassunto.write(str(MLE.FreqOK)+";FreqOK\n")
+                        HandleRiassunto.write(str(MLE.MethodDV)+";MethodDV\n")
+                        HandleRiassunto.write(str(MLE.D)+";D\n")
+                        HandleRiassunto.write(str(MLE.V)+";V\n")
+                        HandleRiassunto.write(str(MLE.Method)+";Method\n")
+                        HandleRiassunto.write(str(MLE.SRNLimit)+";SRNLimit\n")
+                        HandleRiassunto.write(str(MLE.FreqLimit)+";FreqLimit\n")
+                        HandleRiassunto.write(str(MLE.MinMaxSRN)+";MinMaxSRN\n")
+                        HandleRiassunto.write(str(MLE.cw_x_rhow)+";cw_x_rhow\n")
+                        HandleRiassunto.write(str(MLE.c_x_rho)+";c_x_rho\n")
+                        HandleRiassunto.write(str(MLE.IniFlag)+";IniFlag\n")
                         HandleRiassunto.close()
                     else:
-                        StringError = 'SaveData Error'
+                        StringError = "SaveData Error"
+                        logger.error("SaveData")
                 else:
-                    StringError = 'Processing Error'
+                    StringError = "Processing Error"
+                    logger.error("Processing")
             else:
-                StringError = 'LoadData Error'
+                StringError = "LoadData Error"
+                logger.error("LoadData")
         else:
-            StringError = 'CheckOptions Error'
+            StringError = "CheckOptions Error"
+            logger.error("CheckOptions")
         #
-        HandleLog = open(MLE.OutputFolder + '/MLEn.log','w')
+        HandleLog = open(MLE.OutputFolder + "/MLEn.log","w")
         HandleLog.write(StringError)
         HandleLog.close()
+        logger.info(f"ParEstMLEn finished")
     except getopt.GetoptError:
-        HandleLog = open(MLE.OutputFolder + '/MLEn.log','w')
-        HandleLog.write('Options error')
+        HandleLog = open(MLE.OutputFolder + "/MLEn.log","w")
+        HandleLog.write("Options error")
         HandleLog.close()
+        logger.error("Getopt")

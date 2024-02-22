@@ -85,151 +85,98 @@ class ParameterEstimation(PQW.QWizard):
     #     self.back()
     #     self.back()
 
-    @logger.catch
     def next_print(self):
         if self.currentId() == 1:
-            if Page1.CheckUpdate.isChecked():
-                HandleRun = open('../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/PEdata/'+Page1.Combobox_RunEst.currentText()+'.run','r')
-                Run_Analysis = HandleRun.readline().replace('\n','').split(';')[0]
-                if Run_Analysis == 'MLEn':
-                    Run_LPMRun = HandleRun.readline().replace('\n','').split(';')[0]
-                    Run_Sensors = HandleRun.readline().replace('\n','').split(';')[0]
-                    Run_Heights = HandleRun.readline().replace('\n','').split(';')[0]
-                    Run_FreqOK = HandleRun.readline().replace('\n','').split(';')[0]
-                    Run_MethodDV = HandleRun.readline().replace('\n','').split(';')[0]
-                    Run_D = HandleRun.readline().replace('\n','').split(';')[0]
-                    Run_V = HandleRun.readline().replace('\n','').split(';')[0]
-                    Run_Method = HandleRun.readline().replace('\n','').split(';')[0]
-                    Run_SRNLimit = HandleRun.readline().replace('\n','').split(';')[0]
-                    Run_FreqLimit = HandleRun.readline().replace('\n','').split(';')[0]
-                    Run_MinMaxSRN = HandleRun.readline().replace('\n','').split(';')[0]
-                    Run_cw_x_rhow = HandleRun.readline().replace('\n','').split(';')[0]
-                    Run_c_x_rho = HandleRun.readline().replace('\n','').split(';')[0]
-                    Run_IniFlag = HandleRun.readline().replace('\n','').split(';')[0]
-                elif Run_Analysis == 'MLEnZ':
-                    Run_LPMRun = HandleRun.readline().replace('\n','').split(';')[0]
-                    Run_Sensors = HandleRun.readline().replace('\n','').split(';')[0]
-                    Run_Heights = HandleRun.readline().replace('\n','').split(';')[0]
-                    Run_FreqOK = HandleRun.readline().replace('\n','').split(';')[0]
-                    Run_MethodDV = HandleRun.readline().replace('\n','').split(';')[0]
-                    Run_D = HandleRun.readline().replace('\n','').split(';')[0]
-                    Run_V = HandleRun.readline().replace('\n','').split(';')[0]
-                    Run_Method = HandleRun.readline().replace('\n','').split(';')[0]
-                    Run_SRNLimit = HandleRun.readline().replace('\n','').split(';')[0]
-                    Run_FreqLimit = HandleRun.readline().replace('\n','').split(';')[0]
-                    Run_MinMaxSRN = HandleRun.readline().replace('\n','').split(';')[0]
-                    Run_cw_x_rhow = HandleRun.readline().replace('\n','').split(';')[0]
-                    Run_c_x_rho = HandleRun.readline().replace('\n','').split(';')[0]
-                    Run_IniFlag = HandleRun.readline().replace('\n','').split(';')[0]
-                    Run_d50 = HandleRun.readline().replace('\n','').split(';')[0]
-                    Run_Zuser = HandleRun.readline().replace('\n','').split(';')[0]
-                elif Run_Analysis == 'Analytical':
-                    Run_RunSP = HandleRun.readline().replace('\n','').split(';')[0]
-                    Run_Sensors = HandleRun.readline().replace('\n','').split(';')[0]
-                    Run_Heights = HandleRun.readline().replace('\n','').split(';')[0]
-                    Run_PeriodValue = HandleRun.readline().replace('\n','').split(';')[0]
-                    Run_BElev = HandleRun.readline().replace('\n','').split(';')[0]
-                    Run_TopSens = HandleRun.readline().replace('\n','').split(';')[0]
-                    Run_dt = HandleRun.readline().replace('\n','').split(';')[0]
-                    Run_BRE = HandleRun.readline().replace('\n','').split(';')[0]
-                    Run_Gamma = HandleRun.readline().replace('\n','').split(';')[0]
-                    Run_From = HandleRun.readline().replace('\n','').split(';')[0]
-                    Run_To = HandleRun.readline().replace('\n','').split(';')[0]
-                    Run_Ke = HandleRun.readline().replace('\n','').split(';')[0]
-                    Run_Period = HandleRun.readline().replace('\n','').split(';')[0]
-                HandleRun.close()
-            else:   
-            #
-                if Page1.Combobox_Method.currentText() == 'Analytical':
-                    # Project and Probe Active
-                    dfx = pd.read_pickle('../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/SPdata/'+Page1.Combobox_Run.currentText().replace('Run: ','')+'_Phase.pkz',compression='zip')
-                    # with open('../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/SPdata/'+Page1.Combobox_Run.currentText().replace('Run: ','')+'_Phase.PdList','rb') as f:
-                    #     dfx = pickle.load(f)
-                    # #
-                    Columns = (dfx.columns.tolist())[2:]
-                    #
-                    for item in dfx['Freq'].drop_duplicates().tolist():
-                        try:
-                            Page3.Combobox_Period.addItem(str(1/float(item)/3600.0))
-                        except:
-                            Page3.Combobox_Period.addItem('Inf')
-                    #
+            if Page1.Combobox_Method.currentText() == 'Analytical':
+                # Project and Probe Active
+                dfx = pd.read_pickle('../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/SPdata/'+Page1.Combobox_Run.currentText().replace('Run: ','')+'_Phase.pkz',compression='zip')
+                # with open('../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/SPdata/'+Page1.Combobox_Run.currentText().replace('Run: ','')+'_Phase.PdList','rb') as f:
+                #     dfx = pickle.load(f)
+                # #
+                Columns = (dfx.columns.tolist())[2:]
+                #
+                for item in dfx['Freq'].drop_duplicates().tolist():
                     try:
-                        pos = Page1.Sensors.index(Columns[0])
-                        Page3.BedElev.setText(Page1.SensorsHeight[pos])
+                        Page3.Combobox_Period.addItem(str(1/float(item)/3600.0))
                     except:
-                        pass
-                    #
-                    for item in Columns:
-                        Page3.Combobox_TopSensor.addItem(item)
-                    #
-                    if Page3.VBoxSensor is not None:
-                        while Page3.VBoxSensor.count():
-                            item = Page3.VBoxSensor.takeAt(0)
-                            widget = item.widget()
-                            if widget is not None:
-                                widget.deleteLater()
-                            else:
-                                self.clearLayout(item.layout())
-                    #
-                    for sensor in Columns:
-                        CheckBox = PQW.QCheckBox(sensor)
-                        CheckBox.setChecked(True)
-                        Page3.VBoxSensor.addWidget(CheckBox)
-                    #
-                    # df_Clean = pd.read_pickle('../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/data/clean.pkz',compression='zip')
-                    # ChartColumns = (df_Clean.columns).tolist()
-                    # Page3.Chart_Fig.clear()
-                    # Page3.ax = Page3.Chart_Fig.add_subplot(111)
-                    # #
-                    # VAR.SetChartColors(VAR,None)
-                    # if(VAR.GetChartColors(VAR) is None):
-                    #     Colors = []
-                    # else:
-                    #     Colors = VAR.GetChartColors(VAR)
-                    # #
-                    # for i in range(1,len(ChartColumns)):
-                    #     if(VAR.GetChartColors(VAR) == None):
-                    #         if Page1.TimeType == 'yyyy-mm-dd h24:min:sec':
-                    #             plot = Page3.ax.plot(pd.to_datetime(df_Clean['Time'],unit='s'), df_Clean[ChartColumns[i]].to_numpy(), '-', label = ChartColumns[i])
-                    #         elif Page1.TimeType == 'Time':
-                    #             plot = Page3.ax.plot(df_Clean['Time'].to_numpy(), df_Clean[ChartColumns[i]].to_numpy(), '-', label = ChartColumns[i])
-                    #         Colors.append(plot[0].get_color())
-                    #     else:
-                    #         if Page1.TimeType == 'yyyy-mm-dd h24:min:sec':
-                    #             plot = Page3.ax.plot(pd.to_datetime(df_Clean['Time'],unit='s'), df_Clean[ChartColumns[i]].to_numpy(), '-', label = ChartColumns[i], color=Colors[i])
-                    #         elif Page1.TimeType == 'Time':
-                    #             plot = Page3.ax.plot(df_Clean['Time'].to_numpy(), df_Clean[ChartColumns[i]].to_numpy(), '-', label = ChartColumns[i], color=Colors[i])
-                    # #
-                    # if(VAR.GetChartColors(VAR) is None):
-                    #     VAR.SetChartColors(VAR, Colors)
-                    # #
-                    # Page3.ax.legend(loc=9, ncol=len(ChartColumns)) # Add legend to the chart
-                    # #
-                    # Page3.ax.grid(True, which='both', axis='both', linestyle='--')
-                    # Page3.ax.set_ylabel('Temperature')
-                    # #
-                    # if Page1.TimeType == 'Time':
-                    #     Page3.ax.set_xlabel('Time (s)')
-                    # else:
-                    #     pass
-                    # Page3.Canvas.draw()
-                    self.next()
-                else:
-                    df_Temp = pd.read_pickle('../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/SPdata/'+Page1.Combobox_Run.currentText().replace('Run: ','')+'_Amplitude.pkz',compression='zip')
-                    #
-                    if Page2.VBoxSensor is not None:
-                        while Page2.VBoxSensor.count():
-                            item = Page2.VBoxSensor.takeAt(0)
-                            widget = item.widget()
-                            if widget is not None:
-                                widget.deleteLater()
-                            else:
-                                self.clearLayout(item.layout())
-                    for sensor in df_Temp.columns.tolist()[2:]:
-                        CheckBox = PQW.QCheckBox(sensor)
-                        CheckBox.setChecked(True)
-                        Page2.VBoxSensor.addWidget(CheckBox)
+                        Page3.Combobox_Period.addItem('Inf')
+                #
+                try:
+                    pos = Page1.Sensors.index(Columns[0])
+                    Page3.BedElev.setText(Page1.SensorsHeight[pos])
+                except:
+                    pass
+                #
+                for item in Columns:
+                    Page3.Combobox_TopSensor.addItem(item)
+                #
+                if Page3.VBoxSensor is not None:
+                    while Page3.VBoxSensor.count():
+                        item = Page3.VBoxSensor.takeAt(0)
+                        widget = item.widget()
+                        if widget is not None:
+                            widget.deleteLater()
+                        else:
+                            self.clearLayout(item.layout())
+                #
+                for sensor in Columns:
+                    CheckBox = PQW.QCheckBox(sensor)
+                    CheckBox.setChecked(True)
+                    Page3.VBoxSensor.addWidget(CheckBox)
+                #
+                # df_Clean = pd.read_pickle('../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/data/clean.pkz',compression='zip')
+                # ChartColumns = (df_Clean.columns).tolist()
+                # Page3.Chart_Fig.clear()
+                # Page3.ax = Page3.Chart_Fig.add_subplot(111)
+                # #
+                # VAR.SetChartColors(VAR,None)
+                # if(VAR.GetChartColors(VAR) is None):
+                #     Colors = []
+                # else:
+                #     Colors = VAR.GetChartColors(VAR)
+                # #
+                # for i in range(1,len(ChartColumns)):
+                #     if(VAR.GetChartColors(VAR) == None):
+                #         if Page1.TimeType == 'yyyy-mm-dd h24:min:sec':
+                #             plot = Page3.ax.plot(pd.to_datetime(df_Clean['Time'],unit='s'), df_Clean[ChartColumns[i]].to_numpy(), '-', label = ChartColumns[i])
+                #         elif Page1.TimeType == 'Time':
+                #             plot = Page3.ax.plot(df_Clean['Time'].to_numpy(), df_Clean[ChartColumns[i]].to_numpy(), '-', label = ChartColumns[i])
+                #         Colors.append(plot[0].get_color())
+                #     else:
+                #         if Page1.TimeType == 'yyyy-mm-dd h24:min:sec':
+                #             plot = Page3.ax.plot(pd.to_datetime(df_Clean['Time'],unit='s'), df_Clean[ChartColumns[i]].to_numpy(), '-', label = ChartColumns[i], color=Colors[i])
+                #         elif Page1.TimeType == 'Time':
+                #             plot = Page3.ax.plot(df_Clean['Time'].to_numpy(), df_Clean[ChartColumns[i]].to_numpy(), '-', label = ChartColumns[i], color=Colors[i])
+                # #
+                # if(VAR.GetChartColors(VAR) is None):
+                #     VAR.SetChartColors(VAR, Colors)
+                # #
+                # Page3.ax.legend(loc=9, ncol=len(ChartColumns)) # Add legend to the chart
+                # #
+                # Page3.ax.grid(True, which='both', axis='both', linestyle='--')
+                # Page3.ax.set_ylabel('Temperature')
+                # #
+                # if Page1.TimeType == 'Time':
+                #     Page3.ax.set_xlabel('Time (s)')
+                # else:
+                #     pass
+                # Page3.Canvas.draw()
+                self.next()
+            else:
+                df_Temp = pd.read_pickle('../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/SPdata/'+Page1.Combobox_Run.currentText().replace('Run: ','')+'_Amplitude.pkz',compression='zip')
+                #
+                if Page2.VBoxSensor is not None:
+                    while Page2.VBoxSensor.count():
+                        item = Page2.VBoxSensor.takeAt(0)
+                        widget = item.widget()
+                        if widget is not None:
+                            widget.deleteLater()
+                        else:
+                            self.clearLayout(item.layout())
+                for sensor in df_Temp.columns.tolist()[2:]:
+                    CheckBox = PQW.QCheckBox(sensor)
+                    CheckBox.setChecked(True)
+                    Page2.VBoxSensor.addWidget(CheckBox)
         if self.currentId() == 2:
             if Page1.Combobox_Method.currentText() == 'Analytical':
                 pass
@@ -262,10 +209,11 @@ class ParameterEstimation(PQW.QWizard):
                     except:
                         pass
                 #
-                if Page2.CheckBox_MLEnZ.isChecked():
-                    stringEXE = 'ParEstMLEnZ.exe'
-                else:
-                    stringEXE = 'ParEstMLEn.exe'
+                #! if Page2.CheckBox_MLEnZ.isChecked():
+                #!     stringEXE = 'ParEstMLEnZ.exe'
+                #! else:
+                #!     stringEXE = 'ParEstMLEn.exe'
+                stringEXE = 'ParEstMLEn.exe'
                 #
                 SensorOkFin = []
                 HeightOkFin = []
@@ -299,13 +247,13 @@ class ParameterEstimation(PQW.QWizard):
                 # Freq Limit [FLOAT] -n
                 stringEXE = stringEXE + ' -l "' + Page2.FreqLimit.text() +'"'
                 # cxrho [FLOAT] -n
-                stringEXE = stringEXE + ' -z "' + Page2.cxrho.text() +'"'
+                stringEXE = stringEXE + ' -z "' + Page2.Mult_b.text() +'"'
                 # cwxrhow [FLOAT] -n
-                stringEXE = stringEXE + ' -x "' + Page2.cwxrhow.text() +'"'
+                stringEXE = stringEXE + ' -x "' + Page2.Mult_w.text() +'"'
                 # SRNmixmax [INTEGER] -a
-                if Page2.Combobox_SRNminmax.currentText() == 'Max':
+                if Page2.Combobox_SNRminmax.currentText() == 'Max':
                     stringEXE = stringEXE + ' -a "0"'
-                elif Page2.Combobox_SRNminmax.currentText() == 'Min':
+                elif Page2.Combobox_SNRminmax.currentText() == 'Min':
                     stringEXE = stringEXE + ' -a "1"'
                 # InitialCond [INTEGER] -i
                 if Page2.Combobox_InitialCond.currentText() == 'First':
@@ -313,9 +261,9 @@ class ParameterEstimation(PQW.QWizard):
                 elif Page2.Combobox_InitialCond.currentText() == 'Every':
                     stringEXE = stringEXE + ' -i "0"'
                 #
-                if Page2.CheckBox_MLEnZ.isChecked():
-                    stringEXE = stringEXE + ' -p "' + Page2.d50.text() +'"'
-                    stringEXE = stringEXE + ' -j "' + Page2.BedRiv.text() +'"'
+                #! if Page2.CheckBox_MLEnZ.isChecked():
+                #!     stringEXE = stringEXE + ' -p "' + Page2.d50.text() +'"'
+                #!     stringEXE = stringEXE + ' -j "' + Page2.BedRiv.text() +'"'
                 # Call external program
                 logger.info(stringEXE)
                 os.system(stringEXE)
@@ -342,6 +290,15 @@ class ParameterEstimation(PQW.QWizard):
                     for File in FileCYmnt:
                         os.remove(File)
                     #
+                    handle = open('../temp/XXX.run','a')
+                    handle.write(f"{Page2.cp_w.text()};cp water\n")
+                    handle.write(f"{Page2.cp_s.text()};cp soil\n")
+                    handle.write(f"{Page2.rho_w.text()};density water\n")
+                    handle.write(f"{Page2.rho_s.text()};density soil\n")
+                    handle.write(f"{Page2.Gamma.text()};Gamma\n")
+                    handle.write(f"{Page2.Combobox_Gamma_Method.currentIndex()};GammaMethod\n")
+                    handle.close()
+                    #
                     os.replace('../temp/XXX.run','../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/PEdata/'+str(NewRun)+'.run')
                     os.replace('../temp/Diffusivity.pkz','../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/PEdata/'+str(NewRun)+'_Diffusivity.pkz')
                     os.replace('../temp/K.pkz','../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/PEdata/'+str(NewRun)+'_K.pkz')
@@ -352,8 +309,8 @@ class ParameterEstimation(PQW.QWizard):
                     os.replace('../temp/MobWinTime.pkz','../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/PEdata/'+str(NewRun)+'_MobWinTime.pkz')
                     os.replace('../temp/MLEn.log','../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/PEdata/'+str(NewRun)+'_MLEn.log')
                     os.replace('../temp/CostBest.pkz','../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/PEdata/'+str(NewRun)+'_CostBest.pkz')
-                    if Page2.CheckBox_MLEnZ.isChecked():
-                        os.replace('../temp/Heights.pkz','../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/PEdata/'+str(NewRun)+'_Heights.pkz')
+                    #! if Page2.CheckBox_MLEnZ.isChecked():
+                    #!     os.replace('../temp/Heights.pkz','../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/PEdata/'+str(NewRun)+'_Heights.pkz')
                     #
                     self.next()
                     self.next()
@@ -570,6 +527,16 @@ class ParameterEstimation(PQW.QWizard):
                     os.remove('../temp/Amplitude.pkz')
                     os.remove('../temp/Phase.pkz')
                     #
+                    handle = open('../temp/XXX.run','a')
+                    handle.write(f"{Page4.cp_w.text()};cp water\n")
+                    handle.write(f"{Page4.cp_s.text()};cp soil\n")
+                    handle.write(f"{Page4.rho_w.text()};density water\n")
+                    handle.write(f"{Page4.rho_s.text()};density soil\n")
+                    handle.write(f"{Page4.Mult_w.text()};Multi water\n")
+                    handle.write(f"{Page4.Mult_b.text()};Multi bulk\n")
+                    handle.write(f"{Page4.Combobox_Gamma_Method.currentIndex()};GammaMethod\n")
+                    handle.close()
+                    #
                     os.replace('../temp/XXX.run','../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/PEdata/'+str(NewRun)+'.run')
                     os.replace('../temp/BEC.pkz','../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/PEdata/'+str(NewRun)+'_BEC.pkz')
                     os.replace('../temp/Eta.pkz','../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/PEdata/'+str(NewRun)+'_Eta.pkz')
@@ -584,7 +551,6 @@ class ParameterEstimation(PQW.QWizard):
                 else:
                     PQW.QMessageBox.critical(self, VAR.GetSoftwareName(VAR)+' message', Check, PQW.QMessageBox.Ok, PQW.QMessageBox.Ok)
 
-    @logger.catch
     def finish_print(self):
         logger.debug("Action:finish Page: " + str(self.currentId()))
         return
@@ -599,6 +565,9 @@ class Page1(PQW.QWizardPage):
         Layout_Page1 = PQW.QHBoxLayout()
         container_left = PQW.QFrame()
         Layout_Page1_Left = PQW.QVBoxLayout()
+        # The above code is reading data from a probe.ini file. It opens the file,
+        # reads specific lines, and assigns the values to variables. The code then
+        # closes the file.
         # Load Probe.init
         HandleProbIni = open('../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/probe.ini','r')
         HandleProbIni.readline()
@@ -668,6 +637,7 @@ class Page1(PQW.QWizardPage):
         #! Page1.Combobox_RunEst.setEnabled(False) #!
         #! Page1.Combobox_RunEst.currentIndexChanged.connect(self.on_Combobox_RunEst_change) #!
         #
+        container_left.setMaximumWidth(int(VAR.GetWindowsSize(VAR)[0] * 2 / 3 / 4))
         container_left.setLayout(Layout_Page1_Left)
         # Chart column
         container_right = PQW.QFrame()
@@ -723,7 +693,6 @@ class Page1(PQW.QWizardPage):
             pass
         Page1.Canvas.draw()
 
-    @logger.catch
     def UpdateChange(self): #!
 #        print('UpdateChange') #!
 #         if Page1.CheckUpdate.isChecked(): #!
@@ -733,12 +702,10 @@ class Page1(PQW.QWizardPage):
 #         return #!
         return
 
-    @logger.catch
     def on_Combobox_RunEst_change(self): #!
 #        print('on_Combobox_RunEst_change') #!
         return #!
 
-    @logger.catch
     def on_Combobox_Run_change(self):
         logger.debug('Page1 - on_Combobox_Run_change')
         #
@@ -881,85 +848,112 @@ class Page2(PQW.QWizardPage):
         Layout_Page2_Left_7.addWidget(Page2.Combobox_InitialCond)
         Layout_Page2_Left.addLayout(Layout_Page2_Left_7)
         #
-        Page2.CheckBox_Calculate_Gamma = PQW.QCheckBox("Calculate \u03B3")
-        Page2.CheckBox_Calculate_Gamma.stateChanged.connect(self.on_checkbox_changed)
-        Layout_Page2_Left.addWidget(Page2.CheckBox_Calculate_Gamma)
-        #
         Layout_Page2_Left_8 = PQW.QHBoxLayout()
+        Label_Gamma_Method = PQW.QLabel("Gamma method:")
+        Layout_Page2_Left_8.addWidget(Label_Gamma_Method)
+        Page2.Combobox_Gamma_Method = PQW.QComboBox()
+        Page2.Combobox_Gamma_Method.addItem("All parameters")
+        Page2.Combobox_Gamma_Method.addItem("Heat capacity")
+        Page2.Combobox_Gamma_Method.currentIndexChanged.connect(self.onComboBoxChange_GammaMethod)
+        Layout_Page2_Left_8.addWidget(Page2.Combobox_Gamma_Method)
+        Layout_Page2_Left.addLayout(Layout_Page2_Left_8)
+        #
+        Layout_Page2_Left_9 = PQW.QHBoxLayout()
         Label_Cpw = PQW.QLabel(f"c<sub>w</sub> (J kg<sup>-1</sup> K<sup>-1</sup>):")
         Page2.cp_w = PQW.QLineEdit(self)
         Page2.cp_w.setText("4183")
         Page2.cp_w.textChanged.connect(self.CalculateGamma)
-        Page2.cp_w.setEnabled(False)
-        Layout_Page2_Left_8.addWidget(Label_Cpw)
-        Layout_Page2_Left_8.addWidget(Page2.cp_w)
-        Layout_Page2_Left.addLayout(Layout_Page2_Left_8)
+        Page2.cp_w.setEnabled(True)
+        Layout_Page2_Left_9.addWidget(Label_Cpw)
+        Layout_Page2_Left_9.addWidget(Page2.cp_w)
+        Layout_Page2_Left.addLayout(Layout_Page2_Left_9)
         #
-        Layout_Page2_Left_9 = PQW.QHBoxLayout()
+        Layout_Page2_Left_10 = PQW.QHBoxLayout()
         Label_Cps = PQW.QLabel(f"c<sub>s</sub> (J kg<sup>-1</sup> K<sup>-1</sup>):")
         Page2.cp_s = PQW.QLineEdit(self)
         Page2.cp_s.setText("800")
         Page2.cp_s.textChanged.connect(self.CalculateGamma)
-        Page2.cp_s.setEnabled(False)
-        Layout_Page2_Left_9.addWidget(Label_Cps)
-        Layout_Page2_Left_9.addWidget(Page2.cp_s)
-        Layout_Page2_Left.addLayout(Layout_Page2_Left_9)
+        Page2.cp_s.setEnabled(True)
+        Layout_Page2_Left_10.addWidget(Label_Cps)
+        Layout_Page2_Left_10.addWidget(Page2.cp_s)
+        Layout_Page2_Left.addLayout(Layout_Page2_Left_10)
         #
-        Layout_Page2_Left_10 = PQW.QHBoxLayout()
+        Layout_Page2_Left_11 = PQW.QHBoxLayout()
         Label_Rhow = PQW.QLabel(f"ρ<sub>w</sub> (kg m<sup>-3</sup>):")
         Page2.rho_w = PQW.QLineEdit(self)
         Page2.rho_w.setText("998")
         Page2.rho_w.textChanged.connect(self.CalculateGamma)
-        Page2.rho_w.setEnabled(False)
-        Layout_Page2_Left_10.addWidget(Label_Rhow)
-        Layout_Page2_Left_10.addWidget(Page2.rho_w)
-        Layout_Page2_Left.addLayout(Layout_Page2_Left_10)
+        Page2.rho_w.setEnabled(True)
+        Layout_Page2_Left_11.addWidget(Label_Rhow)
+        Layout_Page2_Left_11.addWidget(Page2.rho_w)
+        Layout_Page2_Left.addLayout(Layout_Page2_Left_11)
         #
-        Layout_Page2_Left_11 = PQW.QHBoxLayout()
+        Layout_Page2_Left_12 = PQW.QHBoxLayout()
         Label_Rhos = PQW.QLabel(f"ρ<sub>s</sub> (kg m<sup>-3</sup>):")
         Page2.rho_s = PQW.QLineEdit(self)
         Page2.rho_s.setText("2650")
         Page2.rho_s.textChanged.connect(self.CalculateGamma)
-        Page2.rho_s.setEnabled(False)
-        Layout_Page2_Left_11.addWidget(Label_Rhos)
-        Layout_Page2_Left_11.addWidget(Page2.rho_s)
-        Layout_Page2_Left.addLayout(Layout_Page2_Left_11)
+        Page2.rho_s.setEnabled(True)
+        Layout_Page2_Left_12.addWidget(Label_Rhos)
+        Layout_Page2_Left_12.addWidget(Page2.rho_s)
+        Layout_Page2_Left.addLayout(Layout_Page2_Left_12)
         #
-        Layout_Page2_Left_12 = PQW.QHBoxLayout()
+        Layout_Page2_Left_13 = PQW.QHBoxLayout()
         Label_poros = PQW.QLabel(f"n:")
         Page2.poros = PQW.QLineEdit(self)
         Page2.poros.setText("0.32")
         Page2.poros.textChanged.connect(self.CalculateGamma)
-        Page2.poros.setEnabled(False)
-        Layout_Page2_Left_12.addWidget(Label_poros)
-        Layout_Page2_Left_12.addWidget(Page2.poros)
-        Layout_Page2_Left.addLayout(Layout_Page2_Left_12)
-        #
-        Layout_Page2_Left_12 = PQW.QHBoxLayout()
-        Label_Gamma = PQW.QLabel('\u03B3:')
-        Page2.Gamma = PQW.QLineEdit(self)
-        Page2.Gamma.setText('0.6653')
-        Layout_Page2_Left_12.addWidget(Label_Gamma)
-        Layout_Page2_Left_12.addWidget(Page2.Gamma)
-        Layout_Page2_Left.addLayout(Layout_Page2_Left_12)
-        #
-        Layout_Page2_Left_13 = PQW.QHBoxLayout()
-        Label_Diffusivity = PQW.QLabel('Diffusivity (m<sup>2</sup> s<sup>-1</sup>):')
-        Layout_Page2_Left_13.addWidget(Label_Diffusivity)
-        Page2.Diffusivity = PQW.QLineEdit()
-        Page2.Diffusivity.setText('5e-07')
-        Page2.Diffusivity.setEnabled(False)
-        Layout_Page2_Left_13.addWidget(Page2.Diffusivity)
+        Page2.poros.setEnabled(True)
+        Layout_Page2_Left_13.addWidget(Label_poros)
+        Layout_Page2_Left_13.addWidget(Page2.poros)
         Layout_Page2_Left.addLayout(Layout_Page2_Left_13)
         #
         Layout_Page2_Left_14 = PQW.QHBoxLayout()
+        Label_Mult_w = PQW.QLabel('c<sub>w</sub> ρ<sub>w</sub> (J m<sup>-3</sup> K<sup>-1</sup>):')
+        Page2.Mult_w = PQW.QLineEdit(self)
+        Page2.Mult_w.setText(f"{4183.0*998.0}")
+        Page2.Mult_w.textChanged.connect(self.CalculateGamma)
+        Page2.Mult_w.setEnabled(False)
+        Layout_Page2_Left_14.addWidget(Label_Mult_w)
+        Layout_Page2_Left_14.addWidget(Page2.Mult_w)
+        Layout_Page2_Left.addLayout(Layout_Page2_Left_14)
+        #
+        Layout_Page2_Left_15 = PQW.QHBoxLayout()
+        Label_Mult_b = PQW.QLabel('c<sub>b</sub> ρ<sub>b</sub> (J m<sup>-3</sup> K<sup>-1</sup>):')
+        Page2.Mult_b = PQW.QLineEdit(self)
+        Page2.Mult_b.setText(f"{0.32*4183.0*998.0 + (1-0.32)*800.0*2650.0}")
+        Page2.Mult_b.textChanged.connect(self.CalculateGamma)
+        Page2.Mult_b.setEnabled(False)
+        Layout_Page2_Left_15.addWidget(Label_Mult_b)
+        Layout_Page2_Left_15.addWidget(Page2.Mult_b)
+        Layout_Page2_Left.addLayout(Layout_Page2_Left_15)
+        #
+        Layout_Page2_Left_16 = PQW.QHBoxLayout()
+        Label_Gamma = PQW.QLabel('\u03B3:')
+        Layout_Page2_Left_16.addWidget(Label_Gamma)
+        Page2.Gamma = PQW.QLineEdit(self)
+        Page2.Gamma.setText(f"{(0.32*4183.0*998.0 + (1-0.32)*800.0*2650.0) / (4183.0*998.0)}")
+        Page2.Gamma.setEnabled(False)
+        Layout_Page2_Left_16.addWidget(Page2.Gamma)
+        Layout_Page2_Left.addLayout(Layout_Page2_Left_16)
+        #
+        Layout_Page2_Left_17 = PQW.QHBoxLayout()
+        Label_Diffusivity = PQW.QLabel('Diffusivity (m<sup>2</sup> s<sup>-1</sup>):')
+        Layout_Page2_Left_17.addWidget(Label_Diffusivity)
+        Page2.Diffusivity = PQW.QLineEdit()
+        Page2.Diffusivity.setText('5e-07')
+        Page2.Diffusivity.setEnabled(False)
+        Layout_Page2_Left_17.addWidget(Page2.Diffusivity)
+        Layout_Page2_Left.addLayout(Layout_Page2_Left_17)
+        #
+        Layout_Page2_Left_18 = PQW.QHBoxLayout()
         Label_Velocity = PQW.QLabel('Velocity (m s<sup>-1</sup>):')
-        Layout_Page2_Left_14.addWidget(Label_Velocity)
+        Layout_Page2_Left_18.addWidget(Label_Velocity)
         Page2.Velocity = PQW.QLineEdit()
         Page2.Velocity.setText('6e-06')
         Page2.Velocity.setEnabled(False)
-        Layout_Page2_Left_14.addWidget(Page2.Velocity)
-        Layout_Page2_Left.addLayout(Layout_Page2_Left_14)
+        Layout_Page2_Left_18.addWidget(Page2.Velocity)
+        Layout_Page2_Left.addLayout(Layout_Page2_Left_18)
         #
         #! Page2.CheckBox_MLEnZ = PQW.QCheckBox('Use MLEnZ')
         #! Page2.CheckBox_MLEnZ.toggled.connect(Page2.MLEnZChange)
@@ -1038,20 +1032,18 @@ class Page2(PQW.QWizardPage):
             pass
         Page2.Canvas.draw()
 
-    @logger.catch
-    def MLEnZChange(self):
-#         if Page2.CheckBox_MLEnZ.isChecked():
-#             Page2.BedRiv.setEnabled(True)
-#             Page2.d50.setEnabled(True)
-#             Page2.Combobox_Estimate.setCurrentText('D and V')
-#             Page2.Combobox_Estimate.setEnabled(False)
-#         else:
-#             Page2.BedRiv.setEnabled(False)
-#             Page2.d50.setEnabled(False)
-#             Page2.Combobox_Estimate.setEnabled(True)
-        return
+#!     def MLEnZChange(self):
+#!         if Page2.CheckBox_MLEnZ.isChecked():
+#!             Page2.BedRiv.setEnabled(True)
+#!             Page2.d50.setEnabled(True)
+#!             Page2.Combobox_Estimate.setCurrentText('D and V')
+#!             Page2.Combobox_Estimate.setEnabled(False)
+#!         else:
+#!             Page2.BedRiv.setEnabled(False)
+#!             Page2.d50.setEnabled(False)
+#!             Page2.Combobox_Estimate.setEnabled(True)
+#!         return
 
-    @logger.catch
     def on_Combobox_Estimate_change(self):
         logger.debug('Page1 - on_Combobox_Estimate_change')
         if Page2.Combobox_Estimate.currentText() == 'D and V':
@@ -1064,7 +1056,6 @@ class Page2(PQW.QWizardPage):
             Page2.Diffusivity.setEnabled(True)
             Page2.Velocity.setEnabled(False)
 
-    @logger.catch
     def on_Combobox_Frequency_change(self):
         logger.debug('Page1 - on_Combobox_Frequency_change')
         if Page2.Combobox_Frequency.currentText() == 'Best Frequency':
@@ -1074,39 +1065,66 @@ class Page2(PQW.QWizardPage):
         elif Page2.Combobox_Frequency.currentText() == 'All Frequencies >':
             Page2.SNRLimit.setEnabled(True)
 
-    @logger.catch
-    def on_checkbox_changed(self,state):
-        if state == 2: # Checked
+    def onComboBoxChange_GammaMethod(self, index):
+        #
+        try:
+            cpw = float(Page2.cp_w.text())
+            cps = float(Page2.cp_s.text())
+            rhow = float(Page2.rho_w.text())
+            rhos = float(Page2.rho_s.text())
+            n = float(Page2.poros.text())
+            multw = float(Page2.Mult_w.text())
+            multb = float(Page2.Mult_w.text())
+        except:
+            logger.critical("Error")
+            return
+        #
+        if index == 0: # 0 - Give all parameters
             Page2.cp_w.setEnabled(True)
             Page2.cp_s.setEnabled(True)
             Page2.rho_w.setEnabled(True)
             Page2.rho_s.setEnabled(True)
             Page2.poros.setEnabled(True)
+            Page2.Mult_w.setEnabled(False)
+            Page2.Mult_b.setEnabled(False)
             Page2.Gamma.setEnabled(False)
-        else:
+            #
+            Page2.Mult_w.setText(f"{cpw * rhow}")
+            Page2.Mult_b.setText(f"{n * cpw * rhow + (1 - n) * cps * rhos}")
+            Page2.Gamma.setText(f"{(n * cpw * rhow + (1 - n) * cps * rhos) /(cpw * rhow)}")
+        elif index == 1: # 1 - Give mult parameters
             Page2.cp_w.setEnabled(False)
             Page2.cp_s.setEnabled(False)
             Page2.rho_w.setEnabled(False)
             Page2.rho_s.setEnabled(False)
             Page2.poros.setEnabled(False)
-            Page2.Gamma.setEnabled(True)
+            Page2.Mult_w.setEnabled(True)
+            Page2.Mult_b.setEnabled(True)
+            Page2.Gamma.setEnabled(False)
+            #
+            Page2.Gamma.setText(f"{(n * cpw * rhow + (1 - n) * cps * rhos) /(cpw * rhow)}")
+        #
         return
-
-    @logger.catch
+    
     def CalculateGamma(self):
         Page2.cp_w.textChanged.disconnect(self.CalculateGamma)
         Page2.cp_s.textChanged.disconnect(self.CalculateGamma)
         Page2.rho_w.textChanged.disconnect(self.CalculateGamma)
         Page2.rho_s.textChanged.disconnect(self.CalculateGamma)
         Page2.poros.textChanged.disconnect(self.CalculateGamma)
+        Page2.Mult_b.textChanged.disconnect(self.CalculateGamma)
+        Page2.Mult_w.textChanged.disconnect(self.CalculateGamma)
         try:
             cpw = float(Page2.cp_w.text())
             cps = float(Page2.cp_s.text())
             row = float(Page2.rho_w.text())
             ros = float(Page2.rho_s.text())
             n = float(Page2.poros.text())
+            cpwrow = float(Page2.Mult_w.text())
+            cpbrob = float(Page2.Mult_b.text())
         except:
             logger.critical("Error")
+            return
         #
         if cpw < 0.0:
             cpw = 0.0
@@ -1127,13 +1145,20 @@ class Page2(PQW.QWizardPage):
             n = 1.0
             Page2.poros.setText(f"{n}")
         #
-        Page2.Gamma.setText(f"{(n * cpw * row + (1 - n) * cps * ros) /(cpw * row)}")
+        if Page2.Combobox_Gamma_Method.currentIndex() == 1:
+            Page2.Mult_w.setText(f"{cpw * row}")
+            Page2.Mult_b.setText(f"{n * cpw * row + (1 - n) * cps * ros}")
+            Page2.Gamma.setText(f"{(n * cpw * row + (1 - n) * cps * ros) /(cpw * row)}")
+        elif Page2.Combobox_Gamma_Method.currentIndex() == 2:
+            Page2.Gamma.setText(f"{cpbrob /cpwrow}")
         #
         Page2.cp_w.textChanged.connect(self.CalculateGamma)
         Page2.cp_s.textChanged.connect(self.CalculateGamma)
         Page2.rho_w.textChanged.connect(self.CalculateGamma)
         Page2.rho_s.textChanged.connect(self.CalculateGamma)
         Page2.poros.textChanged.connect(self.CalculateGamma)
+        Page2.Mult_w.textChanged.connect(self.CalculateGamma)
+        Page2.Mult_b.textChanged.connect(self.CalculateGamma)
         return
 
 '''
@@ -1248,75 +1273,102 @@ class Page4(PQW.QWizardPage):
         Layout_Page4_Left_1.addWidget(Page4.Combobox_Chart)
         Layout_Page4_Left.addLayout(Layout_Page4_Left_1)
         #
-        Page4.CheckBox_Calculate_Gamma = PQW.QCheckBox("Calculate \u03B3")
-        Page4.CheckBox_Calculate_Gamma.stateChanged.connect(self.on_checkbox_changed)
-        Layout_Page4_Left.addWidget(Page4.CheckBox_Calculate_Gamma)
+        Layout_Page4_Left_2= PQW.QHBoxLayout()
+        Label_Gamma_Method = PQW.QLabel("Gamma method:")
+        Layout_Page4_Left_2.addWidget(Label_Gamma_Method)
+        Page4.Combobox_Gamma_Method = PQW.QComboBox()
+        Page4.Combobox_Gamma_Method.addItem("Gamma")
+        Page4.Combobox_Gamma_Method.addItem("All Parameters")
+        Page4.Combobox_Gamma_Method.addItem("Heat capacity")
+        Page4.Combobox_Gamma_Method.currentIndexChanged.connect(self.onComboBoxChange_GammaMethod)
+        Layout_Page4_Left_2.addWidget(Page4.Combobox_Gamma_Method)
+        Layout_Page4_Left.addLayout(Layout_Page4_Left_2)
         #
-        Layout_Page4_Left_2 = PQW.QHBoxLayout()
+        Layout_Page4_Left_3 = PQW.QHBoxLayout()
         Label_Cpw = PQW.QLabel(f"c<sub>w</sub> (J kg<sup>-1</sup> K<sup>-1</sup>):")
         Page4.cp_w = PQW.QLineEdit(self)
         Page4.cp_w.setText("4183")
         Page4.cp_w.textChanged.connect(self.CalculateGamma)
         Page4.cp_w.setEnabled(False)
-        Layout_Page4_Left_2.addWidget(Label_Cpw)
-        Layout_Page4_Left_2.addWidget(Page4.cp_w)
-        Layout_Page4_Left.addLayout(Layout_Page4_Left_2)
+        Layout_Page4_Left_3.addWidget(Label_Cpw)
+        Layout_Page4_Left_3.addWidget(Page4.cp_w)
+        Layout_Page4_Left.addLayout(Layout_Page4_Left_3)
         #
-        Layout_Page4_Left_3 = PQW.QHBoxLayout()
+        Layout_Page4_Left_4 = PQW.QHBoxLayout()
         Label_Cps = PQW.QLabel(f"c<sub>s</sub> (J kg<sup>-1</sup> K<sup>-1</sup>):")
         Page4.cp_s = PQW.QLineEdit(self)
         Page4.cp_s.setText("800")
         Page4.cp_s.textChanged.connect(self.CalculateGamma)
         Page4.cp_s.setEnabled(False)
-        Layout_Page4_Left_3.addWidget(Label_Cps)
-        Layout_Page4_Left_3.addWidget(Page4.cp_s)
-        Layout_Page4_Left.addLayout(Layout_Page4_Left_3)
+        Layout_Page4_Left_4.addWidget(Label_Cps)
+        Layout_Page4_Left_4.addWidget(Page4.cp_s)
+        Layout_Page4_Left.addLayout(Layout_Page4_Left_4)
         #
-        Layout_Page4_Left_4 = PQW.QHBoxLayout()
+        Layout_Page4_Left_5 = PQW.QHBoxLayout()
         Label_Rhow = PQW.QLabel(f"ρ<sub>w</sub> (kg m<sup>-3</sup>):")
         Page4.rho_w = PQW.QLineEdit(self)
         Page4.rho_w.setText("998")
         Page4.rho_w.textChanged.connect(self.CalculateGamma)
         Page4.rho_w.setEnabled(False)
-        Layout_Page4_Left_4.addWidget(Label_Rhow)
-        Layout_Page4_Left_4.addWidget(Page4.rho_w)
-        Layout_Page4_Left.addLayout(Layout_Page4_Left_4)
+        Layout_Page4_Left_5.addWidget(Label_Rhow)
+        Layout_Page4_Left_5.addWidget(Page4.rho_w)
+        Layout_Page4_Left.addLayout(Layout_Page4_Left_5)
         #
-        Layout_Page4_Left_5 = PQW.QHBoxLayout()
+        Layout_Page4_Left_6 = PQW.QHBoxLayout()
         Label_Rhos = PQW.QLabel(f"ρ<sub>s</sub> (kg m<sup>-3</sup>):")
         Page4.rho_s = PQW.QLineEdit(self)
         Page4.rho_s.setText("2650")
         Page4.rho_s.textChanged.connect(self.CalculateGamma)
         Page4.rho_s.setEnabled(False)
-        Layout_Page4_Left_5.addWidget(Label_Rhos)
-        Layout_Page4_Left_5.addWidget(Page4.rho_s)
-        Layout_Page4_Left.addLayout(Layout_Page4_Left_5)
+        Layout_Page4_Left_6.addWidget(Label_Rhos)
+        Layout_Page4_Left_6.addWidget(Page4.rho_s)
+        Layout_Page4_Left.addLayout(Layout_Page4_Left_6)
         #
-        Layout_Page4_Left_6 = PQW.QHBoxLayout()
+        Layout_Page4_Left_7 = PQW.QHBoxLayout()
         Label_poros = PQW.QLabel(f"n:")
         Page4.poros = PQW.QLineEdit(self)
         Page4.poros.setText("0.32")
         Page4.poros.textChanged.connect(self.CalculateGamma)
         Page4.poros.setEnabled(False)
-        Layout_Page4_Left_6.addWidget(Label_poros)
-        Layout_Page4_Left_6.addWidget(Page4.poros)
-        Layout_Page4_Left.addLayout(Layout_Page4_Left_6)
-        #
-        Layout_Page4_Left_7 = PQW.QHBoxLayout()
-        Label_Gamma = PQW.QLabel('\u03B3:')
-        Page4.Gamma = PQW.QLineEdit(self)
-        Page4.Gamma.setText('0.6653')
-        Layout_Page4_Left_7.addWidget(Label_Gamma)
-        Layout_Page4_Left_7.addWidget(Page4.Gamma)
+        Layout_Page4_Left_7.addWidget(Label_poros)
+        Layout_Page4_Left_7.addWidget(Page4.poros)
         Layout_Page4_Left.addLayout(Layout_Page4_Left_7)
         #
         Layout_Page4_Left_8 = PQW.QHBoxLayout()
+        Label_Mult_w = PQW.QLabel('c<sub>w</sub> ρ<sub>w</sub> (J m<sup>-3</sup> K<sup>-1</sup>):')
+        Page4.Mult_w = PQW.QLineEdit(self)
+        Page4.Mult_w.setText(f"{4183.0*998.0}")
+        Page4.Mult_w.textChanged.connect(self.CalculateGamma)
+        Page4.Mult_w.setEnabled(False)
+        Layout_Page4_Left_8.addWidget(Label_Mult_w)
+        Layout_Page4_Left_8.addWidget(Page4.Mult_w)
+        Layout_Page4_Left.addLayout(Layout_Page4_Left_8)
+        #
+        Layout_Page4_Left_9 = PQW.QHBoxLayout()
+        Label_Mult_b = PQW.QLabel('c<sub>b</sub> ρ<sub>b</sub> (J m<sup>-3</sup> K<sup>-1</sup>):')
+        Page4.Mult_b = PQW.QLineEdit(self)
+        Page4.Mult_b.setText(f"{0.32*4183.0*998.0 + (1-0.32)*800.0*2650.0}")
+        Page4.Mult_b.textChanged.connect(self.CalculateGamma)
+        Page4.Mult_b.setEnabled(False)
+        Layout_Page4_Left_9.addWidget(Label_Mult_b)
+        Layout_Page4_Left_9.addWidget(Page4.Mult_b)
+        Layout_Page4_Left.addLayout(Layout_Page4_Left_9)
+        #
+        Layout_Page4_Left_10 = PQW.QHBoxLayout()
+        Label_Gamma = PQW.QLabel('\u03B3:')
+        Page4.Gamma = PQW.QLineEdit(self)
+        Page4.Gamma.setText(f"{(0.32*4183.0*998.0 + (1-0.32)*800.0*2650.0) / (4183.0*998.0)}")
+        Layout_Page4_Left_10.addWidget(Label_Gamma)
+        Layout_Page4_Left_10.addWidget(Page4.Gamma)
+        Layout_Page4_Left.addLayout(Layout_Page4_Left_10)
+        #
+        Layout_Page4_Left_11 = PQW.QHBoxLayout()
         Label_BRE2 = PQW.QLabel('Bed River Elevation:')
         Page4.BRE2 = PQW.QLineEdit(self)
         # Page4.BRE2.setText(Page1.SensorsHeight[0])
-        Layout_Page4_Left_8.addWidget(Label_BRE2)
-        Layout_Page4_Left_8.addWidget(Page4.BRE2)
-        Layout_Page4_Left.addLayout(Layout_Page4_Left_8)
+        Layout_Page4_Left_11.addWidget(Label_BRE2)
+        Layout_Page4_Left_11.addWidget(Page4.BRE2)
+        Layout_Page4_Left.addLayout(Layout_Page4_Left_11)
         #
         Label_SBR = PQW.QLabel('Fixed bedriver')
         Layout_Page4_Left.addWidget(Label_SBR)
@@ -1331,14 +1383,14 @@ class Page4(PQW.QWizardPage):
             Page4.ImpoFrom = PQW.QDateTimeEdit(self)
             Page4.ImpoTo = PQW.QDateTimeEdit(self)
         #
-        Layout_Page4_Left_9 = PQW.QHBoxLayout()
-        Layout_Page4_Left_10 = PQW.QHBoxLayout()
-        Layout_Page4_Left_9.addWidget(Label_From)
-        Layout_Page4_Left_9.addWidget(Page4.ImpoFrom)
-        Layout_Page4_Left_10.addWidget(Label_To)
-        Layout_Page4_Left_10.addWidget(Page4.ImpoTo)
-        Layout_Page4_Left.addLayout(Layout_Page4_Left_9)
-        Layout_Page4_Left.addLayout(Layout_Page4_Left_10)
+        Layout_Page4_Left_12 = PQW.QHBoxLayout()
+        Layout_Page4_Left_13 = PQW.QHBoxLayout()
+        Layout_Page4_Left_12.addWidget(Label_From)
+        Layout_Page4_Left_12.addWidget(Page4.ImpoFrom)
+        Layout_Page4_Left_13.addWidget(Label_To)
+        Layout_Page4_Left_13.addWidget(Page4.ImpoTo)
+        Layout_Page4_Left.addLayout(Layout_Page4_Left_12)
+        Layout_Page4_Left.addLayout(Layout_Page4_Left_13)
         # 
         Label_Ke = PQW.QLabel('Ke:')
         Layout_Page4_Left.addWidget(Label_Ke)
@@ -1373,7 +1425,6 @@ class Page4(PQW.QWizardPage):
         #
         self.Chart()
 
-    @logger.catch
     def on_checkbox_changed(self,state):
         if state == 2: # Checked
             Page4.cp_w.setEnabled(True)
@@ -1391,21 +1442,75 @@ class Page4(PQW.QWizardPage):
             Page4.Gamma.setEnabled(True)
         return
 
-    @logger.catch
+    def onComboBoxChange_GammaMethod(self, index):
+        #
+        try:
+            cpw = float(Page4.cp_w.text())
+            cps = float(Page4.cp_s.text())
+            rhow = float(Page4.rho_w.text())
+            rhos = float(Page4.rho_s.text())
+            n = float(Page4.poros.text())
+            multw = float(Page4.Mult_w.text())
+            multb = float(Page4.Mult_w.text())
+        except:
+            logger.critical("Error")
+            return
+        #
+        if index == 0: # 0 - Give Gamma
+            Page4.cp_w.setEnabled(False)
+            Page4.cp_s.setEnabled(False)
+            Page4.rho_w.setEnabled(False)
+            Page4.rho_s.setEnabled(False)
+            Page4.poros.setEnabled(False)
+            Page4.Mult_w.setEnabled(False)
+            Page4.Mult_b.setEnabled(False)
+            Page4.Gamma.setEnabled(True)
+        elif index == 1: # 1 - Give all parameters
+            Page4.cp_w.setEnabled(True)
+            Page4.cp_s.setEnabled(True)
+            Page4.rho_w.setEnabled(True)
+            Page4.rho_s.setEnabled(True)
+            Page4.poros.setEnabled(True)
+            Page4.Mult_w.setEnabled(False)
+            Page4.Mult_b.setEnabled(False)
+            Page4.Gamma.setEnabled(False)
+            #
+            Page4.Mult_w.setText(f"{cpw * rhow}")
+            Page4.Mult_b.setText(f"{n * cpw * rhow + (1 - n) * cps * rhos}")
+            Page4.Gamma.setText(f"{(n * cpw * rhow + (1 - n) * cps * rhos) /(cpw * rhow)}")
+        elif index == 2: # 2 - Give semi parameters
+            Page4.cp_w.setEnabled(False)
+            Page4.cp_s.setEnabled(False)
+            Page4.rho_w.setEnabled(False)
+            Page4.rho_s.setEnabled(False)
+            Page4.poros.setEnabled(False)
+            Page4.Mult_w.setEnabled(True)
+            Page4.Mult_b.setEnabled(True)
+            Page4.Gamma.setEnabled(False)
+            #
+            Page4.Gamma.setText(f"{(n * cpw * rhow + (1 - n) * cps * rhos) /(cpw * rhow)}")
+        #
+        return
+    
     def CalculateGamma(self):
         Page4.cp_w.textChanged.disconnect(self.CalculateGamma)
         Page4.cp_s.textChanged.disconnect(self.CalculateGamma)
         Page4.rho_w.textChanged.disconnect(self.CalculateGamma)
         Page4.rho_s.textChanged.disconnect(self.CalculateGamma)
         Page4.poros.textChanged.disconnect(self.CalculateGamma)
+        Page4.Mult_b.textChanged.disconnect(self.CalculateGamma)
+        Page4.Mult_w.textChanged.disconnect(self.CalculateGamma)
         try:
             cpw = float(Page4.cp_w.text())
             cps = float(Page4.cp_s.text())
             row = float(Page4.rho_w.text())
             ros = float(Page4.rho_s.text())
             n = float(Page4.poros.text())
+            cpwrow = float(Page4.Mult_w.text())
+            cpbrob = float(Page4.Mult_b.text())
         except:
             logger.critical("Error")
+            return
         #
         if cpw < 0.0:
             cpw = 0.0
@@ -1426,16 +1531,22 @@ class Page4(PQW.QWizardPage):
             n = 1.0
             Page4.poros.setText(f"{n}")
         #
-        Page4.Gamma.setText(f"{(n * cpw * row + (1 - n) * cps * ros) /(cpw * row)}")
+        if Page4.Combobox_Gamma_Method.currentIndex() == 1:
+            Page4.Mult_w.setText(f"{cpw * row}")
+            Page4.Mult_b.setText(f"{n * cpw * row + (1 - n) * cps * ros}")
+            Page4.Gamma.setText(f"{(n * cpw * row + (1 - n) * cps * ros) /(cpw * row)}")
+        elif Page4.Combobox_Gamma_Method.currentIndex() == 2:
+            Page4.Gamma.setText(f"{cpbrob /cpwrow}")
         #
         Page4.cp_w.textChanged.connect(self.CalculateGamma)
         Page4.cp_s.textChanged.connect(self.CalculateGamma)
         Page4.rho_w.textChanged.connect(self.CalculateGamma)
         Page4.rho_s.textChanged.connect(self.CalculateGamma)
         Page4.poros.textChanged.connect(self.CalculateGamma)
+        Page4.Mult_w.textChanged.connect(self.CalculateGamma)
+        Page4.Mult_b.textChanged.connect(self.CalculateGamma)
         return
 
-    @logger.catch
     def on_Button_KE_clicked(self):
         """
         The function `on_Button_KE_clicked` opens a dialog window, reads data from a
@@ -1458,7 +1569,6 @@ class Page4(PQW.QWizardPage):
             itemTable = PQW.QTableWidgetItem(Rows[i].split(',')[1])
             Page4.Table_Stat.setItem(i-1,1, itemTable)
 
-    @logger.catch
     def Chart(self):
         """
         The function `Chart` updates a chart based on the selected option in a combo

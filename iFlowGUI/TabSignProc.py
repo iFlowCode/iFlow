@@ -42,6 +42,7 @@ import TabSignProc as TSP
 import WizardSP as WSP
 import WizardPC as WPC
 import WizardEC as WEC
+from loguru import logger
 #------------------------------------------------------------------------------#
 '''
 TabSignAnal Class
@@ -49,141 +50,148 @@ TabSignAnal Class
 class TabSignProc(PQW.QWidget):
     def __init__(self):
         super().__init__()
-        print('TabSignProc - Start Class')
-# Set Matplotlib fonts size
+        logger.debug('TabSignProc - Start Class')
+        # Set Matplotlib fonts size
         TabSignProc.MPL_AxisTitle = int(VAR.GetMPLAxisTitleFontSizeReference(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR))
         TabSignProc.MPL_AxisTick = int(VAR.GetMPLAxisTickFontSizeReference(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR))
         TabSignProc.MPL_Legend = int(VAR.GetMPLLegendFontSizeReference(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR))
-# Store class object
+        # Store class object
         VAR.SetTabSignProc(VAR, self)
-# Create grid layot for the window
-        Layout_Tab_SignProc = PQW.QGridLayout()
-# Button Calculate
+        # Create grid layot for the window
+        #         Layout_Tab_SignProc = PQW.QGridLayout()
+        Layout_Tab_SignProc = PQW.QHBoxLayout()
+        container_left = PQW.QFrame()
+        Layout_Tab_SignProc_left = PQW.QVBoxLayout()
+        # Button Calculate
         TabSignProc.Button_SP = PQW.QPushButton('Signal Processing')
-        # TabSignProc.Button_SP.setFixedHeight(int(VAR.GetConboBoxHeight(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR)))
-# #         TabSignProc.Button_SP.setToolTip('Launch Signal Processing Wizard') # Tooltip message
+        #         TabSignProc.Button_SP.setToolTip('Launch Signal Processing Wizard') # Tooltip message
         TabSignProc.Button_SP.clicked.connect(self.on_Button_SP_clicked) # Button event Click on
-# #%%
-# Groupbox Filter
-        self.GroupBox_Filter = PQW.QGroupBox('Filter:')
-# Create the Layout for the Groupbox Filter
-        self.VBoxFilter = PQW.QVBoxLayout()
-# Label
-        Label_Method = PQW.QLabel('Method:')
-# Element ComboBox Method
-        TabSignProc.Combobox_Method = PQW.QComboBox()
-        # TabSignProc.Combobox_Method.setFixedHeight(int(VAR.GetConboBoxHeight(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR)))
-# #         TabSignProc.Combobox_Method.setToolTip('Filter results by method') # Tooltip message
-        #
-        for item in VAR.GetProcessingMethod(VAR):
-            TabSignProc.Combobox_Method.addItem(item)
+        Layout_Tab_SignProc_left.addWidget(TabSignProc.Button_SP)
+# # Groupbox Filter
+#         self.GroupBox_Filter = PQW.QGroupBox('Filter:')
+# # Create the Layout for the Groupbox Filter
+#         self.VBoxFilter = PQW.QVBoxLayout()
+# # Label
+#         Label_Method = PQW.QLabel('Method:')
+# # Element ComboBox Method
+#         TabSignProc.Combobox_Method = PQW.QComboBox()
+#         # TabSignProc.Combobox_Method.setFixedHeight(int(VAR.GetConboBoxHeight(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR)))
+# # #         TabSignProc.Combobox_Method.setToolTip('Filter results by method') # Tooltip message
 #         #
-        TabSignProc.Combobox_Method.currentIndexChanged.connect(self.on_Combobox_Method_change) # ComboBox event change item
-# Label
-        Label_Detrending = PQW.QLabel('Detrending:')
-# Element ComboBox Detrending
-        TabSignProc.Combobox_Detrending = PQW.QComboBox()
-        # TabSignProc.Combobox_Detrending.setFixedHeight(int(VAR.GetConboBoxHeight(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR)))
-# #         TabSignProc.Combobox_Detrending.setToolTip('Filter results by detrending') # Tooltip message
-        #
-        for item in VAR.GetDetrending(VAR):
-            TabSignProc.Combobox_Detrending.addItem(item)
-        #
-        TabSignProc.Combobox_Detrending.currentIndexChanged.connect(self.on_Combobox_Detrending_change) # ComboBox event change item
-# Label
-        Label_FFTwin = PQW.QLabel('FFT Window:')
-# Element ComboBox FFT window
-        TabSignProc.Combobox_FFTwin = PQW.QComboBox()
-        # TabSignProc.Combobox_FFTwin.setFixedHeight(int(VAR.GetConboBoxHeight(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR)))
-# #         TabSignProc.Combobox_FFTwin.setToolTip('Filter results by FFT window') # Tooltip message
-        #
-        for item in VAR.GetFFTWindowfunction(VAR):
-            TabSignProc.Combobox_FFTwin.addItem(item)
-        #
-        TabSignProc.Combobox_FFTwin.currentIndexChanged.connect(self.on_Combobox_FFTwin_change) # ComboBox event change item
-# Add elements to the Layout
-        self.VBoxFilter.addWidget(Label_Method)
-        self.VBoxFilter.addWidget(TabSignProc.Combobox_Method)
-        self.VBoxFilter.addWidget(Label_Detrending)
-        self.VBoxFilter.addWidget(TabSignProc.Combobox_Detrending)
-        self.VBoxFilter.addWidget(Label_FFTwin)
-        self.VBoxFilter.addWidget(TabSignProc.Combobox_FFTwin)
-# Add the Layout to the Groupbox Filter
-        self.GroupBox_Filter.setLayout(self.VBoxFilter)
-# #%%
-# Groupbox Chart
+#         for item in VAR.GetProcessingMethod(VAR):
+#             TabSignProc.Combobox_Method.addItem(item)
+# #         #
+#         TabSignProc.Combobox_Method.currentIndexChanged.connect(self.on_Combobox_Method_change) # ComboBox event change item
+# # Label
+#         Label_Detrending = PQW.QLabel('Detrending:')
+# # Element ComboBox Detrending
+#         TabSignProc.Combobox_Detrending = PQW.QComboBox()
+#         # TabSignProc.Combobox_Detrending.setFixedHeight(int(VAR.GetConboBoxHeight(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR)))
+# # #         TabSignProc.Combobox_Detrending.setToolTip('Filter results by detrending') # Tooltip message
+#         #
+#         for item in VAR.GetDetrending(VAR):
+#             TabSignProc.Combobox_Detrending.addItem(item)
+#         #
+#         TabSignProc.Combobox_Detrending.currentIndexChanged.connect(self.on_Combobox_Detrending_change) # ComboBox event change item
+# # Label
+#         Label_FFTwin = PQW.QLabel('FFT Window:')
+# # Element ComboBox FFT window
+#         TabSignProc.Combobox_FFTwin = PQW.QComboBox()
+#         # TabSignProc.Combobox_FFTwin.setFixedHeight(int(VAR.GetConboBoxHeight(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR)))
+# # #         TabSignProc.Combobox_FFTwin.setToolTip('Filter results by FFT window') # Tooltip message
+#         #
+#         for item in VAR.GetFFTWindowfunction(VAR):
+#             TabSignProc.Combobox_FFTwin.addItem(item)
+#         #
+#         TabSignProc.Combobox_FFTwin.currentIndexChanged.connect(self.on_Combobox_FFTwin_change) # ComboBox event change item
+# # Add elements to the Layout
+#         self.VBoxFilter.addWidget(Label_Method)
+#         self.VBoxFilter.addWidget(TabSignProc.Combobox_Method)
+#         self.VBoxFilter.addWidget(Label_Detrending)
+#         self.VBoxFilter.addWidget(TabSignProc.Combobox_Detrending)
+#         self.VBoxFilter.addWidget(Label_FFTwin)
+#         self.VBoxFilter.addWidget(TabSignProc.Combobox_FFTwin)
+# # Add the Layout to the Groupbox Filter
+#         self.GroupBox_Filter.setLayout(self.VBoxFilter)
+        # Groupbox Chart
         self.GroupBox_Chart = PQW.QGroupBox('Chart:')
-# Create the lyout for the Groupbox Chart
+        # Create the lyout for the Groupbox Chart
         self.VBoxChart = PQW.QVBoxLayout()
-# Label
+        # Label
         Label_Analysis = PQW.QLabel('Analysis:')
-# Element ComboBox Analysis
+        # Element ComboBox Analysis
         TabSignProc.Combobox_Analysis = PQW.QComboBox()
         # TabSignProc.Combobox_Analysis.setFixedHeight(int(VAR.GetConboBoxHeight(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR)))
-# #         TabSignProc.Combobox_Analysis.setToolTip('Choose analysis to show') # Tooltip message
+        # #         TabSignProc.Combobox_Analysis.setToolTip('Choose analysis to show') # Tooltip message
         TabSignProc.Combobox_Analysis.currentIndexChanged.connect(self.on_Combobox_Analysis_change) # ComboBox event change item
-# Label
+        # Label
         Label_ChartType = PQW.QLabel('Chart type:')
-# Element Combobox ChartType
+        # Element Combobox ChartType
         TabSignProc.Combobox_ChartType = PQW.QComboBox()
         # TabSignProc.Combobox_ChartType.setFixedHeight(int(VAR.GetConboBoxHeight(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR)))
-# #         TabSignProc.Combobox_ChartType.setToolTip('Choose the data to display') # Tooltip message
+        # #         TabSignProc.Combobox_ChartType.setToolTip('Choose the data to display') # Tooltip message
         #
         for item in VAR.GetChartTypeSignalProcessin(VAR):
             TabSignProc.Combobox_ChartType.addItem(item)
         #
         TabSignProc.Combobox_ChartType.currentIndexChanged.connect(self.on_Combobox_ChartType_change) # ComboBox event change item
-# Element Combobox ChartType
+        # Element Combobox ChartType
         TabSignProc.Combobox_ChartTimeFreq = PQW.QComboBox()
         # TabSignProc.Combobox_ChartTimeFreq.setFixedHeight(int(VAR.GetConboBoxHeight(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR)))
-# #         TabSignProc.Combobox_ChartTimeFreq.setToolTip('Choose the data to display') # Tooltip message
+        # #         TabSignProc.Combobox_ChartTimeFreq.setToolTip('Choose the data to display') # Tooltip message
         TabSignProc.Combobox_ChartTimeFreq.currentIndexChanged.connect(self.on_Combobox_ChartTimeFreq_change) # ComboBox event change item
-# Add elements to the Layout
+        # Add elements to the Layout
         self.VBoxChart.addWidget(Label_Analysis)
         self.VBoxChart.addWidget(TabSignProc.Combobox_Analysis)
         self.VBoxChart.addWidget(Label_ChartType)
         self.VBoxChart.addWidget(TabSignProc.Combobox_ChartType)
         self.VBoxChart.addWidget(TabSignProc.Combobox_ChartTimeFreq)
-# Add the Layout to the Groupbox Chart
+        # Add the Layout to the Groupbox Chart
         self.GroupBox_Chart.setLayout(self.VBoxChart)
-# #%%
-# Groupbox Report
+        Layout_Tab_SignProc_left.addWidget(self.GroupBox_Chart)
+        # Groupbox Report
         self.GroupBox_Report = PQW.QGroupBox('Report:')
-# Create Layout for the Groupbox Report
+        # Create Layout for the Groupbox Report
         self.VBoxReport = PQW.QVBoxLayout()
-# Element EditLine
+        # Element EditLine
         TabSignProc.Label_Report = ScrollLabel(self)
         TabSignProc.Label_Report.setText('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\nUt enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\nUt enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\nUt enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. ')
-# Add elements to the Layout
+        # Add elements to the Layout
         self.VBoxReport.addWidget(TabSignProc.Label_Report)
-# Add the Layout to the Groupbox Report
+        # Add the Layout to the Groupbox Report
         self.GroupBox_Report.setLayout(self.VBoxReport)
-# #%%
-# Groupbox Sensors
+        Layout_Tab_SignProc_left.addWidget(self.GroupBox_Report)
+        # Groupbox Sensors
         self.GroupBox_Sensors = PQW.QGroupBox("Sensors:")
-# Create Layout for the Groupbox Sensor
+        # Create Layout for the Groupbox Sensor
         TabSignProc.VBoxSensor = PQW.QGridLayout()
-# #         TabSignProc.VBoxSensor = PQW.QVBoxLayout()
+        # #         TabSignProc.VBoxSensor = PQW.QVBoxLayout()
         self.GroupBox_Sensors.setLayout(TabSignProc.VBoxSensor)
-# #%%
-# FFTChart
+        Layout_Tab_SignProc_left.addWidget(self.GroupBox_Sensors)
+        #
+        container_left.setMaximumWidth(int(VAR.GetWindowsSize(VAR)[0] * 2 / 3 / 4))
+        container_left.setLayout(Layout_Tab_SignProc_left)
+        # FFTChart
+        container_right = PQW.QFrame()
+        Layout_Tab_SignProc_Right = PQW.QVBoxLayout()
         TabSignProc.Chart_Fig = plt.figure()
         TabSignProc.Canvas = FigureCanvas(TabSignProc.Chart_Fig)
         self.Toolbar = NavigationToolbar(TabSignProc.Canvas, self)
         TabSignProc.Canvas.draw()
-# Insert element in the grid
-        Layout_Tab_SignProc.addWidget(TabSignProc.Button_SP,0,0,1,2)
-        Layout_Tab_SignProc.addWidget(self.GroupBox_Filter,2,0,1,2)
-        Layout_Tab_SignProc.addWidget(self.GroupBox_Chart,3,0,2,2)
-        Layout_Tab_SignProc.addWidget(self.GroupBox_Report,5,0,2,2)
-        Layout_Tab_SignProc.addWidget(self.GroupBox_Sensors,7,0,4,2)
-        Layout_Tab_SignProc.addWidget(self.Toolbar,0,2,1,8)
-        Layout_Tab_SignProc.addWidget(TabSignProc.Canvas,1,2,10,8)
-# Set layout of tab
+        #
+        Layout_Tab_SignProc_Right.addWidget(self.Toolbar)
+        Layout_Tab_SignProc_Right.addWidget(TabSignProc.Canvas)
+        #
+        container_right.setLayout(Layout_Tab_SignProc_Right)
+        # Set layout of tab
+        Layout_Tab_SignProc.addWidget(container_left)
+        Layout_Tab_SignProc.addWidget(container_right)
+        # Show layout
         self.setLayout(Layout_Tab_SignProc)
-#%%
+
+    @logger.catch
     def Update(self,Case):
-        print('TabSignProc Update - Case',Case)
+        logger.debug(f"TabSignProc Update - Case: {Case}")
         '''
         Case 0: Event generated by the starting of the GUI
         # Case 1: Event generated by on change project
@@ -204,18 +212,18 @@ class TabSignProc(PQW.QWidget):
         #
         VAR.GetiFlowSelf(VAR).progress.setValue(0)
         # Disconect all the internal events
-        TabSignProc.Combobox_Method.currentIndexChanged.disconnect()
-        TabSignProc.Combobox_Detrending.currentIndexChanged.disconnect()
-        TabSignProc.Combobox_FFTwin.currentIndexChanged.disconnect()
+        # TabSignProc.Combobox_Method.currentIndexChanged.disconnect()
+        # TabSignProc.Combobox_Detrending.currentIndexChanged.disconnect()
+        # TabSignProc.Combobox_FFTwin.currentIndexChanged.disconnect()
         TabSignProc.Combobox_Analysis.currentIndexChanged.disconnect()
         TabSignProc.Combobox_ChartType.currentIndexChanged.disconnect()
         TabSignProc.Combobox_ChartTimeFreq.currentIndexChanged.disconnect()
         if(VAR.GetActiveProject(VAR) == None):
             TabSignProc.Button_SP.setEnabled(False)
             # Filter GroupBox
-            TabSignProc.Combobox_Method.setCurrentIndex(0)
-            TabSignProc.Combobox_Detrending.setCurrentIndex(0)
-            TabSignProc.Combobox_FFTwin.setCurrentIndex(0)
+            # TabSignProc.Combobox_Method.setCurrentIndex(0)
+            # TabSignProc.Combobox_Detrending.setCurrentIndex(0)
+            # TabSignProc.Combobox_FFTwin.setCurrentIndex(0)
             # Chart GroupBox
             TabSignProc.Combobox_ChartType.setCurrentIndex(0)
             TabSignProc.Combobox_ChartType.setEnabled(False)
@@ -255,9 +263,9 @@ class TabSignProc(PQW.QWidget):
             if(VAR.GetActiveProbe(VAR) == None):
                 TabSignProc.Button_SP.setEnabled(False)
                 # Filter GroupBox
-                TabSignProc.Combobox_Method.setCurrentIndex(0)
-                TabSignProc.Combobox_Detrending.setCurrentIndex(0)
-                TabSignProc.Combobox_FFTwin.setCurrentIndex(0)
+                # TabSignProc.Combobox_Method.setCurrentIndex(0)
+                # TabSignProc.Combobox_Detrending.setCurrentIndex(0)
+                # TabSignProc.Combobox_FFTwin.setCurrentIndex(0)
                 # Chart GroupBox
                 TabSignProc.Combobox_ChartType.setCurrentIndex(0)
                 TabSignProc.Combobox_ChartType.setEnabled(False)
@@ -298,29 +306,30 @@ class TabSignProc(PQW.QWidget):
                 #
                 RunOK = []
                 for Run in Runs:
-                    Handle = open(Run,'r')
-                    SimType = Handle.readline().split(';')[0]
-                    if SimType == 'FFT':
-                        Handle.readline().split(';')
-                        Handle.readline().split(';')
-                        SimFFTwim = Handle.readline().split(';')[0]
-                        SimDetren = Handle.readline().split(';')[0]
-                    else:
-                        SimFFTwim = 'Ciccio'
-                        SimDetren = 'Ciccio'
-                    Handle.close()
+                    # Handle = open(Run,'r')
+                    # SimType = Handle.readline().split(';')[0]
+                    # if SimType == 'FFT':
+                    #     Handle.readline().split(';')
+                    #     Handle.readline().split(';')
+                    #     SimFFTwim = Handle.readline().split(';')[0]
+                    #     SimDetren = Handle.readline().split(';')[0]
+                    # else:
+                    #     SimFFTwim = 'Ciccio'
+                    #     SimDetren = 'Ciccio'
+                    # Handle.close()
                     #
-                    if TabSignProc.Combobox_Method.currentText() == '' or SimType == TabSignProc.Combobox_Method.currentText():
-                        if TabSignProc.Combobox_FFTwin.currentText() == '' or SimFFTwim == TabSignProc.Combobox_FFTwin.currentText():
-                            if TabSignProc.Combobox_Detrending.currentText() == '' or SimDetren == TabSignProc.Combobox_Detrending.currentText():
-                                RunOK.append('Run: '+(Run.replace('\\','/').split('/')[-1]).replace('.run',''))
+                    # if TabSignProc.Combobox_Method.currentText() == '' or SimType == TabSignProc.Combobox_Method.currentText():
+                    #     if TabSignProc.Combobox_FFTwin.currentText() == '' or SimFFTwim == TabSignProc.Combobox_FFTwin.currentText():
+                    #         if TabSignProc.Combobox_Detrending.currentText() == '' or SimDetren == TabSignProc.Combobox_Detrending.currentText():
+                    #             RunOK.append('Run: '+(Run.replace('\\','/').split('/')[-1]).replace('.run',''))
+                    RunOK.append('Run: '+(Run.replace('\\','/').split('/')[-1]).replace('.run',''))
                 #
                 TabSignProc.Button_SP.setEnabled(True)
                 if len(RunOK) == 0:
                     # Filter GroupBox
-                    TabSignProc.Combobox_Method.setCurrentIndex(0)
-                    TabSignProc.Combobox_Detrending.setCurrentIndex(0)
-                    TabSignProc.Combobox_FFTwin.setCurrentIndex(0)
+                    # TabSignProc.Combobox_Method.setCurrentIndex(0)
+                    # TabSignProc.Combobox_Detrending.setCurrentIndex(0)
+                    # TabSignProc.Combobox_FFTwin.setCurrentIndex(0)
                     # Chart GroupBox
                     TabSignProc.Combobox_ChartType.setCurrentIndex(0)
                     TabSignProc.Combobox_ChartType.setEnabled(False)
@@ -493,7 +502,6 @@ class TabSignProc(PQW.QWidget):
                             Text = Text+'Processed sensors:\n'
                             for item in Sensors.split(','):
                                 Text = Text+'\t'+item+'\n'
-
                         #
                         TabSignProc.Label_Report.setText(Text)
                     # Sensors GroupBox
@@ -958,9 +966,9 @@ class TabSignProc(PQW.QWidget):
                     VAR.GetiFlowSelf(VAR).Menu_SP_BREcalc.setEnabled(True)
                 VAR.GetiFlowSelf(VAR).Menu_RunSP.setEnabled(True)
         # Connect all internal event
-        TabSignProc.Combobox_Method.currentIndexChanged.connect(TabSignProc.on_Combobox_Method_change) # ComboBox event change item
-        TabSignProc.Combobox_Detrending.currentIndexChanged.connect(TabSignProc.on_Combobox_Detrending_change) # ComboBox event change item
-        TabSignProc.Combobox_FFTwin.currentIndexChanged.connect(TabSignProc.on_Combobox_FFTwin_change) # ComboBox event change item
+        # TabSignProc.Combobox_Method.currentIndexChanged.connect(TabSignProc.on_Combobox_Method_change) # ComboBox event change item
+        # TabSignProc.Combobox_Detrending.currentIndexChanged.connect(TabSignProc.on_Combobox_Detrending_change) # ComboBox event change item
+        # TabSignProc.Combobox_FFTwin.currentIndexChanged.connect(TabSignProc.on_Combobox_FFTwin_change) # ComboBox event change item
         TabSignProc.Combobox_Analysis.currentIndexChanged.connect(TabSignProc.on_Combobox_Analysis_change) # ComboBox event change item
         TabSignProc.Combobox_ChartType.currentIndexChanged.connect(TabSignProc.on_Combobox_ChartType_change) # ComboBox event change item
         TabSignProc.Combobox_ChartTimeFreq.currentIndexChanged.connect(TabSignProc.on_Combobox_ChartTimeFreq_change) # ComboBox event change item
@@ -969,56 +977,62 @@ class TabSignProc(PQW.QWidget):
         #
         return
 
+    # @logger.catch
     def on_Button_SP_clicked(self):
-        print('TabSignProc - on_Button_SP_clicked')
+        logger.debug('TabSignProc - on_Button_SP_clicked')
         # Lunch the wizard for importing a new probe
         WizardAddProbe = WSP.SignalProcessing()
         WizardAddProbe.exec_()
         return
-#%%
-    def on_Combobox_Method_change(self):
-        print('TabSignProc - on_Combobox_Method_change')
-        if TabSignProc.Combobox_Method.currentText() == 'LPM':
-            TabSignProc.Combobox_Detrending.setEnabled(False)
-            TabSignProc.Combobox_FFTwin.setEnabled(False)
-        else:
-            TabSignProc.Combobox_Detrending.setEnabled(True)
-            TabSignProc.Combobox_FFTwin.setEnabled(True)
-        TSP.TabSignProc.Update(TSP,8) #!
-        return
-#%%
-    def on_Combobox_Detrending_change(self):
-        print('TabSignProc - on_Combobox_Detrending_change')
-        TSP.TabSignProc.Update(TSP,8) #!
-        return
-#%%
-    def on_Combobox_FFTwin_change(self):
-        print('TabSignProc - on_Combobox_FFTwin_change')
-        TSP.TabSignProc.Update(TSP,8) #!
-        return
 # #%%
+#     def on_Combobox_Method_change(self):
+#         print('TabSignProc - on_Combobox_Method_change')
+#         if TabSignProc.Combobox_Method.currentText() == 'LPM':
+#             TabSignProc.Combobox_Detrending.setEnabled(False)
+#             TabSignProc.Combobox_FFTwin.setEnabled(False)
+#         else:
+#             TabSignProc.Combobox_Detrending.setEnabled(True)
+#             TabSignProc.Combobox_FFTwin.setEnabled(True)
+#         TSP.TabSignProc.Update(TSP,8) #!
+#         return
+# #%%
+#     def on_Combobox_Detrending_change(self):
+#         print('TabSignProc - on_Combobox_Detrending_change')
+#         TSP.TabSignProc.Update(TSP,8) #!
+#         return
+# #%%
+#     def on_Combobox_FFTwin_change(self):
+#         print('TabSignProc - on_Combobox_FFTwin_change')
+#         TSP.TabSignProc.Update(TSP,8) #!
+#         return
+
+    # @logger.catch
     def on_Combobox_Analysis_change(self):
-        print('TabSignProc - on_Combobox_Analysis_change')
+        logger.debug('TabSignProc - on_Combobox_Analysis_change')
         TSP.TabSignProc.Update(TSP,9)
         return
-#%%
+
+    # @logger.catch
     def on_Combobox_ChartType_change(self):
-        print('TabSignProc - on_Combobox_ChartType_change')
+        logger.debug('TabSignProc - on_Combobox_ChartType_change')
         TSP.TabSignProc.Update(TSP,12)
         return
-#%%
+
+    # @logger.catch
     def on_Combobox_ChartTimeFreq_change(self):
-        print('TabSignProc - on_Combobox_ChartTimeFreq_change')
+        logger.debug('TabSignProc - on_Combobox_ChartTimeFreq_change')
         TSP.TabSignProc.Update(TSP,14)
         return
-#%%
+
+    # @logger.catch
     def SensorActiveChange(self):
-        print('TabSignProc - SensorActiveChange')
+        logger.debug('TabSignProc - SensorActiveChange')
         TSP.TabSignProc.Update(TSP,11)
         return
-#%%
+
+    # @logger.catch
     def on_Button_SPExport_clicked(self):
-        print('TabSignProc - on_Button_SPExport_clicked')
+        logger.debug('TabSignProc - on_Button_SPExport_clicked')
         dfcopy = TabSignProc.df_chart_data.copy()
         if TabSignProc.Combobox_ChartType.currentText() != 'SNR heatmap':
             if VAR.GetActiveParameters(VAR,2) == 'yyyy-mm-dd h24:min:sec':
@@ -1038,7 +1052,6 @@ class TabSignProc(PQW.QWidget):
                     string = string +','+ str(TabSignProc.x[i])
                 Handle.write(string+'\n')
                 #
-                
                 for i in range(0,len(TabSignProc.yChart)):
                     string = str(TabSignProc.yChart[i])
                     for j in range(0,dfcopy.shape[0]):
@@ -1108,16 +1121,18 @@ class TabSignProc(PQW.QWidget):
         #
         return
 
+    # @logger.catch
     def on_Button_SP_PhaseCorr_clicked(self):
-        print('TabSignProc - on_Button_SP_PhaseCorr_clicked')
+        logger.debug('TabSignProc - on_Button_SP_PhaseCorr_clicked')
         # Lunch the wizard for importing a new probe
         WizardPhase = WPC.Phase()
         WizardPhase.exec_()
         TSP.TabSignProc.Update(TSP,9)
         return
 
+    # @logger.catch
     def on_Button_SP_BREcalc_clicked(self):
-        print('TabSignProc - on_Button_SP_BREcalc_clicked')
+        logger.debug('TabSignProc - on_Button_SP_BREcalc_clicked')
         # Lunch the wizard for importing a new probe
         WizardElCalc = WEC.BREcalc()
         WizardElCalc.exec_()
