@@ -130,7 +130,7 @@ Install the following python packages
   ```sh
   pip install scipy
   ```
-* loguru (used version x.x.x)
+* loguru (used version 0.7.2)
   ```sh
   pip install loguru
   ```
@@ -204,12 +204,12 @@ Project Link: [iFlow Project](MAILTO:iflowcode@gmail.com)
 
 |  |  |  |
 | --- | --- | --- |
-| Andrea Bertagnoli | [mail](MAILTO:email@email_client.com) |  |
-| Daniele Tonina | [mail](MAILTO:email@email_client.com) |  |
-| Matthijs van Berkel | [mail](MAILTO:email@email_client.com) |  |
-| Ricky van Kampen | [mail](MAILTO:email@email_client.com) |  |
-| Uwe Schneidewind | [mail](MAILTO:email@email_client.com) |  |
-| Charles Luce| [mail](MAILTO:email@email_client.com) | [web](www.differ.nl) |
+| Andrea Bertagnoli | [mail](MAILTO:bert8301@vandals.uidaho.edu) |  |
+| Daniele Tonina |  |  |
+| Matthijs van Berkel |  |  |
+| Ricky van Kampen |  |
+| Uwe Schneidewind |  |  |
+| Charles Luce|  |  |
 
 
 
