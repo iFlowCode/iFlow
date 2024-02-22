@@ -204,12 +204,16 @@ Project Link: [iFlow Project](MAILTO:iflowcode@gmail.com)
 
 |  |  |  |
 | --- | --- | --- |
-| Andrea Bertagnoli | [mail](MAILTO:bert8301@vandals.uidaho.edu) |  |
-| Daniele Tonina |  |  |
-| Matthijs van Berkel |  |  |
-| Ricky van Kampen |  |
-| Uwe Schneidewind |  |  |
-| Charles Luce|  |  |
+| M. van Berkel |  |  |
+| A. Bertagnoli | [mail](MAILTO:bert8301@vandals.uidaho.edu) |  |
+| C. Luce|  |  |
+| R. van Kampen |  |
+| S. Krause |  |  |
+| S. Schneidewind |  |  |
+| D. Tonina |  |  |
+| U. Schneidewind |  |  |
+| G. Vandersteen |  |  |
+
 
 
 
