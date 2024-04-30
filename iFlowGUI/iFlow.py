@@ -25,7 +25,9 @@ import TabFreqAnal as TFA
 import TabSignProc as TSP
 import TabParEst as TPE
 import TabBrede as TB
+from Units import UNIT
 from loguru import logger
+import platform
 #------------------------------------------------------------------------------#
 '''
 Main window of iFlow
@@ -38,29 +40,36 @@ class iFlowApp(PQW.QMainWindow):
         self.setWindowIcon(PQG.QIcon('iFlow.ico'))
         # Store class object
         VAR.SetiFlowSelf(VAR, self)
-        # Set options Options #! Insert load parameter from file
-        HandleConfig = open('../config/config.ini','r')
-        OPT.SetHarmonicFlag(OPT,HandleConfig.readline().split(',')[0])
-        OPT.SetTFAxAxisUnit(OPT,HandleConfig.readline().split(',')[0])
-        HandleConfig.close()
-        # Load and store the amplitude correction factor for the FFT window types
-        HandleFFTconfig = open('../config/FFTcorAMP.txt')
-        Rows = HandleFFTconfig.readlines()
-        HandleFFTconfig.close()
-        AmpCorrFFT = []
-        for Row in Rows:
-            AmpCorrFFT.append(float(Row.split(',')[0]))
-        OPT.SetFFTcorAMP(OPT,AmpCorrFFT)
-        # Load and store the hamonics for the Frequency Analysis  Tab
-        HandleHarmonics = open('../harmonics/harmonics.hrm','r')
-        Rows = HandleHarmonics.readlines()
-        HandleHarmonics.close()
-        ListHarminics = []
-        for Row in Rows:
-            ListHarminics.append(float(Row.replace('\n','')))
-        OPT.SetHarmonics(OPT,ListHarminics)
-        #
-        OPT.SetBasicPeriod(OPT,24)
+        # # Set options Options #! Insert load parameter from file
+        # HandleConfig = open('../config/config.ini','r')
+        # OPT.SetBasicPeriod(OPT,HandleConfig.readline().split(',')[0])
+        # OPT.SetHarmonicFlag(OPT,HandleConfig.readline().split(',')[0])
+        # OPT.SetTFAxAxisUnit(OPT,HandleConfig.readline().split(',')[0])
+        # OPT.SetScriptRun(OPT,HandleConfig.readline().split(',')[0],"WIN")
+        # OPT.SetScriptRun(OPT,HandleConfig.readline().split(',')[0],"LIN")
+        # OPT.SetScriptRun(OPT,HandleConfig.readline().split(',')[0],"MAC")
+        # OPT.SetRunMode(OPT,HandleConfig.readline().split(',')[0],"WIN")
+        # OPT.SetRunMode(OPT,HandleConfig.readline().split(',')[0],"LIN")
+        # OPT.SetRunMode(OPT,HandleConfig.readline().split(',')[0],"MAC")
+        # HandleConfig.close()
+        # # Load and store the amplitude correction factor for the FFT window types
+        # HandleFFTconfig = open('../config/FFTcorAMP.txt')
+        # Rows = HandleFFTconfig.readlines()
+        # HandleFFTconfig.close()
+        # AmpCorrFFT = []
+        # for Row in Rows:
+        #     AmpCorrFFT.append(float(Row.split(',')[0]))
+        # OPT.SetFFTcorAMP(OPT,AmpCorrFFT)
+        # # Load and store the hamonics for the Frequency Analysis  Tab
+        # HandleHarmonics = open('../harmonics/harmonics.hrm','r')
+        # Rows = HandleHarmonics.readlines()
+        # HandleHarmonics.close()
+        # ListHarminics = []
+        # for Row in Rows:
+        #     ListHarminics.append(float(Row.replace('\n','')))
+        # OPT.SetHarmonics(OPT,ListHarminics)
+        # #
+        # OPT.SetBasicPeriod(OPT,24)
         # Load the projects crated from the file projects.ini
         try:
             HandleProjIni = open('../projects/projects.ini','r')
@@ -125,7 +134,7 @@ class iFlowApp(PQW.QMainWindow):
         # Add Tab Parameter Estimation to TabWidget
         self.Tabs_iFlow.addTab(TPE.TabParEst(), 'Parameter Estimation')
         # Add Tab Bredehofet to TabWidget
-        self.Tabs_iFlow.addTab(TB.TabBrede(), 'Bredehofet')
+        self.Tabs_iFlow.addTab(TB.TabBrede(), 'Bredehoeft')
         # Insert TabWidget in the grid
         Layout_iFlow.addWidget(self.Tabs_iFlow, 0, 0)
         # Create the menubar of the main window
@@ -179,6 +188,7 @@ class iFlowApp(PQW.QMainWindow):
         Menu_Probe.addAction(self.Menu_Probe_Imp)
         #
         Menu_Exit = PQW.QAction('Exit', self)
+        Menu_Exit.triggered.connect(self.on_exit)
         #
         Menu_Main.addMenu(Menu_Project)
         Menu_Main.addMenu(Menu_Probe)
@@ -258,7 +268,7 @@ class iFlowApp(PQW.QMainWindow):
         Menu_Main.addMenu(Menu_PE_Export)
         # Menu_Main.addAction(self.Menu_RunPE_Compare)
         # Menu: Bredehofet
-        Menu_Main = Menu.addMenu('Bredehofet')
+        Menu_Main = Menu.addMenu('Bredehoeft')
         self.Menu_RunBH = PQW.QAction('Run analysis', self)
         self.Menu_RunBH.triggered.connect(VAR.GetTabBrede(VAR).on_Button_BH_clicked)
         self.Menu_BH_Export = PQW.QAction('Export', self)
@@ -286,10 +296,57 @@ class iFlowApp(PQW.QMainWindow):
         TPE.TabParEst.Update(TPE,0)
         TB.TabBrede.Update(TB,0)
 
+    def on_exit(self):
+        self.close()
+
 if __name__ == '__main__':
+    # OS detection
+    OS = platform.system()
+    if OS == "Darwin":
+        VAR.SetOSsystem(VAR,"MAC")
+    elif OS == "Windows":
+        VAR.SetOSsystem(VAR,"WIN")
+    elif OS == "Linux":
+        VAR.SetOSsystem(VAR,"LIN")
+    # Set options Options #! Insert load parameter from file
+    HandleConfig = open('../config/config.ini','r')
+    OPT.SetBasicPeriod(OPT,HandleConfig.readline().split(',')[0])
+    OPT.SetHarmonicFlag(OPT,HandleConfig.readline().split(',')[0])
+    OPT.SetTFAxAxisUnit(OPT,HandleConfig.readline().split(',')[0])
+    OPT.SetScriptRun(OPT,HandleConfig.readline().split(',')[0],"WIN")
+    OPT.SetScriptRun(OPT,HandleConfig.readline().split(',')[0],"LIN")
+    OPT.SetScriptRun(OPT,HandleConfig.readline().split(',')[0],"MAC")
+    OPT.SetRunMode(OPT,HandleConfig.readline().split(',')[0],"WIN")
+    OPT.SetRunMode(OPT,HandleConfig.readline().split(',')[0],"LIN")
+    OPT.SetRunMode(OPT,HandleConfig.readline().split(',')[0],"MAC")
+    UNIT.SetTime(UNIT,HandleConfig.readline().split(',')[0])
+    UNIT.SetTemperature(UNIT,HandleConfig.readline().split(',')[0])
+    UNIT.SetFrequency(UNIT,HandleConfig.readline().split(',')[0])
+    UNIT.SetAngle(UNIT,HandleConfig.readline().split(',')[0])
+    UNIT.SetLenght(UNIT,HandleConfig.readline().split(',')[0])
+    HandleConfig.close()
+    # Load and store the amplitude correction factor for the FFT window types
+    HandleFFTconfig = open('../config/FFTcorAMP.txt')
+    Rows = HandleFFTconfig.readlines()
+    HandleFFTconfig.close()
+    AmpCorrFFT = []
+    for Row in Rows:
+        AmpCorrFFT.append(float(Row.split(',')[0]))
+    OPT.SetFFTcorAMP(OPT,AmpCorrFFT)
+    # Load and store the hamonics for the Frequency Analysis  Tab
+    HandleHarmonics = open('../harmonics/harmonics.hrm','r')
+    Rows = HandleHarmonics.readlines()
+    HandleHarmonics.close()
+    ListHarminics = []
+    for Row in Rows:
+        ListHarminics.append(float(Row.replace('\n','')))
+    OPT.SetHarmonics(OPT,ListHarminics)
+    #
+    # OPT.SetBasicPeriod(OPT,24) #! already read from file
+    #
     logger.remove()
     logger.add(F"../logs/GUI.log", rotation="7 days")
-    
+    #
     app = PQW.QApplication(sys.argv)
     screen_resolution = app.desktop().screenGeometry()
     width, height = screen_resolution.width(), screen_resolution.height()

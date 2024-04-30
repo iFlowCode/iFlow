@@ -33,7 +33,7 @@ from shutil import copyfile
 # Import custom library
 from Variables import VAR
 from loguru import logger
-
+from Options import OPT
 '''
 Wizzard Add Probe Class
 '''
@@ -58,7 +58,21 @@ class Brede(PQW.QWizard):
         #
         copyfile('../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/data/clean.pkz', '../temp/clean.pkz')
         #
-        stringEXE = 'Bredehofet.exe'
+        if VAR.GetOSsystem(VAR) == "WIN":
+            if OPT.GetRunMode(OPT,"WIN") == "script":
+                stringEXE = OPT.GetScriptRun(OPT,"WIN")+" "+"Bredehofet.py"
+            else:
+                stringEXE = 'Bredehofet.exe'
+        elif VAR.GetOSsystem(VAR) == "MAC":
+            if OPT.GetRunMode(OPT,"MAC") == "script":
+                stringEXE = OPT.GetScriptRun(OPT,"MAC")+" "+"Bredehofet.py"
+            else:
+                stringEXE = ""  #! To define on mac when and if i can compile the code
+        elif VAR.GetOSsystem(VAR) == "LIN":
+            if OPT.GetRunMode(OPT,"LIN") == "script":
+                stringEXE = OPT.GetScriptRun(OPT,"LIN")+" "+"Bredehofet.py"
+            else:
+                stringEXE = ""  #! To define on linux when i compile the code
         # Sensors [LIST] -s
         stringEXE = stringEXE + ' -s "' + ','.join(Page1.Sensors) +'"'
         # Heights [LIST] -h

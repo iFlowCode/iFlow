@@ -265,3 +265,12 @@ class VAR():
     '''
     def GetConboBoxHeight(self):
         return 20
+    """
+    OS system
+    """
+    def SetOSsystem(self,OS):
+        self.OS = OS
+        return
+    
+    def GetOSsystem(self):
+        return self.OS

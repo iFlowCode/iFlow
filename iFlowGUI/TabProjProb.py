@@ -35,7 +35,7 @@ import TabParEst as TPE
 import TabBrede as TBH
 import WizardAP as WAP
 from loguru import logger
-
+from Units import UNIT
 '''
 TabProjStac Class
 '''
@@ -338,9 +338,9 @@ class TabProjProb(PQW.QWidget):
             TabProjProb.ax = TabProjProb.Chart_Fig.add_subplot(111)
             # TabProjProb.ax.legend()
             TabProjProb.ax.grid(True, which='both', axis='both', linestyle='--')
-            TabProjProb.ax.set_ylabel('Temperature')
+            # TabProjProb.ax.set_ylabel('Temperature')
             #
-            TabProjProb.ax.set_xlabel('Time')
+            # TabProjProb.ax.set_xlabel('Time')
             TabProjProb.Canvas.draw()
             # Menu Update
             VAR.GetiFlowSelf(VAR).Menu_Project_Del.setEnabled(False)
@@ -389,8 +389,8 @@ class TabProjProb(PQW.QWidget):
                 TabProjProb.ax = TabProjProb.Chart_Fig.add_subplot(111)
                 # TabProjProb.ax.legend()
                 TabProjProb.ax.grid(True, which='both', axis='both', linestyle='--')
-                TabProjProb.ax.set_ylabel('Temperature')
-                TabProjProb.ax.set_xlabel('Time')
+                # TabProjProb.ax.set_ylabel('Temperature')
+                # TabProjProb.ax.set_xlabel('Time')
                 TabProjProb.Canvas.draw()
                 # Menu Update
                 VAR.GetiFlowSelf(VAR).Menu_Project_Del.setEnabled(True)
@@ -528,23 +528,23 @@ class TabProjProb(PQW.QWidget):
                         if TabProjProb.VBoxSensor.itemAt(i).widget().isChecked():
                             if(VAR.GetChartColors(VAR) == None):
                                 if VAR.GetActiveParameters(VAR,2) == 'yyyy-mm-dd h24:min:sec':
-                                    plot = TabProjProb.ax.plot(pd.to_datetime(self.df_Data['Time'],unit='s').to_numpy(), (self.df_Data[TabProjProb.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), '-', label = TabProjProb.VBoxSensor.itemAt(i).widget().text())
+                                    plot = TabProjProb.ax.plot(pd.to_datetime(self.df_Data['Time'],unit='s').to_numpy(), UNIT.ConvertTemperature(UNIT,(self.df_Data[TabProjProb.VBoxSensor.itemAt(i).widget().text()]).to_numpy()), '-', label = TabProjProb.VBoxSensor.itemAt(i).widget().text())
                                     if TabProjProb.CheckBox_DispInter.isChecked():
-                                        plot = TabProjProb.ax.plot(pd.to_datetime(self.df_Mark['Time'],unit='s').to_numpy(), (self.df_Mark[TabProjProb.VBoxSensor.itemAt(i).widget().text()].replace(-9999.0,Min)).to_numpy(), 'o', label = TabProjProb.VBoxSensor.itemAt(i).widget().text(), color=Colors[i])
+                                        plot = TabProjProb.ax.plot(pd.to_datetime(self.df_Mark['Time'],unit='s').to_numpy(), UNIT.ConvertTemperature(UNIT,(self.df_Mark[TabProjProb.VBoxSensor.itemAt(i).widget().text()].replace(-9999.0,Min)).to_numpy()), 'o', label = TabProjProb.VBoxSensor.itemAt(i).widget().text(), color=Colors[i])
                                 elif VAR.GetActiveParameters(VAR,2) == 'Time':
-                                    plot = TabProjProb.ax.plot(self.df_Data['Time'].to_numpy(), (self.df_Data[TabProjProb.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), '-', label = TabProjProb.VBoxSensor.itemAt(i).widget().text())
+                                    plot = TabProjProb.ax.plot(UNIT.ConvertTime(UNIT,self.df_Data['Time'].to_numpy()), UNIT.ConvertTemperature(UNIT,(self.df_Data[TabProjProb.VBoxSensor.itemAt(i).widget().text()]).to_numpy()), '-', label = TabProjProb.VBoxSensor.itemAt(i).widget().text())
                                     if TabProjProb.CheckBox_DispInter.isChecked():
-                                        plot = TabProjProb.ax.plot(self.df_Mark['Time'].to_numpy(), (self.df_Mark[TabProjProb.VBoxSensor.itemAt(i).widget().text()].replace(-9999.0,Min)).to_numpy(), 'o', label = TabProjProb.VBoxSensor.itemAt(i).widget().text(), color=Colors[i])
+                                        plot = TabProjProb.ax.plot(UNIT.ConvertTime(UNIT,self.df_Mark['Time'].to_numpy()), UNIT.ConvertTemperature(UNIT,(self.df_Mark[TabProjProb.VBoxSensor.itemAt(i).widget().text()].replace(-9999.0,Min)).to_numpy()), 'o', label = TabProjProb.VBoxSensor.itemAt(i).widget().text(), color=Colors[i])
                                 Colors.append(plot[0].get_color())
                             else:
                                 if VAR.GetActiveParameters(VAR,2) == 'yyyy-mm-dd h24:min:sec':
-                                    plot = TabProjProb.ax.plot(pd.to_datetime(self.df_Data['Time'],unit='s').to_numpy(), (self.df_Data[TabProjProb.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), '-', label = TabProjProb.VBoxSensor.itemAt(i).widget().text(), color=Colors[i])
+                                    plot = TabProjProb.ax.plot(pd.to_datetime(self.df_Data['Time'],unit='s').to_numpy(), UNIT.ConvertTemperature(UNIT,(self.df_Data[TabProjProb.VBoxSensor.itemAt(i).widget().text()]).to_numpy()), '-', label = TabProjProb.VBoxSensor.itemAt(i).widget().text(), color=Colors[i])
                                     if TabProjProb.CheckBox_DispInter.isChecked():
-                                        plot = TabProjProb.ax.plot(pd.to_datetime(self.df_Mark['Time'],unit='s').to_numpy(), (self.df_Mark[TabProjProb.VBoxSensor.itemAt(i).widget().text()].replace(-9999.0,Min)).to_numpy(), 'o', label = TabProjProb.VBoxSensor.itemAt(i).widget().text(), color=Colors[i])
+                                        plot = TabProjProb.ax.plot(pd.to_datetime(self.df_Mark['Time'],unit='s').to_numpy(), UNIT.ConvertTemperature(UNIT,(self.df_Mark[TabProjProb.VBoxSensor.itemAt(i).widget().text()].replace(-9999.0,Min)).to_numpy()), 'o', label = TabProjProb.VBoxSensor.itemAt(i).widget().text(), color=Colors[i])
                                 elif VAR.GetActiveParameters(VAR,2) == 'Time':
-                                    plot = TabProjProb.ax.plot(self.df_Data['Time'].to_numpy(), (self.df_Data[TabProjProb.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), '-', label = TabProjProb.VBoxSensor.itemAt(i).widget().text(), color=Colors[i])
+                                    plot = TabProjProb.ax.plot(UNIT.ConvertTime(UNIT,self.df_Data['Time'].to_numpy()), UNIT.ConvertTemperature(UNIT,(self.df_Data[TabProjProb.VBoxSensor.itemAt(i).widget().text()]).to_numpy()), '-', label = TabProjProb.VBoxSensor.itemAt(i).widget().text(), color=Colors[i])
                                     if TabProjProb.CheckBox_DispInter.isChecked():
-                                        plot = TabProjProb.ax.plot(self.df_Mark['Time'].to_numpy(), (self.df_Mark[TabProjProb.VBoxSensor.itemAt(i).widget().text()].replace(-9999.0,Min)).to_numpy(), 'o', label = TabProjProb.VBoxSensor.itemAt(i).widget().text(), color=Colors[i])
+                                        plot = TabProjProb.ax.plot(UNIT.ConvertTime(UNIT,self.df_Mark['Time'].to_numpy()), UNIT.ConvertTemperature(UNIT,(self.df_Mark[TabProjProb.VBoxSensor.itemAt(i).widget().text()].replace(-9999.0,Min)).to_numpy()), 'o', label = TabProjProb.VBoxSensor.itemAt(i).widget().text(), color=Colors[i])
                     #
                     VAR.GetiFlowSelf(VAR).progress.setValue(80)
                     if len(self.Data_Columns) > 5:
@@ -552,12 +552,14 @@ class TabProjProb(PQW.QWidget):
                     else:
                         TabProjProb.ax.legend(ncol=len(self.Data_Columns),fontsize=TabProjProb.MPL_Legend)
                     TabProjProb.ax.grid(True, which='both', axis='both', linestyle='--')
-                    TabProjProb.ax.set_ylabel('Temperature ('+u'\N{DEGREE SIGN}'+'C)',fontsize=TabProjProb.MPL_AxisTitle)
+                    # TabProjProb.ax.set_ylabel('Temperature ('+u'\N{DEGREE SIGN}'+'C)',fontsize=TabProjProb.MPL_AxisTitle)
+                    TabProjProb.ax.set_ylabel(UNIT.LabelTemperature(UNIT),fontsize=TabProjProb.MPL_AxisTitle)
                     TabProjProb.ax.tick_params(axis='both', labelsize=TabProjProb.MPL_AxisTick)
                     if VAR.GetActiveParameters(VAR,2) == 'yyyy-mm-dd h24:min:sec':
                         TabProjProb.ax.set_xlabel('Date',fontsize=TabProjProb.MPL_AxisTitle)
                     elif VAR.GetActiveParameters(VAR,2) == 'Time':
-                        TabProjProb.ax.set_xlabel('Time (s)',fontsize=TabProjProb.MPL_AxisTitle)
+                        # TabProjProb.ax.set_xlabel('Time (s)',fontsize=TabProjProb.MPL_AxisTitle)
+                        TabProjProb.ax.set_xlabel(UNIT.LabelTime(UNIT),fontsize=TabProjProb.MPL_AxisTitle)
                     #
                     # if Case == 7:
                     #     if VAR.GetActiveParameters(VAR,2) == 'yyyy-mm-dd h24:min:sec':

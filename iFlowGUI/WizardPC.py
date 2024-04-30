@@ -51,9 +51,9 @@ class Phase(PQW.QWizard):
         super(Phase, self).__init__(parent)
         self.setWindowTitle('Phase Correction - '+VAR.GetTabSignProc(VAR).Combobox_Analysis.currentText())
         #
-        width = int(VAR.GetWindowsSize(VAR)[0] * 0.9) # Width of the window
-        height = int(VAR.GetWindowsSize(VAR)[1] * 0.9) # Height of the window
-        self.setMinimumSize(width,height)
+        # width = int(VAR.GetWindowsSize(VAR)[0] * 0.9) # Width of the window
+        # height = int(VAR.GetWindowsSize(VAR)[1] * 0.9) # Height of the window
+        # self.setMinimumSize(width,height)
         #
         self.addPage(Page1(self)) # Add Page1
         #
@@ -99,37 +99,37 @@ class Page1(PQW.QWizardPage):
         #
         for item in Periods:
             Page1.Combobox_Freq.addItem(str(item))
-        Page1.Combobox_Freq.setFixedHeight(VAR.GetConboBoxHeight(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR))
-        Page1.Combobox_Freq.setFixedWidth(VAR.GetWindowsWidth(VAR)*0.2)
+        # Page1.Combobox_Freq.setFixedHeight(VAR.GetConboBoxHeight(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR))
+        # Page1.Combobox_Freq.setFixedWidth(VAR.GetWindowsWidth(VAR)*0.2)
         Periods = (np.array(Periods) - OPT.GetBasicPeriod(OPT))**2
         pos = np.argmin(Periods)
         Page1.Combobox_Freq.setCurrentIndex(pos)
         Page1.Combobox_Freq.currentIndexChanged.connect(self.on_Combobox_Freq_change)
         Label_Threshold = PQW.QLabel('Threshold:')
         Page1.Threshold_Value = PQW.QLineEdit()
-        Page1.Threshold_Value.setFixedHeight(VAR.GetConboBoxHeight(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR))
-        Page1.Threshold_Value.setFixedWidth(VAR.GetWindowsWidth(VAR)*0.2)
+        # Page1.Threshold_Value.setFixedHeight(VAR.GetConboBoxHeight(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR))
+        # Page1.Threshold_Value.setFixedWidth(VAR.GetWindowsWidth(VAR)*0.2)
         Label_WorkSens = PQW.QLabel('WorkSens:')
         Page1.Combobox_WorkSens = PQW.QComboBox()
         for Col in Columns[1:]:
             Page1.Combobox_WorkSens.addItem(Col)
-        Page1.Combobox_WorkSens.setFixedHeight(VAR.GetConboBoxHeight(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR))
-        Page1.Combobox_WorkSens.setFixedWidth(VAR.GetWindowsWidth(VAR)*0.2)
+        # Page1.Combobox_WorkSens.setFixedHeight(VAR.GetConboBoxHeight(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR))
+        # Page1.Combobox_WorkSens.setFixedWidth(VAR.GetWindowsWidth(VAR)*0.2)
         Page1.Combobox_WorkSens.currentIndexChanged.connect(self.on_Combobox_WorkSens_change)
         Label_UPDown = PQW.QLabel('Move UP/DOWN:')
         Page1.Combobox_UPDown = PQW.QComboBox()
         Page1.Combobox_UPDown.addItem('UP')
         Page1.Combobox_UPDown.addItem('DOWN')
-        Page1.Combobox_UPDown.setFixedHeight(VAR.GetConboBoxHeight(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR))
-        Page1.Combobox_UPDown.setFixedWidth(VAR.GetWindowsWidth(VAR)*0.2)
+        # Page1.Combobox_UPDown.setFixedHeight(VAR.GetConboBoxHeight(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR))
+        # Page1.Combobox_UPDown.setFixedWidth(VAR.GetWindowsWidth(VAR)*0.2)
         Page1.Button_Apply = PQW.QPushButton('Apply')
-        Page1.Button_Apply.setFixedHeight(VAR.GetConboBoxHeight(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR))
-        Page1.Button_Apply.setFixedWidth(VAR.GetWindowsWidth(VAR)*0.2)
+        # Page1.Button_Apply.setFixedHeight(VAR.GetConboBoxHeight(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR))
+        # Page1.Button_Apply.setFixedWidth(VAR.GetWindowsWidth(VAR)*0.2)
         Page1.Button_Apply.clicked.connect(self.on_Button_Apply_clicked) # Button event Click on
         # Chart
         Page1.Chart_Fig = plt.figure()
         Page1.Canvas = FigureCanvas(Page1.Chart_Fig)
-        Page1.Canvas.setFixedHeight(VAR.GetWindowsHeight(VAR)*0.7)
+        # Page1.Canvas.setFixedHeight(VAR.GetWindowsHeight(VAR)*0.7)
         self.Toolbar = NavigationToolbar(Page1.Canvas, self)
         Page1.ax = Page1.Chart_Fig.add_subplot(111)
         Page1.Canvas.draw()

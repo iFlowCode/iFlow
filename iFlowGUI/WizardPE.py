@@ -37,7 +37,7 @@ from loguru import logger
 # Import custom library
 from Variables import VAR
 import WizEtaKeMean as WKE
-
+from Options import OPT
 '''
 Wizzard Add Probe Class
 '''
@@ -47,10 +47,10 @@ class ParameterEstimation(PQW.QWizard):
         super(ParameterEstimation, self).__init__(parent)
         self.setWindowTitle('Parameter Estimation')
         #
-        self.width = VAR.GetWindowsSize(VAR)[0] * 2 / 3 # Width of the window
-        height = VAR.GetWindowsSize(VAR)[1] * 2 / 3 # Height of the window
+        # self.width = VAR.GetWindowsSize(VAR)[0] * 2 / 3 # Width of the window
+        # height = VAR.GetWindowsSize(VAR)[1] * 2 / 3 # Height of the window
         #
-        self.setMinimumSize(self.width,height) # Set the minimun size of the wondow
+        # self.setMinimumSize(self.width,height) # Set the minimun size of the wondow
         #
         HandleLog = open('../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/probe.ini')
         HandleLog.readline()
@@ -183,7 +183,7 @@ class ParameterEstimation(PQW.QWizard):
                 # self.next()
             else:
                 # Input Files
-                FileDel = glob.glob('../temp/*.*')
+                FileDel = glob.glob('../temp/*.*') #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 for File in FileDel:
                     os.remove(File)
                 #
@@ -191,10 +191,10 @@ class ParameterEstimation(PQW.QWizard):
                 copyfile('../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/SPdata/'+(Page1.Combobox_Run.currentText()).replace('Run: ','')+'_SRN.PdList', '../temp/SRN.PdList')
                 copyfile('../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/SPdata/'+(Page1.Combobox_Run.currentText()).replace('Run: ','')+'_Y.PdList', '../temp/Y.PdList')
                 copyfile('../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/SPdata/'+(Page1.Combobox_Run.currentText()).replace('Run: ','')+'_Amplitude.pkz', '../temp/Amplitude.pkz')
-                #
+                # #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 FileCYmnt = glob.glob('../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/SPdata/'+(Page1.Combobox_Run.currentText()).replace('Run: ','')+'_*.CY_m_nt')
                 for File in FileCYmnt:
-                    copyfile(File, File.replace('../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/SPdata\\'+(Page1.Combobox_Run.currentText()).replace('Run: ','')+'_','../temp/'))
+                    copyfile(File, File.replace("\\","/").replace('../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/SPdata/'+(Page1.Combobox_Run.currentText()).replace('Run: ','')+'_','../temp/'))
                 # SensorOk
                 dfTemp = pd.read_pickle('../temp/Amplitude.pkz',compression='zip')
                 SensorOk = (dfTemp.columns.tolist())[2:]
@@ -213,7 +213,21 @@ class ParameterEstimation(PQW.QWizard):
                 #!     stringEXE = 'ParEstMLEnZ.exe'
                 #! else:
                 #!     stringEXE = 'ParEstMLEn.exe'
-                stringEXE = 'ParEstMLEn.exe'
+                if VAR.GetOSsystem(VAR) == "WIN":
+                    if OPT.GetRunMode(OPT,"WIN") == "script":
+                        stringEXE = OPT.GetScriptRun(OPT,"WIN")+" "+"ParEstMLEn.py"
+                    else:
+                        stringEXE = 'ParEstMLEn.exe'
+                elif VAR.GetOSsystem(VAR) == "MAC":
+                    if OPT.GetRunMode(OPT,"MAC") == "script":
+                        stringEXE = OPT.GetScriptRun(OPT,"MAC")+" "+"ParEstMLEn.py"
+                    else:
+                        stringEXE = ""  #! To define on mac when and if i can compile the code
+                elif VAR.GetOSsystem(VAR) == "LIN":
+                    if OPT.GetRunMode(OPT,"LIN") == "script":
+                        stringEXE = OPT.GetScriptRun(OPT,"LIN")+" "+"ParEstMLEn.py"
+                    else:
+                        stringEXE = ""  #! To define on linux when i compile the code
                 #
                 SensorOkFin = []
                 HeightOkFin = []
@@ -273,7 +287,7 @@ class ParameterEstimation(PQW.QWizard):
                 Check = HandleLog.readline().replace('\n','')
                 HandleLog.close()
                 if Check == 'No Error':
-                    FilesRuns = glob.glob('../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/PEdata/*.run')
+                    FilesRuns = glob.glob('../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/PEdata/*.run') #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     if len(FilesRuns) == 0:
                         NewRun = '0'
                     else:
@@ -286,7 +300,7 @@ class ParameterEstimation(PQW.QWizard):
                     os.remove('../temp/Amplitude.pkz')
                     os.remove('../temp/SRN.PdList')
                     os.remove('../temp/Y.PdList')
-                    FileCYmnt = glob.glob('../temp/*.CY_m_nt')
+                    FileCYmnt = glob.glob('../temp/*.CY_m_nt') #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     for File in FileCYmnt:
                         os.remove(File)
                     #
@@ -337,7 +351,7 @@ class ParameterEstimation(PQW.QWizard):
                         self.back()
                         return
                 # Input Files
-                FileDel = glob.glob('../temp/*.*')
+                FileDel = glob.glob('../temp/*.*') #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 for File in FileDel:
                     os.remove(File)
                 #
@@ -358,7 +372,21 @@ class ParameterEstimation(PQW.QWizard):
                     except:
                         pass
                 #
-                stringEXE = 'ParEstAnal.exe'
+                if VAR.GetOSsystem(VAR) == "WIN":
+                    if OPT.GetRunMode(OPT,"WIN") == "script":
+                        stringEXE = OPT.GetScriptRun(OPT,"WIN")+" "+"ParEstAnal.py"
+                    else:
+                        stringEXE = 'ParEstAnal.exe'
+                elif VAR.GetOSsystem(VAR) == "MAC":
+                    if OPT.GetRunMode(OPT,"MAC") == "script":
+                        stringEXE = OPT.GetScriptRun(OPT,"MAC")+" "+"ParEstAnal.py"
+                    else:
+                        stringEXE = ""  #! To define on mac when and if i can compile the code
+                elif VAR.GetOSsystem(VAR) == "LIN":
+                    if OPT.GetRunMode(OPT,"LIN") == "script":
+                        stringEXE = OPT.GetScriptRun(OPT,"LIN")+" "+"ParEstAnal.py"
+                    else:
+                        stringEXE = ""  #! To define on linux when i compile the code
                 #
                 SensorOkFin = []
                 HeightOkFin = []
@@ -366,11 +394,7 @@ class ParameterEstimation(PQW.QWizard):
                     if Page3.VBoxSensor.itemAt(i).widget().isChecked():
                         SensorOkFin.append(SensorOk[i])
                         HeightOkFin.append(HeightOk[i])
-                # # Probe name  [STRING] -p
-                # stringEXE = stringEXE + ' -p "' + VAR.GetActiveProbe(VAR) +'"'
-                # # Project name  [STRING] -j
-                # stringEXE = stringEXE + ' -j "' + VAR.GetActiveProject(VAR) +'"'
-
+                #
                 # AllItems = [Page3.Combobox_TopSensor.itemText(i) for i in range(Page3.Combobox_TopSensor.count())]
                 # AllItems2 = []
                 # for Sens in AllItems:
@@ -472,6 +496,21 @@ class ParameterEstimation(PQW.QWizard):
                         pass
                 #
                 stringEXE = 'ParEstAnal2.exe'
+                if VAR.GetOSsystem(VAR) == "WIN":
+                    if OPT.GetRunMode(OPT,"WIN") == "script":
+                        stringEXE = OPT.GetScriptRun(OPT,"WIN")+" "+"ParEstAnal2.py"
+                    else:
+                        stringEXE = 'ParEstAnal2.exe'
+                elif VAR.GetOSsystem(VAR) == "MAC":
+                    if OPT.GetRunMode(OPT,"MAC") == "script":
+                        stringEXE = OPT.GetScriptRun(OPT,"MAC")+" "+"ParEstAnal2.py"
+                    else:
+                        stringEXE = ""  #! To define on mac when and if i can compile the code
+                elif VAR.GetOSsystem(VAR) == "LIN":
+                    if OPT.GetRunMode(OPT,"LIN") == "script":
+                        stringEXE = OPT.GetScriptRun(OPT,"LIN")+" "+"ParEstAnal2.py"
+                    else:
+                        stringEXE = ""  #! To define on linux when i compile the code
                 #
                 SensorOkFin = []
                 HeightOkFin = []
@@ -514,7 +553,7 @@ class ParameterEstimation(PQW.QWizard):
                 Check = HandleLog.readline().replace('\n','')
                 HandleLog.close()
                 if Check == 'No Error':
-                    FilesRuns = glob.glob('../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/PEdata/*.run')
+                    FilesRuns = glob.glob('../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/PEdata/*.run') #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     if len(FilesRuns) == 0:
                         NewRun = '0'
                     else:
@@ -594,11 +633,11 @@ class Page1(PQW.QWizardPage):
         Layout_Page1_Left.addWidget(Label_Run)
         Page1.Combobox_Run = PQW.QComboBox() # Combobox Signal processing Runs
         #
-        Files = glob.glob('../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/SPdata/*.run')
+        Files = glob.glob('../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/SPdata/*.run') #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         # RunList = []
         for File in Files:
             # RunList.append('Run: '+File.split('\\')[-1].replace('.run',''))
-            Page1.Combobox_Run.addItem('Run: '+File.split('\\')[-1].replace('.run',''))
+            Page1.Combobox_Run.addItem('Run: '+File.replace("\\","/").split('/')[-1].replace('.run',''))
         #
         Page1.Combobox_Run.currentIndexChanged.connect(self.on_Combobox_Run_change) # ComboBox event change item
         Layout_Page1_Left.addWidget(Page1.Combobox_Run)
@@ -1379,6 +1418,8 @@ class Page4(PQW.QWizardPage):
         if Page1.TimeType == 'Time':
             Page4.ImpoFrom = PQW.QSpinBox(self)
             Page4.ImpoTo = PQW.QSpinBox(self)
+            Page4.ImpoFrom.setRange(10,200)
+            Page4.ImpoTo.setRange(20,500)
         else:
             Page4.ImpoFrom = PQW.QDateTimeEdit(self)
             Page4.ImpoTo = PQW.QDateTimeEdit(self)
@@ -1405,7 +1446,7 @@ class Page4(PQW.QWizardPage):
         Page4.Table_Stat.setHorizontalHeaderLabels(['Sensor', 'Ke'])
         Layout_Page4_Left.addWidget(Page4.Table_Stat)
         #
-        container_left.setMaximumWidth(int(VAR.GetWindowsSize(VAR)[0] * 2 / 3 / 4))
+        # container_left.setMaximumWidth(int(VAR.GetWindowsSize(VAR)[0] * 2 / 3 / 4))
         container_left.setLayout(Layout_Page4_Left)
         # Chart Columns
         container_right = PQW.QFrame()
@@ -1584,6 +1625,14 @@ class Page4(PQW.QWizardPage):
                 df_Chart = pd.read_pickle('../temp/Eta.pkz',compression='zip')
             elif Page4.Combobox_Chart.currentText() == 'Ke':
                 df_Chart = pd.read_pickle('../temp/Ke.pkz',compression='zip')
+
+
+            if Page1.TimeType == 'Time':
+                temp_time = df_Chart["Time"].to_list()
+                Page4.ImpoFrom.setRange(int(temp_time[0]),int(temp_time[-1]))
+                Page4.ImpoTo.setRange(int(temp_time[0]),int(temp_time[-1]))
+                Page4.ImpoFrom.setValue(int(temp_time[0]))
+                Page4.ImpoTo.setValue(int(temp_time[-1]))
             #
             Columns = ((df_Chart.columns).tolist())[1:]
             #

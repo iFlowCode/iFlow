@@ -138,11 +138,11 @@ class TabBrede(PQW.QWidget):
             TabBrede.ax = TabBrede.Chart_Fig.add_subplot(111)
             # TabFreqAnal.ax.legend()
             TabBrede.ax.grid(True, which='both', axis='both', linestyle='--')
-            TabBrede.ax.set_ylabel('Velocity (m/s)',fontsize=TabBrede.MPL_AxisTitle)
-            if VAR.GetActiveParameters(VAR,2) == 'yyyy-mm-dd h24:min:sec':
-                pass
-            elif VAR.GetActiveParameters(VAR,2) == 'Time':
-                TabBrede.ax.set_xlabel('Time (s)',fontsize=TabBrede.MPL_AxisTitle)
+            # TabBrede.ax.set_ylabel('q ($m$ $s^-1$)',fontsize=TabBrede.MPL_AxisTitle)
+            # if VAR.GetActiveParameters(VAR,2) == 'yyyy-mm-dd h24:min:sec':
+            #     pass
+            # elif VAR.GetActiveParameters(VAR,2) == 'Time':
+            #     TabBrede.ax.set_xlabel('Time (s)',fontsize=TabBrede.MPL_AxisTitle)
             TabBrede.Canvas.draw()
             #
             VAR.GetiFlowSelf(VAR).Menu_RunBH.setEnabled(False)
@@ -159,11 +159,11 @@ class TabBrede(PQW.QWidget):
                 TabBrede.ax = TabBrede.Chart_Fig.add_subplot(111)
                 # TabFreqAnal.ax.legend()
                 TabBrede.ax.grid(True, which='both', axis='both', linestyle='--')
-                TabBrede.ax.set_ylabel('Velocity ($m$ $s^-1$))',fontsize=TabBrede.MPL_AxisTitle)
-                if VAR.GetActiveParameters(VAR,2) == 'yyyy-mm-dd h24:min:sec':
-                    pass
-                elif VAR.GetActiveParameters(VAR,2) == 'Time':
-                    TabBrede.ax.set_xlabel('Time (s)',fontsize=TabBrede.MPL_AxisTitle)
+                # TabBrede.ax.set_ylabel('q ($m$ $s^-1$))',fontsize=TabBrede.MPL_AxisTitle)
+                # if VAR.GetActiveParameters(VAR,2) == 'yyyy-mm-dd h24:min:sec':
+                #     pass
+                # elif VAR.GetActiveParameters(VAR,2) == 'Time':
+                #     TabBrede.ax.set_xlabel('Time (s)',fontsize=TabBrede.MPL_AxisTitle)
                 #
                 TabBrede.Canvas.draw()
                 #
@@ -183,11 +183,11 @@ class TabBrede(PQW.QWidget):
                     TabBrede.ax = TabBrede.Chart_Fig.add_subplot(111)
                     # TabFreqAnal.ax.legend()
                     TabBrede.ax.grid(True, which='both', axis='both', linestyle='--')
-                    TabBrede.ax.set_ylabel('Velocity (m/s)',fontsize=TabBrede.MPL_AxisTitle)
-                    if VAR.GetActiveParameters(VAR,2) == 'yyyy-mm-dd h24:min:sec':
-                        pass
-                    elif VAR.GetActiveParameters(VAR,2) == 'Time':
-                        TabBrede.ax.set_xlabel('Time (s)',fontsize=TabBrede.MPL_AxisTitle)
+                    # TabBrede.ax.set_ylabel('q ($m$ $s^-1$)',fontsize=TabBrede.MPL_AxisTitle)
+                    # if VAR.GetActiveParameters(VAR,2) == 'yyyy-mm-dd h24:min:sec':
+                    #     pass
+                    # elif VAR.GetActiveParameters(VAR,2) == 'Time':
+                    #     TabBrede.ax.set_xlabel('Time (s)',fontsize=TabBrede.MPL_AxisTitle)
                     #
                     TabBrede.Canvas.draw()
                     #
@@ -228,7 +228,7 @@ class TabBrede(PQW.QWidget):
                             plot = TabBrede.ax.plot(TabBrede.df_chart_data['Time'].to_numpy(), TabBrede.df_chart_data['Velocity'].to_numpy(), '-', color='b', label = 'Velocity')
                             plot = TabBrede.ax.plot(TabBrede.df_chart_data['Time'].to_numpy(), TabBrede.df_chart_data['Velocity'].to_numpy(), 'o', color='b', label = 'Velocity')
                         TabBrede.ax.grid(True, which='both', axis='both', linestyle='--')
-                        TabBrede.ax.set_ylabel('Velocity (m/s)')
+                        TabBrede.ax.set_ylabel('q ($m$ $s^-1$)')
                         if VAR.GetActiveParameters(VAR,2) == 'Time':
                             TabBrede.ax.set_xlabel('Time (s)')
                         else:

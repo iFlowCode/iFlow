@@ -38,7 +38,7 @@ from ScrollLabel import ScrollLabel
 import TabSignProc as TSP
 # # import STabFFTAnal as STFA
 # # import STabLPMAnal as STLA
-
+from Units import UNIT
 import WizardSP as WSP
 import WizardPC as WPC
 import WizardEC as WEC
@@ -245,14 +245,14 @@ class TabSignProc(PQW.QWidget):
             TabSignProc.ax = TabSignProc.Chart_Fig.add_subplot(111)
             # TabFreqAnal.ax.legend()
             TabSignProc.ax.grid(True, which='both', axis='both', linestyle='--')
-            TabSignProc.ax.set_ylabel('z (m)',fontsize=TabSignProc.MPL_AxisTitle)
+            TabSignProc.ax.set_ylabel('',fontsize=TabSignProc.MPL_AxisTitle)
             #
-            if OPT.GetTFAxAxisUnit(OPT) == 'Hz':
-                TabSignProc.ax.set_xlabel('Frequency (Hz)',fontsize=TabSignProc.MPL_AxisTitle)
-            if OPT.GetTFAxAxisUnit(OPT) == 'Day':
-                TabSignProc.ax.set_xlabel('Frequency (d$^{-1}$)',fontsize=TabSignProc.MPL_AxisTitle)
-            if OPT.GetTFAxAxisUnit(OPT) == 'Hour':
-                TabSignProc.ax.set_xlabel('Frequency (hr$^{-1}$)',fontsize=TabSignProc.MPL_AxisTitle)
+            # if OPT.GetTFAxAxisUnit(OPT) == 'Hz':
+            #     TabSignProc.ax.set_xlabel('Frequency (Hz)',fontsize=TabSignProc.MPL_AxisTitle)
+            # if OPT.GetTFAxAxisUnit(OPT) == 'Day':
+            #     TabSignProc.ax.set_xlabel('Frequency (d$^{-1}$)',fontsize=TabSignProc.MPL_AxisTitle)
+            # if OPT.GetTFAxAxisUnit(OPT) == 'Hour':
+            #     TabSignProc.ax.set_xlabel('Frequency (hr$^{-1}$)',fontsize=TabSignProc.MPL_AxisTitle)
             TabSignProc.Canvas.draw()
             # Menu
             VAR.GetiFlowSelf(VAR).Menu_RunSP.setEnabled(False)
@@ -287,14 +287,14 @@ class TabSignProc(PQW.QWidget):
                 TabSignProc.ax = TabSignProc.Chart_Fig.add_subplot(111)
                 # TabFreqAnal.ax.legend()
                 TabSignProc.ax.grid(True, which='both', axis='both', linestyle='--')
-                TabSignProc.ax.set_ylabel('z (m)',fontsize=TabSignProc.MPL_AxisTitle)
+                # TabSignProc.ax.set_ylabel('z (m)',fontsize=TabSignProc.MPL_AxisTitle)
                 #
-                if OPT.GetTFAxAxisUnit(OPT) == 'Hz':
-                    TabSignProc.ax.set_xlabel('Frequency (Hz)',fontsize=TabSignProc.MPL_AxisTitle)
-                if OPT.GetTFAxAxisUnit(OPT) == 'Day':
-                    TabSignProc.ax.set_xlabel('Frequency (d$^{-1}$)',fontsize=TabSignProc.MPL_AxisTitle)
-                if OPT.GetTFAxAxisUnit(OPT) == 'Hour':
-                    TabSignProc.ax.set_xlabel('Frequency (hr$^{-1}$)',fontsize=TabSignProc.MPL_AxisTitle)
+                # if OPT.GetTFAxAxisUnit(OPT) == 'Hz':
+                #     TabSignProc.ax.set_xlabel('Frequency (Hz)',fontsize=TabSignProc.MPL_AxisTitle)
+                # if OPT.GetTFAxAxisUnit(OPT) == 'Day':
+                #     TabSignProc.ax.set_xlabel('Frequency (d$^{-1}$)',fontsize=TabSignProc.MPL_AxisTitle)
+                # if OPT.GetTFAxAxisUnit(OPT) == 'Hour':
+                #     TabSignProc.ax.set_xlabel('Frequency (hr$^{-1}$)',fontsize=TabSignProc.MPL_AxisTitle)
                 TabSignProc.Canvas.draw()
                 # Menu
                 VAR.GetiFlowSelf(VAR).Menu_RunSP.setEnabled(False)
@@ -351,14 +351,14 @@ class TabSignProc(PQW.QWidget):
                     TabSignProc.ax = TabSignProc.Chart_Fig.add_subplot(111)
                     # TabFreqAnal.ax.legend()
                     TabSignProc.ax.grid(True, which='both', axis='both', linestyle='--')
-                    TabSignProc.ax.set_ylabel('z (m)',fontsize=TabSignProc.MPL_AxisTitle)
-                    #
-                    if OPT.GetTFAxAxisUnit(OPT) == 'Hz':
-                        TabSignProc.ax.set_xlabel('Frequency (Hz)',fontsize=TabSignProc.MPL_AxisTitle)
-                    if OPT.GetTFAxAxisUnit(OPT) == 'Day':
-                        TabSignProc.ax.set_xlabel('Frequency (d$^{-1}$)',fontsize=TabSignProc.MPL_AxisTitle)
-                    if OPT.GetTFAxAxisUnit(OPT) == 'Hour':
-                        TabSignProc.ax.set_xlabel('Frequency (hr$^{-1}$)',fontsize=TabSignProc.MPL_AxisTitle)
+                    # TabSignProc.ax.set_ylabel('z (m)',fontsize=TabSignProc.MPL_AxisTitle)
+                    # #
+                    # if OPT.GetTFAxAxisUnit(OPT) == 'Hz':
+                    #     TabSignProc.ax.set_xlabel('Frequency (Hz)',fontsize=TabSignProc.MPL_AxisTitle)
+                    # if OPT.GetTFAxAxisUnit(OPT) == 'Day':
+                    #     TabSignProc.ax.set_xlabel('Frequency (d$^{-1}$)',fontsize=TabSignProc.MPL_AxisTitle)
+                    # if OPT.GetTFAxAxisUnit(OPT) == 'Hour':
+                    #     TabSignProc.ax.set_xlabel('Frequency (hr$^{-1}$)',fontsize=TabSignProc.MPL_AxisTitle)
                     TabSignProc.Canvas.draw()
                     # Menu
                     VAR.GetiFlowSelf(VAR).Menu_SP_Export.setEnabled(False)
@@ -521,10 +521,15 @@ class TabSignProc(PQW.QWidget):
                             CheckBox = PQW.QCheckBox(Sensor)
                             CheckBox.setChecked(True)
                             CheckBox.toggled.connect(TabSignProc.SensorActiveChange)
+                            if TabSignProc.Combobox_ChartType.currentText() == 'SNR heatmap':
+                                CheckBox.setEnabled(False)
+                            else:
+                                CheckBox.setEnabled(True)
                             if contPos % 2 == 0:
                                 TabSignProc.VBoxSensor.addWidget(CheckBox,int(contPos/2),0,1,1)
                             else:
                                 TabSignProc.VBoxSensor.addWidget(CheckBox,int(contPos/2),1,1,1)
+                            
                             contPos = contPos + 1
                     # Chart
                     if Case != -1:
@@ -565,6 +570,7 @@ class TabSignProc(PQW.QWidget):
                         if TabSignProc.Combobox_ChartType.currentText() == 'SNR heatmap':
                             TabSignProc.df_chart_data = self.dfxSRN[TabSignProc.Combobox_ChartTimeFreq.currentIndex()]
                             # TabSignProc.df_chart_data = 20*np.log10(TabSignProc.df_chart_data)
+                            print(TabSignProc.df_chart_data.shape)
                             #
                             Ytemp = []
                             Heights = VAR.GetActiveParameters(VAR,7).split(',')
@@ -572,12 +578,11 @@ class TabSignProc(PQW.QWidget):
                             # print(Sensors.split(','))
                             for i,Sensor in enumerate(VAR.GetActiveParameters(VAR,6).split(',')):
                                 if Sensor in Sensors.split(','):
-                                # if Sensor == UPSens:
-                                #     Flag = 1
-                                # if Flag == 1:
-                                    Ytemp.append(float(Heights[i]))
-                                # if Sensor == DOWNSens:
-                                #     Flag = 0
+                                    if Sensor == RefSens:
+                                        # Ytemp.append(float(Heights[i]))
+                                        TabSignProc.df_chart_data = np.delete(TabSignProc.df_chart_data,i,1)
+                                    else:
+                                        Ytemp.append(float(Heights[i]))
                             #
                             TabSignProc.yChart = Ytemp
                             Y = []
@@ -587,18 +592,18 @@ class TabSignProc(PQW.QWidget):
                                 Y.append(Ytemp[i]+(Ytemp[i+1]-Ytemp[i])/2)
                             Y.append(Ytemp[len(Ytemp)-1]+(Ytemp[len(Ytemp)-1]-Ytemp[len(Ytemp)-2])/2)
                             #
-                            TabSignProc.y = np.array(Y)
+                            TabSignProc.y = UNIT.ConvertLenght(UNIT,np.array(Y))
                             #
                             X = np.array(self.dfxAmplitude['Freq'].drop_duplicates().tolist())
-                            if OPT.GetTFAxAxisUnit(OPT) == 'Hz':
-                                pass
-                            elif OPT.GetTFAxAxisUnit(OPT) == 'Day':
-                                X = X * 86400.0
-                            elif OPT.GetTFAxAxisUnit(OPT) == 'Hour':
-                                X = X * 3600.0
+                            # if OPT.GetTFAxAxisUnit(OPT) == 'Hz':
+                            #     pass
+                            # elif OPT.GetTFAxAxisUnit(OPT) == 'Day':
+                            #     X = X * 86400.0
+                            # elif OPT.GetTFAxAxisUnit(OPT) == 'Hour':
+                            #     X = X * 3600.0
                             X = X.tolist()
                             X.append(X[-1]+(X[-1]-X[-2])/2)
-                            TabSignProc.x = np.array(X)
+                            TabSignProc.x = UNIT.ConvertFrequency(UNIT,np.array(X))
                             #
                             plot = TabSignProc.ax.pcolormesh(TabSignProc.x, TabSignProc.y, TabSignProc.df_chart_data.T, cmap='RdBu')
                             cbar = TabSignProc.Chart_Fig.colorbar(plot, ax=TabSignProc.ax)
@@ -633,9 +638,9 @@ class TabSignProc(PQW.QWidget):
                                                         plot = TabSignProc.ax.plot(pd.to_datetime(TabSignProc.df_chart_data['Time'],unit='s'), (TabSignProc.df_chart_data[TabSignProc.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), '-', label = TabSignProc.VBoxSensor.itemAt(i).widget().text())
                                                 elif VAR.GetActiveParameters(VAR,2) == 'Time':
                                                     if TabSignProc.df_chart_data.shape[0] == 1:
-                                                        plot = TabSignProc.ax.plot(TabSignProc.df_chart_data['Time'].to_numpy(), (TabSignProc.df_chart_data[TabSignProc.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), 'o', label = TabSignProc.VBoxSensor.itemAt(i).widget().text())
+                                                        plot = TabSignProc.ax.plot(UNIT.ConvertTime(UNIT,TabSignProc.df_chart_data['Time'].to_numpy()), (TabSignProc.df_chart_data[TabSignProc.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), 'o', label = TabSignProc.VBoxSensor.itemAt(i).widget().text())
                                                     else:
-                                                        plot = TabSignProc.ax.plot(TabSignProc.df_chart_data['Time'].to_numpy(), (TabSignProc.df_chart_data[TabSignProc.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), '-', label = TabSignProc.VBoxSensor.itemAt(i).widget().text())
+                                                        plot = TabSignProc.ax.plot(UNIT.ConvertTime(UNIT,TabSignProc.df_chart_data['Time'].to_numpy()), (TabSignProc.df_chart_data[TabSignProc.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), '-', label = TabSignProc.VBoxSensor.itemAt(i).widget().text())
                                                 Colors.append(plot[0].get_color())
                                             else:
                                                 if VAR.GetActiveParameters(VAR,2) == 'yyyy-mm-dd h24:min:sec':
@@ -645,9 +650,9 @@ class TabSignProc(PQW.QWidget):
                                                         plot = TabSignProc.ax.plot(pd.to_datetime(TabSignProc.df_chart_data['Time'],unit='s'), (TabSignProc.df_chart_data[TabSignProc.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), '-', label = TabSignProc.VBoxSensor.itemAt(i).widget().text(), color=Colors[i])
                                                 elif VAR.GetActiveParameters(VAR,2) == 'Time':
                                                     if TabSignProc.df_chart_data.shape[0] == 1:
-                                                        plot = TabSignProc.ax.plot(TabSignProc.df_chart_data['Time'].to_numpy(), (TabSignProc.df_chart_data[TabSignProc.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), 'o', label = TabSignProc.VBoxSensor.itemAt(i).widget().text(), color=Colors[i])
+                                                        plot = TabSignProc.ax.plot(UNIT.ConvertTime(UNIT,TabSignProc.df_chart_data['Time'].to_numpy()), (TabSignProc.df_chart_data[TabSignProc.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), 'o', label = TabSignProc.VBoxSensor.itemAt(i).widget().text(), color=Colors[i])
                                                     else:
-                                                        plot = TabSignProc.ax.plot(TabSignProc.df_chart_data['Time'].to_numpy(), (TabSignProc.df_chart_data[TabSignProc.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), '-', label = TabSignProc.VBoxSensor.itemAt(i).widget().text(), color=Colors[i])
+                                                        plot = TabSignProc.ax.plot(UNIT.ConvertTime(UNIT,TabSignProc.df_chart_data['Time'].to_numpy()), (TabSignProc.df_chart_data[TabSignProc.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), '-', label = TabSignProc.VBoxSensor.itemAt(i).widget().text(), color=Colors[i])
                                     else:
                                         TabSignProc.VBoxSensor.itemAt(i).widget().setEnabled(False)
                                 except:
@@ -668,26 +673,26 @@ class TabSignProc(PQW.QWidget):
                                         if(VAR.GetChartColors(VAR) == None):
                                             if VAR.GetActiveParameters(VAR,2) == 'yyyy-mm-dd h24:min:sec':
                                                 if TabSignProc.df_chart_data.shape[0] == 1:
-                                                    plot = TabSignProc.ax.plot(pd.to_datetime(TabSignProc.df_chart_data['Time'],unit='s').to_numpy(), (TabSignProc.df_chart_data[TabSignProc.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), 'o', label = TabSignProc.VBoxSensor.itemAt(i).widget().text())
+                                                    plot = TabSignProc.ax.plot(pd.to_datetime(TabSignProc.df_chart_data['Time'],unit='s').to_numpy(), UNIT.ConvertAngle(UNIT,(TabSignProc.df_chart_data[TabSignProc.VBoxSensor.itemAt(i).widget().text()]).to_numpy()), 'o', label = TabSignProc.VBoxSensor.itemAt(i).widget().text())
                                                 else:
-                                                    plot = TabSignProc.ax.plot(pd.to_datetime(TabSignProc.df_chart_data['Time'],unit='s').to_numpy(), (TabSignProc.df_chart_data[TabSignProc.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), '-', label = TabSignProc.VBoxSensor.itemAt(i).widget().text())
+                                                    plot = TabSignProc.ax.plot(pd.to_datetime(TabSignProc.df_chart_data['Time'],unit='s').to_numpy(), UNIT.ConvertAngle(UNIT,(TabSignProc.df_chart_data[TabSignProc.VBoxSensor.itemAt(i).widget().text()]).to_numpy()), '-', label = TabSignProc.VBoxSensor.itemAt(i).widget().text())
                                             elif VAR.GetActiveParameters(VAR,2) == 'Time':
                                                 if TabSignProc.df_chart_data.shape[0] == 1:
-                                                    plot = TabSignProc.ax.plot(TabSignProc.df_chart_data['Time'].to_numpy(), (TabSignProc.df_chart_data[TabSignProc.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), 'o', label = TabSignProc.VBoxSensor.itemAt(i).widget().text())
+                                                    plot = TabSignProc.ax.plot(UNIT.ConvertTime(UNIT,TabSignProc.df_chart_data['Time'].to_numpy()), UNIT.ConvertAngle(UNIT,(TabSignProc.df_chart_data[TabSignProc.VBoxSensor.itemAt(i).widget().text()]).to_numpy()), 'o', label = TabSignProc.VBoxSensor.itemAt(i).widget().text())
                                                 else:
-                                                    plot = TabSignProc.ax.plot(TabSignProc.df_chart_data['Time'].to_numpy(), (TabSignProc.df_chart_data[TabSignProc.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), '-', label = TabSignProc.VBoxSensor.itemAt(i).widget().text())
+                                                    plot = TabSignProc.ax.plot(UNIT.ConvertTime(UNIT,TabSignProc.df_chart_data['Time'].to_numpy()), UNIT.ConvertAngle(UNIT,(TabSignProc.df_chart_data[TabSignProc.VBoxSensor.itemAt(i).widget().text()]).to_numpy()), '-', label = TabSignProc.VBoxSensor.itemAt(i).widget().text())
                                             Colors.append(plot[0].get_color())
                                         else:
                                             if VAR.GetActiveParameters(VAR,2) == 'yyyy-mm-dd h24:min:sec':
                                                 if TabSignProc.df_chart_data.shape[0] == 1:
-                                                    plot = TabSignProc.ax.plot(pd.to_datetime(TabSignProc.df_chart_data['Time'],unit='s').to_numpy(), (TabSignProc.df_chart_data[TabSignProc.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), 'o', label = TabSignProc.VBoxSensor.itemAt(i).widget().text(), color=Colors[i])
+                                                    plot = TabSignProc.ax.plot(pd.to_datetime(TabSignProc.df_chart_data['Time'],unit='s').to_numpy(), UNIT.ConvertAngle(UNIT,(TabSignProc.df_chart_data[TabSignProc.VBoxSensor.itemAt(i).widget().text()]).to_numpy()), 'o', label = TabSignProc.VBoxSensor.itemAt(i).widget().text(), color=Colors[i])
                                                 else:
-                                                    plot = TabSignProc.ax.plot(pd.to_datetime(TabSignProc.df_chart_data['Time'],unit='s').to_numpy(), (TabSignProc.df_chart_data[TabSignProc.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), '-', label = TabSignProc.VBoxSensor.itemAt(i).widget().text(), color=Colors[i])
+                                                    plot = TabSignProc.ax.plot(pd.to_datetime(TabSignProc.df_chart_data['Time'],unit='s').to_numpy(), UNIT.ConvertAngle(UNIT,(TabSignProc.df_chart_data[TabSignProc.VBoxSensor.itemAt(i).widget().text()]).to_numpy()), '-', label = TabSignProc.VBoxSensor.itemAt(i).widget().text(), color=Colors[i])
                                             elif VAR.GetActiveParameters(VAR,2) == 'Time':
                                                 if TabSignProc.df_chart_data.shape[0] == 1:
-                                                    plot = TabSignProc.ax.plot(TabSignProc.df_chart_data['Time'].to_numpy(), (TabSignProc.df_chart_data[TabSignProc.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), 'o', label = TabSignProc.VBoxSensor.itemAt(i).widget().text(), color=Colors[i])
+                                                    plot = TabSignProc.ax.plot(UNIT.ConvertTime(UNIT,TabSignProc.df_chart_data['Time'].to_numpy()), UNIT.ConvertAngle(UNIT,(TabSignProc.df_chart_data[TabSignProc.VBoxSensor.itemAt(i).widget().text()]).to_numpy()), 'o', label = TabSignProc.VBoxSensor.itemAt(i).widget().text(), color=Colors[i])
                                                 else:
-                                                    plot = TabSignProc.ax.plot(TabSignProc.df_chart_data['Time'].to_numpy(), (TabSignProc.df_chart_data[TabSignProc.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), '-', label = TabSignProc.VBoxSensor.itemAt(i).widget().text(), color=Colors[i])
+                                                    plot = TabSignProc.ax.plot(UNIT.ConvertTime(UNIT,TabSignProc.df_chart_data['Time'].to_numpy()), UNIT.ConvertAngle(UNIT,(TabSignProc.df_chart_data[TabSignProc.VBoxSensor.itemAt(i).widget().text()]).to_numpy()), '-', label = TabSignProc.VBoxSensor.itemAt(i).widget().text(), color=Colors[i])
                                 else:
                                     TabSignProc.VBoxSensor.itemAt(i).widget().setEnabled(False)
                         elif TabSignProc.Combobox_ChartType.currentText() == 'Amplitude vs Time':
@@ -733,9 +738,9 @@ class TabSignProc(PQW.QWidget):
                                                     plot = TabSignProc.ax.plot(pd.to_datetime(TabSignProc.df_chart_data['Time'],unit='s').to_numpy(), (TabSignProc.df_chart_data[TabSignProc.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), '-', label = TabSignProc.VBoxSensor.itemAt(i).widget().text())
                                             elif VAR.GetActiveParameters(VAR,2) == 'Time':
                                                 if TabSignProc.df_chart_data.shape[0] == 1:
-                                                    plot = TabSignProc.ax.plot(TabSignProc.df_chart_data['Time'].to_numpy(), (TabSignProc.df_chart_data[TabSignProc.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), 'o', label = TabSignProc.VBoxSensor.itemAt(i).widget().text())
+                                                    plot = TabSignProc.ax.plot(UNIT.ConvertTime(UNIT,TabSignProc.df_chart_data['Time'].to_numpy()), (TabSignProc.df_chart_data[TabSignProc.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), 'o', label = TabSignProc.VBoxSensor.itemAt(i).widget().text())
                                                 else:
-                                                    plot = TabSignProc.ax.plot(TabSignProc.df_chart_data['Time'].to_numpy(), (TabSignProc.df_chart_data[TabSignProc.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), '-', label = TabSignProc.VBoxSensor.itemAt(i).widget().text())
+                                                    plot = TabSignProc.ax.plot(UNIT.ConvertTime(UNIT,TabSignProc.df_chart_data['Time'].to_numpy()), (TabSignProc.df_chart_data[TabSignProc.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), '-', label = TabSignProc.VBoxSensor.itemAt(i).widget().text())
                                             Colors.append(plot[0].get_color())
                                         else:
                                             if VAR.GetActiveParameters(VAR,2) == 'yyyy-mm-dd h24:min:sec':
@@ -745,9 +750,9 @@ class TabSignProc(PQW.QWidget):
                                                     plot = TabSignProc.ax.plot(pd.to_datetime(TabSignProc.df_chart_data['Time'],unit='s').to_numpy(), (TabSignProc.df_chart_data[TabSignProc.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), '-', label = TabSignProc.VBoxSensor.itemAt(i).widget().text(), color=Colors[i])
                                             elif VAR.GetActiveParameters(VAR,2) == 'Time':
                                                 if TabSignProc.df_chart_data.shape[0] == 1:
-                                                    plot = TabSignProc.ax.plot(TabSignProc.df_chart_data['Time'].to_numpy(), (TabSignProc.df_chart_data[TabSignProc.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), 'o', label = TabSignProc.VBoxSensor.itemAt(i).widget().text(), color=Colors[i])
+                                                    plot = TabSignProc.ax.plot(UNIT.ConvertTime(UNIT,TabSignProc.df_chart_data['Time'].to_numpy()), (TabSignProc.df_chart_data[TabSignProc.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), 'o', label = TabSignProc.VBoxSensor.itemAt(i).widget().text(), color=Colors[i])
                                                 else:
-                                                    plot = TabSignProc.ax.plot(TabSignProc.df_chart_data['Time'].to_numpy(), (TabSignProc.df_chart_data[TabSignProc.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), '-', label = TabSignProc.VBoxSensor.itemAt(i).widget().text(), color=Colors[i])
+                                                    plot = TabSignProc.ax.plot(UNIT.ConvertTime(UNIT,TabSignProc.df_chart_data['Time'].to_numpy()), (TabSignProc.df_chart_data[TabSignProc.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), '-', label = TabSignProc.VBoxSensor.itemAt(i).widget().text(), color=Colors[i])
                                 else:
                                     TabSignProc.VBoxSensor.itemAt(i).widget().setEnabled(False)
                             Handle = open('../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/SPdata/'+TabSignProc.Combobox_Analysis.currentText().replace('Run: ','')+'.run','r')
@@ -774,12 +779,12 @@ class TabSignProc(PQW.QWidget):
                             Handle.close()
                         elif TabSignProc.Combobox_ChartType.currentText() == 'Amplitude vs Frequency':
                             TabSignProc.df_chart_data = self.dfxAmplitude[self.dfxAmplitude['Time'] == float(TabSignProc.Combobox_ChartTimeFreq.currentText())]
-                            if OPT.GetTFAxAxisUnit(OPT) == 'Hz':
-                                pass
-                            elif OPT.GetTFAxAxisUnit(OPT) == 'Day':
-                                TabSignProc.df_chart_data['Freq'] = TabSignProc.df_chart_data['Freq'].apply(lambda x: x * 86400.0)
-                            elif OPT.GetTFAxAxisUnit(OPT) == 'Hour':
-                                TabSignProc.df_chart_data['Freq'] = TabSignProc.df_chart_data['Freq'].apply(lambda x: x * 3600.0)
+                            # if OPT.GetTFAxAxisUnit(OPT) == 'Hz':
+                            #     pass
+                            # elif OPT.GetTFAxAxisUnit(OPT) == 'Day':
+                            #     TabSignProc.df_chart_data['Freq'] = TabSignProc.df_chart_data['Freq'].apply(lambda x: x * 86400.0)
+                            # elif OPT.GetTFAxAxisUnit(OPT) == 'Hour':
+                            #     TabSignProc.df_chart_data['Freq'] = TabSignProc.df_chart_data['Freq'].apply(lambda x: x * 3600.0)
                             Handle = open('../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/SPdata/'+TabSignProc.Combobox_Analysis.currentText().replace('Run: ','')+'.run','r')
                             First = Handle.readline().split(';')[0]
                             if First == 'FFT':
@@ -809,15 +814,15 @@ class TabSignProc(PQW.QWidget):
                                     if TabSignProc.VBoxSensor.itemAt(i).widget().isChecked():
                                         if(VAR.GetChartColors(VAR) == None):
                                             if TabSignProc.df_chart_data.shape[0] == 1:
-                                                plot = TabSignProc.ax.plot(TabSignProc.df_chart_data['Freq'].to_numpy(), (TabSignProc.df_chart_data[TabSignProc.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), 'o', label = TabSignProc.VBoxSensor.itemAt(i).widget().text())
+                                                plot = TabSignProc.ax.plot(UNIT.ConvertFrequency(UNIT,TabSignProc.df_chart_data['Freq'].to_numpy()), (TabSignProc.df_chart_data[TabSignProc.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), 'o', label = TabSignProc.VBoxSensor.itemAt(i).widget().text())
                                             else:
-                                                plot = TabSignProc.ax.plot(TabSignProc.df_chart_data['Freq'].to_numpy(), (TabSignProc.df_chart_data[TabSignProc.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), '-', label = TabSignProc.VBoxSensor.itemAt(i).widget().text())
+                                                plot = TabSignProc.ax.plot(UNIT.ConvertFrequency(UNIT,TabSignProc.df_chart_data['Freq'].to_numpy()), (TabSignProc.df_chart_data[TabSignProc.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), '-', label = TabSignProc.VBoxSensor.itemAt(i).widget().text())
                                             Colors.append(plot[0].get_color())
                                         else:
                                             if TabSignProc.df_chart_data.shape[0] == 1:
-                                                plot = TabSignProc.ax.plot(TabSignProc.df_chart_data['Freq'].to_numpy(), (TabSignProc.df_chart_data[TabSignProc.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), 'o', label = TabSignProc.VBoxSensor.itemAt(i).widget().text(), color=Colors[i])
+                                                plot = TabSignProc.ax.plot(UNIT.ConvertFrequency(UNIT,TabSignProc.df_chart_data['Freq'].to_numpy()), (TabSignProc.df_chart_data[TabSignProc.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), 'o', label = TabSignProc.VBoxSensor.itemAt(i).widget().text(), color=Colors[i])
                                             else:
-                                                plot = TabSignProc.ax.plot(TabSignProc.df_chart_data['Freq'].to_numpy(), (TabSignProc.df_chart_data[TabSignProc.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), '-', label = TabSignProc.VBoxSensor.itemAt(i).widget().text(), color=Colors[i])
+                                                plot = TabSignProc.ax.plot(UNIT.ConvertFrequency(UNIT,TabSignProc.df_chart_data['Freq'].to_numpy()), (TabSignProc.df_chart_data[TabSignProc.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), '-', label = TabSignProc.VBoxSensor.itemAt(i).widget().text(), color=Colors[i])
                                 else:
                                     TabSignProc.VBoxSensor.itemAt(i).widget().setEnabled(False)
                             if OPT.GetTFAxAxisUnit(OPT) == 'Hz':
@@ -850,12 +855,12 @@ class TabSignProc(PQW.QWidget):
                             Handle.close()
                         elif TabSignProc.Combobox_ChartType.currentText() == 'Phase vs Frequency':
                             TabSignProc.df_chart_data = self.dfxPhase[self.dfxPhase['Time'] == float(TabSignProc.Combobox_ChartTimeFreq.currentText())]
-                            if OPT.GetTFAxAxisUnit(OPT) == 'Hz':
-                                pass
-                            elif OPT.GetTFAxAxisUnit(OPT) == 'Day':
-                                TabSignProc.df_chart_data['Freq'] = TabSignProc.df_chart_data['Freq'].apply(lambda x: x * 86400.0)
-                            elif OPT.GetTFAxAxisUnit(OPT) == 'Hour':
-                                TabSignProc.df_chart_data['Freq'] = TabSignProc.df_chart_data['Freq'].apply(lambda x: x * 3600.0)
+                            # if OPT.GetTFAxAxisUnit(OPT) == 'Hz':
+                            #     pass
+                            # elif OPT.GetTFAxAxisUnit(OPT) == 'Day':
+                            #     TabSignProc.df_chart_data['Freq'] = TabSignProc.df_chart_data['Freq'].apply(lambda x: x * 86400.0)
+                            # elif OPT.GetTFAxAxisUnit(OPT) == 'Hour':
+                            #     TabSignProc.df_chart_data['Freq'] = TabSignProc.df_chart_data['Freq'].apply(lambda x: x * 3600.0)
                             #
                             for i in range(0,len(self.Columns)):
                                 if TabSignProc.VBoxSensor.itemAt(i).widget().text() in self.Columns:
@@ -863,23 +868,23 @@ class TabSignProc(PQW.QWidget):
                                     if TabSignProc.VBoxSensor.itemAt(i).widget().isChecked():
                                         if(VAR.GetChartColors(VAR) == None):
                                             if TabSignProc.df_chart_data.shape[0] == 1:
-                                                plot = TabSignProc.ax.plot(TabSignProc.df_chart_data['Freq'].to_numpy(), (TabSignProc.df_chart_data[TabSignProc.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), 'o', label = TabSignProc.VBoxSensor.itemAt(i).widget().text())
+                                                plot = TabSignProc.ax.plot(UNIT.ConvertFrequency(UNIT,TabSignProc.df_chart_data['Freq'].to_numpy()), UNIT.ConvertAngle(UNIT,(TabSignProc.df_chart_data[TabSignProc.VBoxSensor.itemAt(i).widget().text()]).to_numpy()), 'o', label = TabSignProc.VBoxSensor.itemAt(i).widget().text())
                                             else:
-                                                plot = TabSignProc.ax.plot(TabSignProc.df_chart_data['Freq'].to_numpy(), (TabSignProc.df_chart_data[TabSignProc.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), '-', label = TabSignProc.VBoxSensor.itemAt(i).widget().text())
+                                                plot = TabSignProc.ax.plot(UNIT.ConvertFrequency(UNIT,TabSignProc.df_chart_data['Freq'].to_numpy()), UNIT.ConvertAngle(UNIT,(TabSignProc.df_chart_data[TabSignProc.VBoxSensor.itemAt(i).widget().text()]).to_numpy()), '-', label = TabSignProc.VBoxSensor.itemAt(i).widget().text())
                                             Colors.append(plot[0].get_color())
                                         else:
                                             if TabSignProc.df_chart_data.shape[0] == 1:
-                                                plot = TabSignProc.ax.plot(TabSignProc.df_chart_data['Freq'].to_numpy(), (TabSignProc.df_chart_data[TabSignProc.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), 'o', label = TabSignProc.VBoxSensor.itemAt(i).widget().text(), color=Colors[i])
+                                                plot = TabSignProc.ax.plot(UNIT.ConvertFrequency(UNIT,TabSignProc.df_chart_data['Freq'].to_numpy()), UNIT.ConvertAngle(UNIT,(TabSignProc.df_chart_data[TabSignProc.VBoxSensor.itemAt(i).widget().text()]).to_numpy()), 'o', label = TabSignProc.VBoxSensor.itemAt(i).widget().text(), color=Colors[i])
                                             else:
-                                                plot = TabSignProc.ax.plot(TabSignProc.df_chart_data['Freq'].to_numpy(), (TabSignProc.df_chart_data[TabSignProc.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), '-', label = TabSignProc.VBoxSensor.itemAt(i).widget().text(), color=Colors[i])
+                                                plot = TabSignProc.ax.plot(UNIT.ConvertFrequency(UNIT,TabSignProc.df_chart_data['Freq'].to_numpy()), UNIT.ConvertAngle(UNIT,(TabSignProc.df_chart_data[TabSignProc.VBoxSensor.itemAt(i).widget().text()]).to_numpy()), '-', label = TabSignProc.VBoxSensor.itemAt(i).widget().text(), color=Colors[i])
                                 else:
                                     TabSignProc.VBoxSensor.itemAt(i).widget().setEnabled(False)
-                            if OPT.GetTFAxAxisUnit(OPT) == 'Hz':
-                                pass
-                            elif OPT.GetTFAxAxisUnit(OPT) == 'Day':
-                                TabSignProc.df_chart_data['Freq'] = TabSignProc.df_chart_data['Freq'].apply(lambda x: x / 86400.0)
-                            elif OPT.GetTFAxAxisUnit(OPT) == 'Hour':
-                                TabSignProc.df_chart_data['Freq'] = TabSignProc.df_chart_data['Freq'].apply(lambda x: x / 3600.0)
+                            # if OPT.GetTFAxAxisUnit(OPT) == 'Hz':
+                            #     pass
+                            # elif OPT.GetTFAxAxisUnit(OPT) == 'Day':
+                            #     TabSignProc.df_chart_data['Freq'] = TabSignProc.df_chart_data['Freq'].apply(lambda x: x / 86400.0)
+                            # elif OPT.GetTFAxAxisUnit(OPT) == 'Hour':
+                            #     TabSignProc.df_chart_data['Freq'] = TabSignProc.df_chart_data['Freq'].apply(lambda x: x / 3600.0)
                         #
                         if TabSignProc.Combobox_ChartType.currentText() != 'SNR heatmap':
                             if len(self.Columns) > 5:
@@ -891,44 +896,47 @@ class TabSignProc(PQW.QWidget):
                         #
                         if TabSignProc.Combobox_ChartType.currentText() == 'Amplitude vs Frequency':
                             TabSignProc.ax.set_ylabel('Amplitude',fontsize=TabSignProc.MPL_AxisTitle)
-                            if OPT.GetTFAxAxisUnit(OPT) == 'Hz':
-                                TabSignProc.ax.set_xlabel('Frequency (Hz)',fontsize=TabSignProc.MPL_AxisTitle)
-                            elif OPT.GetTFAxAxisUnit(OPT) == 'Day':
-                                TabSignProc.ax.set_xlabel('Frequency (d$^{-1}$)',fontsize=TabSignProc.MPL_AxisTitle)
-                            elif OPT.GetTFAxAxisUnit(OPT) == 'Hour':
-                                TabSignProc.ax.set_xlabel('Frequency (hr$^{-1}$)',fontsize=TabSignProc.MPL_AxisTitle)
+                            # if OPT.GetTFAxAxisUnit(OPT) == 'Hz':
+                            #     TabSignProc.ax.set_xlabel('Frequency (Hz)',fontsize=TabSignProc.MPL_AxisTitle)
+                            # elif OPT.GetTFAxAxisUnit(OPT) == 'Day':
+                            #     TabSignProc.ax.set_xlabel('Frequency (d$^{-1}$)',fontsize=TabSignProc.MPL_AxisTitle)
+                            # elif OPT.GetTFAxAxisUnit(OPT) == 'Hour':
+                            #     TabSignProc.ax.set_xlabel('Frequency (hr$^{-1}$)',fontsize=TabSignProc.MPL_AxisTitle)
+                            TabSignProc.ax.set_xlabel(UNIT.LabelFrequency(UNIT),fontsize=TabSignProc.MPL_AxisTitle)
                         elif TabSignProc.Combobox_ChartType.currentText() == 'Phase vs Frequency':
-                            TabSignProc.ax.set_ylabel('Phase',fontsize=TabSignProc.MPL_AxisTitle)
-                            if OPT.GetTFAxAxisUnit(OPT) == 'Hz':
-                                TabSignProc.ax.set_xlabel('Frequency (Hz)',fontsize=TabSignProc.MPL_AxisTitle)
-                            elif OPT.GetTFAxAxisUnit(OPT) == 'Day':
-                                TabSignProc.ax.set_xlabel('Frequency (d$^{-1}$)',fontsize=TabSignProc.MPL_AxisTitle)
-                            elif OPT.GetTFAxAxisUnit(OPT) == 'Hour':
-                                TabSignProc.ax.set_xlabel('Frequency (hr$^{-1}$)',fontsize=TabSignProc.MPL_AxisTitle)
+                            TabSignProc.ax.set_ylabel(UNIT.LabelPhase(UNIT),fontsize=TabSignProc.MPL_AxisTitle)
+                            # if OPT.GetTFAxAxisUnit(OPT) == 'Hz':
+                            #     TabSignProc.ax.set_xlabel('Frequency (Hz)',fontsize=TabSignProc.MPL_AxisTitle)
+                            # elif OPT.GetTFAxAxisUnit(OPT) == 'Day':
+                            #     TabSignProc.ax.set_xlabel('Frequency (d$^{-1}$)',fontsize=TabSignProc.MPL_AxisTitle)
+                            # elif OPT.GetTFAxAxisUnit(OPT) == 'Hour':
+                            #     TabSignProc.ax.set_xlabel('Frequency (hr$^{-1}$)',fontsize=TabSignProc.MPL_AxisTitle)
+                            TabSignProc.ax.set_xlabel(UNIT.LabelFrequency(UNIT),fontsize=TabSignProc.MPL_AxisTitle)
                         elif TabSignProc.Combobox_ChartType.currentText() == 'Amplitude vs Time':
                             TabSignProc.ax.set_ylabel('Amplitude',fontsize=TabSignProc.MPL_AxisTitle)
                             if VAR.GetActiveParameters(VAR,2) == 'Time':
-                                TabSignProc.ax.set_xlabel('Time (s)',fontsize=TabSignProc.MPL_AxisTitle)
+                                TabSignProc.ax.set_xlabel(UNIT.LabelTime(UNIT),fontsize=TabSignProc.MPL_AxisTitle)
                             else:
                                 pass
                         elif TabSignProc.Combobox_ChartType.currentText() == 'Phase vs Time':
-                            TabSignProc.ax.set_ylabel('Phase',fontsize=TabSignProc.MPL_AxisTitle)
+                            TabSignProc.ax.set_ylabel(UNIT.LabelPhase(UNIT),fontsize=TabSignProc.MPL_AxisTitle)
                             if VAR.GetActiveParameters(VAR,2) == 'Time':
-                                TabSignProc.ax.set_xlabel('Time (s)',fontsize=TabSignProc.MPL_AxisTitle)
+                                TabSignProc.ax.set_xlabel(UNIT.LabelTime(UNIT),fontsize=TabSignProc.MPL_AxisTitle)
                             else:
                                 pass
                         elif TabSignProc.Combobox_ChartType.currentText() == 'SNR heatmap':
-                            TabSignProc.ax.set_ylabel('z (m)',fontsize=TabSignProc.MPL_AxisTitle)
-                            if OPT.GetTFAxAxisUnit(OPT) == 'Hz':
-                                TabSignProc.ax.set_xlabel('Frequency (Hz)',fontsize=TabSignProc.MPL_AxisTitle)
-                            elif OPT.GetTFAxAxisUnit(OPT) == 'Day':
-                                TabSignProc.ax.set_xlabel('Frequency (d$^{-1}$)',fontsize=TabSignProc.MPL_AxisTitle)
-                            elif OPT.GetTFAxAxisUnit(OPT) == 'Hour':
-                                TabSignProc.ax.set_xlabel('Frequency (hr$^{-1}$)',fontsize=TabSignProc.MPL_AxisTitle)
+                            TabSignProc.ax.set_ylabel(UNIT.LabelLenght(UNIT),fontsize=TabSignProc.MPL_AxisTitle)
+                            # if OPT.GetTFAxAxisUnit(OPT) == 'Hz':
+                            #     TabSignProc.ax.set_xlabel('Frequency (Hz)',fontsize=TabSignProc.MPL_AxisTitle)
+                            # elif OPT.GetTFAxAxisUnit(OPT) == 'Day':
+                            #     TabSignProc.ax.set_xlabel('Frequency (d$^{-1}$)',fontsize=TabSignProc.MPL_AxisTitle)
+                            # elif OPT.GetTFAxAxisUnit(OPT) == 'Hour':
+                            #     TabSignProc.ax.set_xlabel('Frequency (hr$^{-1}$)',fontsize=TabSignProc.MPL_AxisTitle)
+                            TabSignProc.ax.set_xlabel(UNIT.LabelFrequency(UNIT),fontsize=TabSignProc.MPL_AxisTitle)
                         elif TabSignProc.Combobox_ChartType.currentText() == 'SNR vs Time':
                             TabSignProc.ax.set_ylabel('SNR (dB)',fontsize=TabSignProc.MPL_AxisTitle)
                             if VAR.GetActiveParameters(VAR,2) == 'Time':
-                                TabSignProc.ax.set_xlabel('Time (s)')
+                                TabSignProc.ax.set_xlabel(UNIT.LabelTime(UNIT))
                             else:
                                 pass
                         #

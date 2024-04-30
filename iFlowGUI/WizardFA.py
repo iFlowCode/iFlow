@@ -34,6 +34,7 @@ from shutil import copy
 from Variables import VAR
 # import WizEtaKeMean as WKE
 from loguru import logger
+from Options import OPT
 
 '''
 Wizzard Frequency Analisys Class
@@ -63,11 +64,21 @@ class FrequencyAnalysis(PQW.QWizard):
         if Page1.Combobox_WT.currentText() == '':
             FFTWin = 'Rectangular'
         #
-        stringEXE = 'FrequencyAnalysis.exe'
-        # Probe name  [STRING] -p
-        # stringEXE = stringEXE + ' -p "' + VAR.GetActiveProbe(VAR) +'"'
-        # Project name  [STRING] -j
-        # stringEXE = stringEXE + ' -j "' + VAR.GetActiveProject(VAR) +'"'
+        if VAR.GetOSsystem(VAR) == "WIN":
+            if OPT.GetRunMode(OPT,"WIN") == "script":
+                stringEXE = OPT.GetScriptRun(OPT,"WIN")+" "+"FrequencyAnalysis.py"
+            else:
+                stringEXE = 'FrequencyAnalysis.exe'
+        elif VAR.GetOSsystem(VAR) == "MAC":
+            if OPT.GetRunMode(OPT,"MAC") == "script":
+                stringEXE = OPT.GetScriptRun(OPT,"MAC")+" "+"FrequencyAnalysis.py"
+            else:
+                stringEXE = ""  #! To define on mac when and if i can compile the code
+        elif VAR.GetOSsystem(VAR) == "LIN":
+            if OPT.GetRunMode(OPT,"LIN") == "script":
+                stringEXE = OPT.GetScriptRun(OPT,"LIN")+" "+"FrequencyAnalysis.py"
+            else:
+                stringEXE = ""  #! To define on linux when i compile the code
         # FFT Windows [STRING] -w
         stringEXE = stringEXE + ' -w "' + FFTWin +'"'
         # From [FLOAT] -f
@@ -90,7 +101,7 @@ class FrequencyAnalysis(PQW.QWizard):
         Check = HandleLog.readline().replace('\n','')
         HandleLog.close()
         if Check == 'No Error':
-            FilesRuns = glob.glob('../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/fft/*.run')
+            FilesRuns = glob.glob('../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/fft/*.run') #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             if len(FilesRuns) == 0:
                 NewRun = '0'
             else:

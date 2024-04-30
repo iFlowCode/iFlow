@@ -31,6 +31,7 @@ import glob
 from loguru import logger
 # Import custom library
 from Variables import VAR
+from Options import OPT
 
 '''
 Wizzard Add Probe Class
@@ -42,7 +43,7 @@ class AddProbe(PQW.QWizard):
         #
         width = VAR.GetWindowsSize(VAR)[0] * 2 / 3 # Width of the window
         height = VAR.GetWindowsSize(VAR)[1] * 2 / 3 # Height of the window
-        self.setMinimumSize(width,height) # Set the minimun size of the wondow
+        # self.setMinimumSize(width,height) # Set the minimun size of the wondow
         #
         Page1.Flag_Update = False # Set False the Flag_Update
         #
@@ -77,17 +78,13 @@ class AddProbe(PQW.QWizard):
                 Flag_Error = 2
             #
             try:
-                if(Page1.Combobox_TimeSerie.currentText() != '' and Flag_Error == 0):
-                    pass
-                else:
+                if(Page1.Combobox_TimeSerie.currentText() == '' and Flag_Error == 0):
                     Flag_Error = 3
             except:
                 Flag_Error = 3
             #
             try:
-                if(Page1.Combobox_TimeType.currentText() != '' and Flag_Error == 0):
-                    pass
-                else:
+                if(Page1.Combobox_TimeType.currentText() == '' and Flag_Error == 0):
                     Flag_Error = 4
             except:
                 Flag_Error = 4
@@ -101,6 +98,7 @@ class AddProbe(PQW.QWizard):
             # Error Message
             if(Flag_Error == 1):
                 string = 'Probe\'s name not setted.'
+                Page1.Flag_Update = True
             elif(Flag_Error == 2):
                 string = 'Data file of the probe not setted.'
             elif(Flag_Error == 3):
@@ -138,7 +136,7 @@ class AddProbe(PQW.QWizard):
                     pass
                 else:
                     Page3.Table_Height.setColumnCount(2)
-                    Page3.Table_Height.setHorizontalHeaderLabels(['Sensor', 'Height (m asl)'])
+                    Page3.Table_Height.setHorizontalHeaderLabels(['Sensor', 'Elevation (m)'])
                     Page3.Table_Height.setRowCount(Page2.List_Sensor_Impo.count())
                     #
                     for i in range(0,Page2.List_Sensor_Impo.count()):
@@ -243,14 +241,22 @@ class AddProbe(PQW.QWizard):
                     self.back()
                     return
             #
-            stringEXE = 'DataImport.exe'
+            if VAR.GetOSsystem(VAR) == "WIN":
+                if OPT.GetRunMode(OPT,"WIN") == "script":
+                    stringEXE = OPT.GetScriptRun(OPT,"WIN")+" "+"DataImport.py"
+                else:
+                    stringEXE = 'DataImport.exe'
+            elif VAR.GetOSsystem(VAR) == "MAC":
+                if OPT.GetRunMode(OPT,"MAC") == "script":
+                    stringEXE = OPT.GetScriptRun(OPT,"MAC")+" "+"DataImport.py"
+                else:
+                    stringEXE = ""  #! To define on mac when and if i can compile the code
+            elif VAR.GetOSsystem(VAR) == "LIN":
+                if OPT.GetRunMode(OPT,"LIN") == "script":
+                    stringEXE = OPT.GetScriptRun(OPT,"LIN")+" "+"DataImport.py"
+                else:
+                    stringEXE = ""  #! To define on linux when i compile the code
             stringLog = ''
-            # Probe name  [STRING] -p
-            # stringEXE = stringEXE + ' -p "' + Page1.Combobox_ProbName.currentText() +'"'
-            # stringLog = stringLog + Page1.Combobox_ProbName.currentText() + ';ProbeName\n'
-            # Project name  [STRING] -j
-            # stringEXE = stringEXE + ' -j "' + VAR.GetActiveProject(VAR) +'"'
-            # stringLog = stringLog + VAR.GetActiveProject(VAR) + ';ProjectName\n'
             # FileIn  [STRING] -f
             stringEXE = stringEXE + ' -f "' + Page1.Data_File.text() +'"'
             stringLog = stringLog + Page1.Data_File.text() + ';LastDatafile\n'
@@ -626,9 +632,9 @@ class Page1(PQW.QWizardPage):
         self.HBoxDataFile = PQW.QHBoxLayout() # Create the Layout for the Groupbox DataFile
         Page1.Data_File = PQW.QLineEdit() # Data File  field
         Page1.Data_File.setEnabled(False) # Setted as not modificable (Feature)
-        Page1.Data_File.setFixedHeight(VAR.GetConboBoxHeight(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR))
+        # Page1.Data_File.setFixedHeight(VAR.GetConboBoxHeight(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR))
         Button_Select_File = PQW.QPushButton('Select') # Button select data file
-        Button_Select_File.setFixedHeight(VAR.GetConboBoxHeight(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR))
+        # Button_Select_File.setFixedHeight(VAR.GetConboBoxHeight(VAR)/VAR.GetWindowHeightReference(VAR)*VAR.GetWindowsHeight(VAR))
         Button_Select_File.clicked.connect(self.on_Button_Select_File_clicked) # Button event Click on
         self.HBoxDataFile.addWidget(Page1.Data_File) # Add element to the Layout
         self.HBoxDataFile.addWidget(Button_Select_File) # Add element to the Layout
@@ -901,7 +907,7 @@ class Page1(PQW.QWizardPage):
             Page3.Table_Height.setRowCount(0)
             Page3.Table_Height.setRowCount(len(Page1.SensorsNow))
             Page3.Table_Height.setColumnCount(2)
-            Page3.Table_Height.setHorizontalHeaderLabels(['Sensor', 'Height (m asl)'])
+            Page3.Table_Height.setHorizontalHeaderLabels(['Sensor', 'Elevation (m)'])
             # #
             for i,Sensor in enumerate(Page1.SensorsNow):
                 Page2.List_Sensor_Impo.addItem(Sensor)

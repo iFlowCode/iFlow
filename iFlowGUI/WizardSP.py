@@ -32,7 +32,7 @@ import glob
 # Import custom library
 from Variables import VAR
 from loguru import logger
-
+from Options import OPT
 '''
 Wizzard Add Probe Class
 '''
@@ -112,11 +112,39 @@ class SignalProcessing(PQW.QWizard):
         df.to_pickle('../temp/clean.pkz',compression='zip')
         #
         if Page1.Combobox_Method.currentText() == 'FFT':
-            stringEXE = 'SignalProcessingFFT.exe'
+            if VAR.GetOSsystem(VAR) == "WIN":
+                if OPT.GetRunMode(OPT,"WIN") == "script":
+                    stringEXE = OPT.GetScriptRun(OPT,"WIN")+" "+"SignalProcessingFFT.py"
+                else:
+                    stringEXE = 'SignalProcessingFFT.exe'
+            elif VAR.GetOSsystem(VAR) == "MAC":
+                if OPT.GetRunMode(OPT,"MAC") == "script":
+                    stringEXE = OPT.GetScriptRun(OPT,"MAC")+" "+"SignalProcessingFFT.py"
+                else:
+                    stringEXE = ""  #! To define on mac when and if i can compile the code
+            elif VAR.GetOSsystem(VAR) == "LIN":
+                if OPT.GetRunMode(OPT,"LIN") == "script":
+                    stringEXE = OPT.GetScriptRun(OPT,"LIN")+" "+"SignalProcessingFFT.py"
+                else:
+                    stringEXE = ""  #! To define on linux when i compile the code
         elif Page1.Combobox_Method.currentText() == 'LPM':
-            stringEXE = 'SignalProcessingLPM.exe'
+            if VAR.GetOSsystem(VAR) == "WIN":
+                if OPT.GetRunMode(OPT,"WIN") == "script":
+                    stringEXE = OPT.GetScriptRun(OPT,"WIN")+" "+"SignalProcessingLPM.py"
+                else:
+                    stringEXE = 'SignalProcessingLPM.exe'
+            elif VAR.GetOSsystem(VAR) == "MAC":
+                if OPT.GetRunMode(OPT,"MAC") == "script":
+                    stringEXE = OPT.GetScriptRun(OPT,"MAC")+" "+"SignalProcessingLPM.py"
+                else:
+                    stringEXE = ""  #! To define on mac when and if i can compile the code
+            elif VAR.GetOSsystem(VAR) == "LIN":
+                if OPT.GetRunMode(OPT,"LIN") == "script":
+                    stringEXE = OPT.GetScriptRun(OPT,"LIN")+" "+"SignalProcessingLPM.py"
+                else:
+                    stringEXE = ""  #! To define on linux when i compile the code
         # Mobile Window [BOOLEAN] -f
-        if Page1.Checkbox_MobWin:
+        if Page1.Checkbox_MobWin.isChecked():
             stringEXE = stringEXE + ' -f True'
             # Mobile Window lenght [FLOAT] -s
             stringEXE = stringEXE + ' -s "' + Page1.WinLen.text() +'"'
@@ -154,8 +182,8 @@ class SignalProcessing(PQW.QWizard):
             FilesRun = glob.glob('../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/SPdata/*.run')
             NewRun = '-1'
             for FileRun in FilesRun:
-                if int(FileRun.split('\\')[1].split('.')[0]) > int(NewRun):
-                    NewRun = FileRun.split('\\')[1].split('.')[0]
+                if int(FileRun.replace("\\","/").split('/')[-1].split('.')[0]) > int(NewRun):
+                    NewRun = FileRun.replace("\\","/").split('/')[-1].split('.')[0]
             NewRun = str(int(NewRun)+1)
             if Page1.Combobox_Method.currentText() == 'LPM':
                 # Move the data
@@ -166,9 +194,9 @@ class SignalProcessing(PQW.QWizard):
                 os.replace('../temp/Phase.pkz','../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/SPdata/'+str(NewRun)+'_Phase.pkz')
                 os.replace('../temp/SRN.PdList','../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/SPdata/'+str(NewRun)+'_SRN.PdList')
                 os.replace('../temp/Y.PdList','../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/SPdata/'+str(NewRun)+'_Y.PdList')
-                CYFiles = glob.glob('../temp/*.CY_m_nt')
+                CYFiles = glob.glob('../temp/*.CY_m_nt') #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 for CYFile in CYFiles:
-                    os.replace(CYFile,'../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/SPdata/'+str(NewRun)+'_'+CYFile.split('\\')[1])
+                    os.replace(CYFile,'../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/SPdata/'+str(NewRun)+'_'+CYFile.replace("\\","/").split('/')[-1])
                 os.replace('../temp/SignalProcessing.log','../projects/'+VAR.GetActiveProject(VAR)+'/'+VAR.GetActiveProbe(VAR)+'/SPdata/'+str(NewRun)+'_SignalProcessing.log')
             elif Page1.Combobox_Method.currentText() == 'FFT':
                 # Move the data

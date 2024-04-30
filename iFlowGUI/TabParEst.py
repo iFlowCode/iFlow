@@ -38,7 +38,7 @@ from ScrollLabel import ScrollLabel
 import TabParEst as TPE
 # # import STabFFTAnal as STFA
 # # import STabLPMAnal as STLA
-
+from Units import UNIT
 import WizardPE as WPE
 from PyQt5.QtGui import QTextDocument
 from loguru import logger
@@ -183,20 +183,20 @@ class TabParEst(PQW.QWidget):
                     else:
                         self.clearLayout(item.layout())
             # Chart
-#             TabParEst.Chart_Fig.clear()
-#             TabParEst.ax = TabParEst.Chart_Fig.add_subplot(111)
-# #!             TabFreqAnal.ax.legend()
-#             TabParEst.ax.grid(True, which='both', axis='both', linestyle='--')
-#             TabParEst.ax.set_ylabel('Flux (m s$^{-1}$)',fontsize=TabParEst.MPL_AxisTitle)
-#             #
-#             TabParEst.ax.set_xlabel('Time (s)',fontsize=TabParEst.MPL_AxisTitle)
-#             TabParEst.Canvas.draw()
-#             # Menu
-#             VAR.GetiFlowSelf(VAR).Menu_RunPE.setEnabled(False)
-#             VAR.GetiFlowSelf(VAR).Menu_PE_Export_Eta.setEnabled(False)
-#             VAR.GetiFlowSelf(VAR).Menu_PE_Export_Ke.setEnabled(False)
-#             VAR.GetiFlowSelf(VAR).Menu_PE_Export_Flow.setEnabled(False)
-#             VAR.GetiFlowSelf(VAR).Menu_PE_Export_Height.setEnabled(False)
+            TabParEst.Chart_Fig.clear()
+            TabParEst.ax = TabParEst.Chart_Fig.add_subplot(111)
+#!             TabFreqAnal.ax.legend()
+            TabParEst.ax.grid(True, which='both', axis='both', linestyle='--')
+            # TabParEst.ax.set_ylabel('q (m s$^{-1}$)',fontsize=TabParEst.MPL_AxisTitle)
+            #
+            # TabParEst.ax.set_xlabel('Time (s)',fontsize=TabParEst.MPL_AxisTitle)
+            TabParEst.Canvas.draw()
+            # Menu
+            VAR.GetiFlowSelf(VAR).Menu_RunPE.setEnabled(False)
+            VAR.GetiFlowSelf(VAR).Menu_PE_Export_Eta.setEnabled(False)
+            VAR.GetiFlowSelf(VAR).Menu_PE_Export_Ke.setEnabled(False)
+            VAR.GetiFlowSelf(VAR).Menu_PE_Export_Flow.setEnabled(False)
+            VAR.GetiFlowSelf(VAR).Menu_PE_Export_Height.setEnabled(False)
 # #!             VAR.GetiFlowSelf(VAR).Menu_RunPE_Compare.setEnabled(False)
         else:
             if(VAR.GetActiveProbe(VAR) == None):
@@ -223,9 +223,9 @@ class TabParEst(PQW.QWidget):
                 TabParEst.ax = TabParEst.Chart_Fig.add_subplot(111)
 #!                 TabFreqAnal.ax.legend()
                 TabParEst.ax.grid(True, which='both', axis='both', linestyle='--')
-                TabParEst.ax.set_ylabel('Flux (m s$^{-1}$)',fontsize=TabParEst.MPL_AxisTitle)
+                # TabParEst.ax.set_ylabel('q (m s$^{-1}$)',fontsize=TabParEst.MPL_AxisTitle)
                 #
-                TabParEst.ax.set_xlabel('Time (s)',fontsize=TabParEst.MPL_AxisTitle)
+                # TabParEst.ax.set_xlabel('Time (s)',fontsize=TabParEst.MPL_AxisTitle)
                 TabParEst.Canvas.draw()
                 # Menu
                 VAR.GetiFlowSelf(VAR).Menu_RunPE.setEnabled(False)
@@ -278,9 +278,9 @@ class TabParEst(PQW.QWidget):
                     TabParEst.ax = TabParEst.Chart_Fig.add_subplot(111)
 #!                     TabFreqAnal.ax.legend()
                     TabParEst.ax.grid(True, which='both', axis='both', linestyle='--')
-                    TabParEst.ax.set_ylabel('Eta',fontsize=TabParEst.MPL_AxisTitle)
-                    #
-                    TabParEst.ax.set_xlabel('Time (s)',fontsize=TabParEst.MPL_AxisTitle)
+                    # TabParEst.ax.set_ylabel('Eta',fontsize=TabParEst.MPL_AxisTitle)
+                    # #
+                    # TabParEst.ax.set_xlabel('Time (s)',fontsize=TabParEst.MPL_AxisTitle)
                     TabParEst.Canvas.draw()
                     # Menu
                     VAR.GetiFlowSelf(VAR).Menu_PE_Export_Eta.setEnabled(False)
@@ -528,95 +528,95 @@ class TabParEst(PQW.QWidget):
                             if TabParEst.Combobox_ChartType.currentText() == 'ke':
                                 if df_chart.shape[0] == 1:
                                     if VAR.GetActiveParameters(VAR,2) == 'yyyy-mm-dd h24:min:sec':
-                                        plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), df_chart['Dif'].to_numpy(), 'o', label = 'ke')
+                                        plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), UNIT.ConvertThermDiff(UNIT,df_chart['Dif'].to_numpy()), 'o', label = 'ke')
                                         if TabParEst.VBoxSensor.itemAt(0).widget().isChecked():
-                                            plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), (df_chart['Dif']+df_chart['DifI']).to_numpy(), 'v', label = '+ke')
-                                            plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), (df_chart['Dif']-df_chart['DifI']).to_numpy(), '^', label = '-ke')
+                                            plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), UNIT.ConvertThermDiff(UNIT,(df_chart['Dif']+df_chart['DifI']).to_numpy()), 'v', label = '+ke')
+                                            plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), UNIT.ConvertThermDiff(UNIT,(df_chart['Dif']-df_chart['DifI']).to_numpy()), '^', label = '-ke')
                                     else:
-                                        plot = TabParEst.ax.plot(df_chart['Time'].to_numpy(), df_chart['Dif'].to_numpy(), 'o', label = 'ke')
+                                        plot = TabParEst.ax.plot(UNIT.ConvertTime(UNIT,df_chart['Time'].to_numpy()), UNIT.ConvertThermDiff(UNIT,df_chart['Dif'].to_numpy()), 'o', label = 'ke')
                                         if TabParEst.VBoxSensor.itemAt(0).widget().isChecked():
-                                            plot = TabParEst.ax.plot(df_chart['Time'].to_numpy(), (df_chart['Dif']+df_chart['DifI']).to_numpy(), 'v', label = '+ke')
-                                            plot = TabParEst.ax.plot(df_chart['Time'].to_numpy(), (df_chart['Dif']-df_chart['DifI']).to_numpy(), '^', label = '-ke')
+                                            plot = TabParEst.ax.plot(UNIT.ConvertTime(UNIT,df_chart['Time'].to_numpy()), UNIT.ConvertThermDiff(UNIT,(df_chart['Dif']+df_chart['DifI']).to_numpy()), 'v', label = '+ke')
+                                            plot = TabParEst.ax.plot(UNIT.ConvertTime(UNIT,df_chart['Time'].to_numpy()), UNIT.ConvertThermDiff(UNIT,(df_chart['Dif']-df_chart['DifI']).to_numpy()), '^', label = '-ke')
                                 else:
                                     if VAR.GetActiveParameters(VAR,2) == 'yyyy-mm-dd h24:min:sec':
-                                        plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), df_chart['Dif'].to_numpy(), '-', label = 'ke')
+                                        plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), UNIT.ConvertThermDiff(UNIT,df_chart['Dif'].to_numpy()), '-', label = 'ke')
                                         if TabParEst.VBoxSensor.itemAt(0).widget().isChecked():
-                                            plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), (df_chart['Dif']+df_chart['DifI']).to_numpy(), 'v', label = '+ke')
-                                            plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), (df_chart['Dif']-df_chart['DifI']).to_numpy(), '^', label = '-ke')
+                                            plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), UNIT.ConvertThermDiff(UNIT,(df_chart['Dif']+df_chart['DifI']).to_numpy()), 'v', label = '+ke')
+                                            plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), UNIT.ConvertThermDiff(UNIT,(df_chart['Dif']-df_chart['DifI']).to_numpy()), '^', label = '-ke')
                                     else:
-                                        plot = TabParEst.ax.plot(df_chart['Time'].to_numpy(), df_chart['Dif'].to_numpy(), '-', label = 'ke')
+                                        plot = TabParEst.ax.plot(UNIT.ConvertTime(UNIT,df_chart['Time'].to_numpy()), UNIT.ConvertThermDiff(UNIT,df_chart['Dif'].to_numpy()), '-', label = 'ke')
                                         if TabParEst.VBoxSensor.itemAt(0).widget().isChecked():
-                                            plot = TabParEst.ax.plot(df_chart['Time'].to_numpy(), (df_chart['Dif']+df_chart['DifI']).to_numpy(), '-', label = '+ke')
-                                            plot = TabParEst.ax.plot(df_chart['Time'].to_numpy(), (df_chart['Dif']-df_chart['DifI']).to_numpy(), '-', label = '-ke')
+                                            plot = TabParEst.ax.plot(UNIT.ConvertTime(UNIT,df_chart['Time'].to_numpy()), UNIT.ConvertThermDiff(UNIT,(df_chart['Dif']+df_chart['DifI']).to_numpy()), '-', label = '+ke')
+                                            plot = TabParEst.ax.plot(UNIT.ConvertTime(UNIT,df_chart['Time'].to_numpy()), UNIT.ConvertThermDiff(UNIT,(df_chart['Dif']-df_chart['DifI']).to_numpy()), '-', label = '-ke')
                             elif TabParEst.Combobox_ChartType.currentText() == 'vt':
                                 if df_chart.shape[0] == 1:
                                     if VAR.GetActiveParameters(VAR,2) == 'yyyy-mm-dd h24:min:sec':
-                                        plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), df_chart['Vel'].to_numpy(), 'o', label = 'vt')
+                                        plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), UNIT.ConvertThermVel(UNIT,df_chart['Vel'].to_numpy()), 'o', label = 'vt')
                                         if TabParEst.VBoxSensor.itemAt(0).widget().isChecked():
-                                            plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), (df_chart['Vel']+df_chart['VelI']).to_numpy(), 'v', label = '+vt')
-                                            plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), (df_chart['Vel']-df_chart['VelI']).to_numpy(), '^', label = '-vt')
+                                            plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), UNIT.ConvertThermVel(UNIT,(df_chart['Vel']+df_chart['VelI']).to_numpy()), 'v', label = '+vt')
+                                            plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), UNIT.ConvertThermVel(UNIT,(df_chart['Vel']-df_chart['VelI']).to_numpy()), '^', label = '-vt')
                                     else:
-                                        plot = TabParEst.ax.plot(df_chart['Time'].to_numpy(), df_chart['Vel'].to_numpy(), 'o', label = 'vt')
+                                        plot = TabParEst.ax.plot(UNIT.ConvertTime(UNIT,df_chart['Time'].to_numpy()), UNIT.ConvertThermVel(UNIT,df_chart['Vel'].to_numpy()), 'o', label = 'vt')
                                         if TabParEst.VBoxSensor.itemAt(0).widget().isChecked():
-                                            plot = TabParEst.ax.plot(df_chart['Time'].to_numpy(), (df_chart['Vel']+df_chart['VelI']), 'v', label = '+vt')
-                                            plot = TabParEst.ax.plot(df_chart['Time'].to_numpy(), (df_chart['Vel']-df_chart['VelI']), '^', label = '-vt')
+                                            plot = TabParEst.ax.plot(UNIT.ConvertTime(UNIT,df_chart['Time'].to_numpy()), UNIT.ConvertThermVel(UNIT,(df_chart['Vel']+df_chart['VelI'])), 'v', label = '+vt')
+                                            plot = TabParEst.ax.plot(UNIT.ConvertTime(UNIT,df_chart['Time'].to_numpy()), UNIT.ConvertThermVel(UNIT,(df_chart['Vel']-df_chart['VelI'])), '^', label = '-vt')
                                 else:
                                     if VAR.GetActiveParameters(VAR,2) == 'yyyy-mm-dd h24:min:sec':
-                                        plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), df_chart['Vel'].to_numpy(), '-', label = 'vt')
+                                        plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), UNIT.ConvertThermVel(UNIT,df_chart['Vel'].to_numpy()), '-', label = 'vt')
                                         if TabParEst.VBoxSensor.itemAt(0).widget().isChecked():
-                                            plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), (df_chart['Vel']+df_chart['VelI']).to_numpy(), '-', label = '+vt')
-                                            plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), (df_chart['Vel']-df_chart['VelI']).to_numpy(), '-', label = '-vt')
+                                            plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), UNIT.ConvertThermVel(UNIT,(df_chart['Vel']+df_chart['VelI']).to_numpy()), '-', label = '+vt')
+                                            plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), UNIT.ConvertThermVel(UNIT,(df_chart['Vel']-df_chart['VelI']).to_numpy()), '-', label = '-vt')
                                     else:
-                                        plot = TabParEst.ax.plot(df_chart['Time'].to_numpy(), df_chart['Vel'].to_numpy(), '-', label = 'vt')
+                                        plot = TabParEst.ax.plot(UNIT.ConvertTime(UNIT,df_chart['Time'].to_numpy()), UNIT.ConvertThermVel(UNIT,df_chart['Vel'].to_numpy()), '-', label = 'vt')
                                         if TabParEst.VBoxSensor.itemAt(0).widget().isChecked():
-                                            plot = TabParEst.ax.plot(df_chart['Time'].to_numpy(), (df_chart['Vel']+df_chart['VelI']).to_numpy(), '-', label = '+vt')
-                                            plot = TabParEst.ax.plot(df_chart['Time'].to_numpy(), (df_chart['Vel']-df_chart['VelI']).to_numpy(), '-', label = '-vt')
+                                            plot = TabParEst.ax.plot(UNIT.ConvertTime(UNIT,df_chart['Time'].to_numpy()), UNIT.ConvertThermVel(UNIT,(df_chart['Vel']+df_chart['VelI']).to_numpy()), '-', label = '+vt')
+                                            plot = TabParEst.ax.plot(UNIT.ConvertTime(UNIT,df_chart['Time'].to_numpy()), UNIT.ConvertThermVel(UNIT,(df_chart['Vel']-df_chart['VelI']).to_numpy()), '-', label = '-vt')
                             elif TabParEst.Combobox_ChartType.currentText() == 'k':
                                 if df_chart.shape[0] == 1:
                                     if VAR.GetActiveParameters(VAR,2) == 'yyyy-mm-dd h24:min:sec':
-                                        plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), df_chart['K'].to_numpy(), 'o', label = 'k')
+                                        plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), UNIT.ConvertThermDiff(UNIT,df_chart['K'].to_numpy()), 'o', label = 'k')
                                         if TabParEst.VBoxSensor.itemAt(0).widget().isChecked():
-                                            plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), (df_chart['K']+df_chart['KI']).to_numpy(), 'v', label = '+k')
-                                            plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), (df_chart['K']-df_chart['KI']).to_numpy(), '^', label = '-k')
+                                            plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), UNIT.ConvertThermDiff(UNIT,(df_chart['K']+df_chart['KI']).to_numpy()), 'v', label = '+k')
+                                            plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), UNIT.ConvertThermDiff(UNIT,(df_chart['K']-df_chart['KI']).to_numpy()), '^', label = '-k')
                                     else:
-                                        plot = TabParEst.ax.plot(df_chart['Time'].to_numpy(), df_chart['K'].to_numpy(), 'o', label = 'k')
+                                        plot = TabParEst.ax.plot(UNIT.ConvertTime(UNIT,df_chart['Time'].to_numpy()), UNIT.ConvertThermDiff(UNIT,df_chart['K'].to_numpy()), 'o', label = 'k')
                                         if TabParEst.VBoxSensor.itemAt(0).widget().isChecked():
-                                            plot = TabParEst.ax.plot(df_chart['Time'].to_numpy(), (df_chart['K']+df_chart['KI']).to_numpy(), 'v', label = '+k')
-                                            plot = TabParEst.ax.plot(df_chart['Time'].to_numpy(), (df_chart['K']-df_chart['KI']).to_numpy(), '^', label = '-k')
+                                            plot = TabParEst.ax.plot(UNIT.ConvertTime(UNIT,df_chart['Time'].to_numpy()), UNIT.ConvertThermDiff(UNIT,(df_chart['K']+df_chart['KI']).to_numpy()), 'v', label = '+k')
+                                            plot = TabParEst.ax.plot(UNIT.ConvertTime(UNIT,df_chart['Time'].to_numpy()), UNIT.ConvertThermDiff(UNIT,(df_chart['K']-df_chart['KI']).to_numpy()), '^', label = '-k')
                                 else:
                                     if VAR.GetActiveParameters(VAR,2) == 'yyyy-mm-dd h24:min:sec':
-                                        plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), df_chart['K'].to_numpy(), '-', label = 'k')
+                                        plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), UNIT.ConvertThermDiff(UNIT,df_chart['K'].to_numpy()), '-', label = 'k')
                                         if TabParEst.VBoxSensor.itemAt(0).widget().isChecked():
-                                            plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), (df_chart['K']+df_chart['KI']).to_numpy(), 'v', label = '+k')
-                                            plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), (df_chart['K']-df_chart['KI']).to_numpy(), '^', label = '-k')
+                                            plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), UNIT.ConvertThermDiff(UNIT,(df_chart['K']+df_chart['KI']).to_numpy()), 'v', label = '+k')
+                                            plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), UNIT.ConvertThermDiff(UNIT,(df_chart['K']-df_chart['KI']).to_numpy()), '^', label = '-k')
                                     else:
-                                        plot = TabParEst.ax.plot(df_chart['Time'].to_numpy(), df_chart['K'].to_numpy(), '-', label = 'k')
+                                        plot = TabParEst.ax.plot(UNIT.ConvertTime(UNIT,df_chart['Time'].to_numpy()), UNIT.ConvertThermDiff(UNIT,df_chart['K'].to_numpy()), '-', label = 'k')
                                         if TabParEst.VBoxSensor.itemAt(0).widget().isChecked():
-                                            plot = TabParEst.ax.plot(df_chart['Time'].to_numpy(), (df_chart['K']+df_chart['KI']).to_numpy(), '-', label = '+k')
-                                            plot = TabParEst.ax.plot(df_chart['Time'].to_numpy(), (df_chart['K']-df_chart['KI']).to_numpy(), '-', label = '-k')
+                                            plot = TabParEst.ax.plot(UNIT.ConvertTime(UNIT,df_chart['Time'].to_numpy()), UNIT.ConvertThermDiff(UNIT,(df_chart['K']+df_chart['KI']).to_numpy()), '-', label = '+k')
+                                            plot = TabParEst.ax.plot(UNIT.ConvertTime(UNIT,df_chart['Time'].to_numpy()), UNIT.ConvertThermDiff(UNIT,(df_chart['K']-df_chart['KI']).to_numpy()), '-', label = '-k')
                             elif TabParEst.Combobox_ChartType.currentText() == 'q':
                                 if df_chart.shape[0] == 1:
                                     if VAR.GetActiveParameters(VAR,2) == 'yyyy-mm-dd h24:min:sec':
-                                        plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s'), df_chart['Vel'].to_numpy(), 'o', label = 'q')
+                                        plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s'), UNIT.ConvertThermVel(UNIT,df_chart['Vel'].to_numpy()), 'o', label = 'q')
                                         if TabParEst.VBoxSensor.itemAt(0).widget().isChecked():
-                                            plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), (df_chart['Vel']+df_chart['VelI']).to_numpy(), 'v', label = '+q')
-                                            plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), (df_chart['Vel']-df_chart['VelI']).to_numpy(), '^', label = '-q')
+                                            plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), UNIT.ConvertThermVel(UNIT,(df_chart['Vel']+df_chart['VelI']).to_numpy()), 'v', label = '+q')
+                                            plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), UNIT.ConvertThermVel(UNIT,(df_chart['Vel']-df_chart['VelI']).to_numpy()), '^', label = '-q')
                                     else:
-                                        plot = TabParEst.ax.plot(df_chart['Time'].to_numpy(), df_chart['Vel'].to_numpy(), 'o', label = 'q')
+                                        plot = TabParEst.ax.plot(UNIT.ConvertTime(UNIT,df_chart['Time'].to_numpy()), UNIT.ConvertThermVel(UNIT,df_chart['Vel'].to_numpy()), 'o', label = 'q')
                                         if TabParEst.VBoxSensor.itemAt(0).widget().isChecked():
-                                            plot = TabParEst.ax.plot(df_chart['Time'].to_numpy(), (df_chart['Vel']+df_chart['VelI']), 'v', label = '+q')
-                                            plot = TabParEst.ax.plot(df_chart['Time'].to_numpy(), (df_chart['Vel']-df_chart['VelI']), '^', label = '-q')
+                                            plot = TabParEst.ax.plot(UNIT.ConvertTime(UNIT,df_chart['Time'].to_numpy()), UNIT.ConvertThermVel(UNIT,(df_chart['Vel']+df_chart['VelI'])), 'v', label = '+q')
+                                            plot = TabParEst.ax.plot(UNIT.ConvertTime(UNIT,df_chart['Time'].to_numpy()), UNIT.ConvertThermVel(UNIT,(df_chart['Vel']-df_chart['VelI'])), '^', label = '-q')
                                 else:
                                     if VAR.GetActiveParameters(VAR,2) == 'yyyy-mm-dd h24:min:sec':
-                                        plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), df_chart['Vel'].to_numpy(), '-', label = 'q')
+                                        plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), UNIT.ConvertThermVel(UNIT,df_chart['Vel'].to_numpy()), '-', label = 'q')
                                         if TabParEst.VBoxSensor.itemAt(0).widget().isChecked():
-                                            plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), (df_chart['Vel']+df_chart['VelI']).to_numpy(), '-', label = '+q')
-                                            plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), (df_chart['Vel']-df_chart['VelI']).to_numpy(), '-', label = '-q')
+                                            plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), UNIT.ConvertThermVel(UNIT,(df_chart['Vel']+df_chart['VelI']).to_numpy()), '-', label = '+q')
+                                            plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), UNIT.ConvertThermVel(UNIT,(df_chart['Vel']-df_chart['VelI']).to_numpy()), '-', label = '-q')
                                     else:
-                                        plot = TabParEst.ax.plot(df_chart['Time'].to_numpy(), df_chart['Vel'].to_numpy(), '-', label = 'q')
+                                        plot = TabParEst.ax.plot(UNIT.ConvertTime(UNIT,df_chart['Time'].to_numpy()), UNIT.ConvertThermVel(UNIT,df_chart['Vel'].to_numpy()), '-', label = 'q')
                                         if TabParEst.VBoxSensor.itemAt(0).widget().isChecked():
-                                            plot = TabParEst.ax.plot(df_chart['Time'].to_numpy(), (df_chart['Vel']+df_chart['VelI']).to_numpy(), '-', label = '+q')
-                                            plot = TabParEst.ax.plot(df_chart['Time'].to_numpy(), (df_chart['Vel']-df_chart['VelI']).to_numpy(), '-', label = '-q')
+                                            plot = TabParEst.ax.plot(UNIT.ConvertTime(UNIT,df_chart['Time'].to_numpy()), UNIT.ConvertThermVel(UNIT,(df_chart['Vel']+df_chart['VelI']).to_numpy()), '-', label = '+q')
+                                            plot = TabParEst.ax.plot(UNIT.ConvertTime(UNIT,df_chart['Time'].to_numpy()), UNIT.ConvertThermVel(UNIT,(df_chart['Vel']-df_chart['VelI']).to_numpy()), '-', label = '-q')
 #                             elif TabParEst.Combobox_ChartType.currentText() == 'Heights' and TabParEst.AnalysisType == 'MLEnZ':
 #                                 if df_chart.shape[0] == 1:
 #                                     if VAR.GetActiveParameters(VAR,2) == 'yyyy-mm-dd h24:min:sec':
@@ -633,43 +633,72 @@ class TabParEst(PQW.QWidget):
                                 if TabParEst.VBoxSensor.itemAt(i).widget().isChecked():
                                     if(VAR.GetChartColors(VAR) == None):
                                         if VAR.GetActiveParameters(VAR,2) == 'yyyy-mm-dd h24:min:sec':
-                                            plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), (df_chart[TabParEst.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), '-', label = TabParEst.VBoxSensor.itemAt(i).widget().text())
+                                            if TabParEst.Combobox_ChartType.currentText() == 'ke':
+                                                plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), UNIT.ConvertThermDiff(UNIT,(df_chart[TabParEst.VBoxSensor.itemAt(i).widget().text()]).to_numpy()), '-', label = TabParEst.VBoxSensor.itemAt(i).widget().text())
+                                            elif TabParEst.Combobox_ChartType.currentText() == 'vt':
+                                                plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), UNIT.ConvertThermVel(UNIT,(df_chart[TabParEst.VBoxSensor.itemAt(i).widget().text()]).to_numpy()), '-', label = TabParEst.VBoxSensor.itemAt(i).widget().text())
+                                            elif TabParEst.Combobox_ChartType.currentText() == 'q':
+                                                plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), UNIT.ConvertThermVel(UNIT,(df_chart[TabParEst.VBoxSensor.itemAt(i).widget().text()]).to_numpy()), '-', label = TabParEst.VBoxSensor.itemAt(i).widget().text())
+                                            elif TabParEst.Combobox_ChartType.currentText() == 'Heights':
+                                                plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), UNIT.ConvertLenght(UNIT,(df_chart[TabParEst.VBoxSensor.itemAt(i).widget().text()]).to_numpy()), '-', label = TabParEst.VBoxSensor.itemAt(i).widget().text())
+                                            else:
+                                                plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), (df_chart[TabParEst.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), '-', label = TabParEst.VBoxSensor.itemAt(i).widget().text())
                                         elif VAR.GetActiveParameters(VAR,2) == 'Time':
-                                            plot = TabParEst.ax.plot(df_chart['Time'].to_numpy(), (df_chart[TabParEst.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), '-', label = TabParEst.VBoxSensor.itemAt(i).widget().text())
+                                            if TabParEst.Combobox_ChartType.currentText() == 'ke':
+                                                plot = TabParEst.ax.plot(UNIT.ConvertTime(UNIT,df_chart['Time'].to_numpy()), UNIT.ConvertThermDiff(UNIT,(df_chart[TabParEst.VBoxSensor.itemAt(i).widget().text()]).to_numpy()), '-', label = TabParEst.VBoxSensor.itemAt(i).widget().text())
+                                            elif TabParEst.Combobox_ChartType.currentText() == 'vt':
+                                                plot = TabParEst.ax.plot(UNIT.ConvertTime(UNIT,df_chart['Time'].to_numpy()), UNIT.ConvertThermVel(UNIT,(df_chart[TabParEst.VBoxSensor.itemAt(i).widget().text()]).to_numpy()), '-', label = TabParEst.VBoxSensor.itemAt(i).widget().text())
+                                            elif TabParEst.Combobox_ChartType.currentText() == 'q':
+                                                plot = TabParEst.ax.plot(UNIT.ConvertTime(UNIT,df_chart['Time'].to_numpy()), UNIT.ConvertThermVel(UNIT,(df_chart[TabParEst.VBoxSensor.itemAt(i).widget().text()]).to_numpy()), '-', label = TabParEst.VBoxSensor.itemAt(i).widget().text())
+                                            elif TabParEst.Combobox_ChartType.currentText() == 'Heights':
+                                                plot = TabParEst.ax.plot(UNIT.ConvertTime(UNIT,df_chart['Time'].to_numpy()), UNIT.ConvertLenght(UNIT,(df_chart[TabParEst.VBoxSensor.itemAt(i).widget().text()]).to_numpy()), '-', label = TabParEst.VBoxSensor.itemAt(i).widget().text())
+                                            else:
+                                                plot = TabParEst.ax.plot(UNIT.ConvertTime(UNIT,df_chart['Time'].to_numpy()), (df_chart[TabParEst.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), '-', label = TabParEst.VBoxSensor.itemAt(i).widget().text())
                                         Colors.append(plot[0].get_color())
                                     else:
                                         if VAR.GetActiveParameters(VAR,2) == 'yyyy-mm-dd h24:min:sec':
-                                            plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), (df_chart[TabParEst.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), '-', label = TabParEst.VBoxSensor.itemAt(i).widget().text(), color=Colors[i])
+                                            if TabParEst.Combobox_ChartType.currentText() == 'ke':
+                                                plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), UNIT.ConvertThermDiff(UNIT,(df_chart[TabParEst.VBoxSensor.itemAt(i).widget().text()]).to_numpy()), '-', label = TabParEst.VBoxSensor.itemAt(i).widget().text(), color=Colors[i])
+                                            elif TabParEst.Combobox_ChartType.currentText() == 'vt':
+                                                plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), UNIT.ConvertThermVel(UNIT,(df_chart[TabParEst.VBoxSensor.itemAt(i).widget().text()]).to_numpy()), '-', label = TabParEst.VBoxSensor.itemAt(i).widget().text(), color=Colors[i])
+                                            elif TabParEst.Combobox_ChartType.currentText() == 'q':
+                                                plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), UNIT.ConvertThermVel(UNIT,(df_chart[TabParEst.VBoxSensor.itemAt(i).widget().text()]).to_numpy()), '-', label = TabParEst.VBoxSensor.itemAt(i).widget().text(), color=Colors[i])
+                                            else:
+                                                plot = TabParEst.ax.plot(pd.to_datetime(df_chart['Time'],unit='s').to_numpy(), (df_chart[TabParEst.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), '-', label = TabParEst.VBoxSensor.itemAt(i).widget().text(), color=Colors[i])
                                         elif VAR.GetActiveParameters(VAR,2) == 'Time':
-                                            try:
-                                                plot = TabParEst.ax.plot(df_chart['Time'].to_numpy(), (df_chart[TabParEst.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), '-', label = TabParEst.VBoxSensor.itemAt(i).widget().text(), color=Colors[i])
-                                            except:
-                                                pass
+                                            if TabParEst.Combobox_ChartType.currentText() == 'ke':
+                                                plot = TabParEst.ax.plot(UNIT.ConvertTime(UNIT,df_chart['Time'].to_numpy()), UNIT.ConvertThermDiff(UNIT,(df_chart[TabParEst.VBoxSensor.itemAt(i).widget().text()]).to_numpy()), '-', label = TabParEst.VBoxSensor.itemAt(i).widget().text(), color=Colors[i])
+                                            elif TabParEst.Combobox_ChartType.currentText() == 'vt':
+                                                plot = TabParEst.ax.plot(UNIT.ConvertTime(UNIT,df_chart['Time'].to_numpy()), UNIT.ConvertThermVel(UNIT,(df_chart[TabParEst.VBoxSensor.itemAt(i).widget().text()]).to_numpy()), '-', label = TabParEst.VBoxSensor.itemAt(i).widget().text(), color=Colors[i])
+                                            elif TabParEst.Combobox_ChartType.currentText() == 'q':
+                                                plot = TabParEst.ax.plot(UNIT.ConvertTime(UNIT,df_chart['Time'].to_numpy()), UNIT.ConvertThermVel(UNIT,(df_chart[TabParEst.VBoxSensor.itemAt(i).widget().text()]).to_numpy()), '-', label = TabParEst.VBoxSensor.itemAt(i).widget().text(), color=Colors[i])
+                                            else:
+                                                plot = TabParEst.ax.plot(UNIT.ConvertTime(UNIT,df_chart['Time'].to_numpy()), (df_chart[TabParEst.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), '-', label = TabParEst.VBoxSensor.itemAt(i).widget().text(), color=Colors[i])
                         #
                         if TabParEst.Combobox_ChartType.currentText() == '\u03B7':
                             TabParEst.ax.set_ylabel('\u03B7')
                             if VAR.GetActiveParameters(VAR,2) == 'Time':
-                                TabParEst.ax.set_xlabel('Time (s)')
+                                TabParEst.ax.set_xlabel(UNIT.LabelTime(UNIT))
                         elif TabParEst.Combobox_ChartType.currentText() == 'ke':
-                            TabParEst.ax.set_ylabel('ke ($m^2$ $s^{-1}$)')
+                            TabParEst.ax.set_ylabel(UNIT.LabelThermDiff(UNIT))
                             if VAR.GetActiveParameters(VAR,2) == 'Time':
-                                TabParEst.ax.set_xlabel('Time (s)')
+                                TabParEst.ax.set_xlabel(UNIT.LabelTime(UNIT))
                         elif TabParEst.Combobox_ChartType.currentText() == 'Heights':
-                            TabParEst.ax.set_ylabel('Heights (m)')
+                            TabParEst.ax.set_ylabel(UNIT.LabelLenght(UNIT))
                             if VAR.GetActiveParameters(VAR,2) == 'Time':
-                                TabParEst.ax.set_xlabel('Time (s)')
+                                TabParEst.ax.set_xlabel(UNIT.LabelTime(UNIT))
                         elif TabParEst.Combobox_ChartType.currentText() == 'vt':
-                            TabParEst.ax.set_ylabel('vt ($m$ $s^{-1}$)')
+                            TabParEst.ax.set_ylabel(UNIT.LabelThermVel(UNIT))
                             if VAR.GetActiveParameters(VAR,2) == 'Time':
-                                TabParEst.ax.set_xlabel('Time (s)')
+                                TabParEst.ax.set_xlabel(UNIT.LabelTime(UNIT))
                         elif TabParEst.Combobox_ChartType.currentText() == 'k':
-                            TabParEst.ax.set_ylabel('k ($m^2$ $s^{-1}$)')
+                            TabParEst.ax.set_ylabel(UNIT.LabelDiff(UNIT))
                             if VAR.GetActiveParameters(VAR,2) == 'Time':
-                                TabParEst.ax.set_xlabel('Time (s)')
+                                TabParEst.ax.set_xlabel(UNIT.LabelTime(UNIT))
                         elif TabParEst.Combobox_ChartType.currentText() == 'q':
-                            TabParEst.ax.set_ylabel('q ($m$ $s^{-1}$)')
+                            TabParEst.ax.set_ylabel(UNIT.LabelFlux(UNIT))
                             if VAR.GetActiveParameters(VAR,2) == 'Time':
-                                TabParEst.ax.set_xlabel('Time (s)')
+                                TabParEst.ax.set_xlabel(UNIT.LabelTime(UNIT))
                         #
                         TabParEst.ax.yaxis.set_major_formatter(FormatStrFormatter('%.2e'))
                         #

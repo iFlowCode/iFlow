@@ -37,7 +37,7 @@ import TabFreqAnal as TFA
 # # import STabLPMAnal as STLA
 import WizManageHarmonics as WMH
 from loguru import logger
-
+from Units import UNIT
 import WizardFA as WFA
 #------------------------------------------------------------------------------#
 '''
@@ -222,14 +222,14 @@ class TabFreqAnal(PQW.QWidget):
             TabFreqAnal.ax = TabFreqAnal.Chart_Fig.add_subplot(111)
             # TabFreqAnal.ax.legend()
             TabFreqAnal.ax.grid(True, which='both', axis='both', linestyle='--')
-            TabFreqAnal.ax.set_ylabel('PSD',fontsize=TabFreqAnal.MPL_AxisTitle)
+            # TabFreqAnal.ax.set_ylabel('PSD',fontsize=TabFreqAnal.MPL_AxisTitle)
             #
-            if OPT.GetTFAxAxisUnit(OPT) == 'Hz':
-                TabFreqAnal.ax.set_xlabel('Frequency (Hz)',fontsize=TabFreqAnal.MPL_AxisTitle)
-            elif OPT.GetTFAxAxisUnit(OPT) == 'Day':
-                TabFreqAnal.ax.set_xlabel('Frequency (d$^{-1}$)',fontsize=TabFreqAnal.MPL_AxisTitle)
-            elif OPT.GetTFAxAxisUnit(OPT) == 'Hour':
-                TabFreqAnal.ax.set_xlabel('Frequency (hr$^{-1}$)',fontsize=TabFreqAnal.MPL_AxisTitle)
+            # if OPT.GetTFAxAxisUnit(OPT) == 'Hz':
+            #     TabFreqAnal.ax.set_xlabel('Frequency (Hz)',fontsize=TabFreqAnal.MPL_AxisTitle)
+            # elif OPT.GetTFAxAxisUnit(OPT) == 'Day':
+            #     TabFreqAnal.ax.set_xlabel('Frequency (d$^{-1}$)',fontsize=TabFreqAnal.MPL_AxisTitle)
+            # elif OPT.GetTFAxAxisUnit(OPT) == 'Hour':
+            #     TabFreqAnal.ax.set_xlabel('Frequency (hr$^{-1}$)',fontsize=TabFreqAnal.MPL_AxisTitle)
             TabFreqAnal.ax.tick_params(axis='both', labelsize=TabFreqAnal.MPL_AxisTick)
             TabFreqAnal.Canvas.draw()
             # Menu Update
@@ -263,14 +263,14 @@ class TabFreqAnal(PQW.QWidget):
                 TabFreqAnal.ax = TabFreqAnal.Chart_Fig.add_subplot(111)
                 # TabFreqAnal.ax.legend()
                 TabFreqAnal.ax.grid(True, which='both', axis='both', linestyle='--')
-                TabFreqAnal.ax.set_ylabel('PSD',fontsize=TabFreqAnal.MPL_AxisTitle)
+                # TabFreqAnal.ax.set_ylabel('PSD',fontsize=TabFreqAnal.MPL_AxisTitle)
                 #
-                if OPT.GetTFAxAxisUnit(OPT) == 'Hz':
-                    TabFreqAnal.ax.set_xlabel('Frequency (Hz)',fontsize=TabFreqAnal.MPL_AxisTitle)
-                elif OPT.GetTFAxAxisUnit(OPT) == 'Day':
-                    TabFreqAnal.ax.set_xlabel('Frequency (d$^{-1}$)',fontsize=TabFreqAnal.MPL_AxisTitle)
-                elif OPT.GetTFAxAxisUnit(OPT) == 'Hour':
-                    TabFreqAnal.ax.set_xlabel('Frequency (hr$^{-1}$)',fontsize=TabFreqAnal.MPL_AxisTitle)
+                # if OPT.GetTFAxAxisUnit(OPT) == 'Hz':
+                #     TabFreqAnal.ax.set_xlabel('Frequency (Hz)',fontsize=TabFreqAnal.MPL_AxisTitle)
+                # elif OPT.GetTFAxAxisUnit(OPT) == 'Day':
+                #     TabFreqAnal.ax.set_xlabel('Frequency (d$^{-1}$)',fontsize=TabFreqAnal.MPL_AxisTitle)
+                # elif OPT.GetTFAxAxisUnit(OPT) == 'Hour':
+                #     TabFreqAnal.ax.set_xlabel('Frequency (hr$^{-1}$)',fontsize=TabFreqAnal.MPL_AxisTitle)
                 TabFreqAnal.Canvas.draw()
                 # Menu Update
                 VAR.GetiFlowSelf(VAR).Menu_RunFA.setEnabled(False)
@@ -309,14 +309,14 @@ class TabFreqAnal(PQW.QWidget):
                     TabFreqAnal.ax = TabFreqAnal.Chart_Fig.add_subplot(111)
                     # TabFreqAnal.ax.legend()
                     TabFreqAnal.ax.grid(True, which='both', axis='both', linestyle='--')
-                    TabFreqAnal.ax.set_ylabel('PSD',fontsize=TabFreqAnal.MPL_AxisTitle)
+                    # TabFreqAnal.ax.set_ylabel('PSD',fontsize=TabFreqAnal.MPL_AxisTitle)
                     #
-                    if OPT.GetTFAxAxisUnit(OPT) == 'Hz':
-                        TabFreqAnal.ax.set_xlabel('Frequency (Hz)',fontsize=TabFreqAnal.MPL_AxisTitle)
-                    elif OPT.GetTFAxAxisUnit(OPT) == 'Day':
-                        TabFreqAnal.ax.set_xlabel('Frequency (d$^{-1}$)',fontsize=TabFreqAnal.MPL_AxisTitle)
-                    elif OPT.GetTFAxAxisUnit(OPT) == 'Hour':
-                        TabFreqAnal.ax.set_xlabel('Frequency (hr$^{-1}$)',fontsize=TabFreqAnal.MPL_AxisTitle)
+                    # if OPT.GetTFAxAxisUnit(OPT) == 'Hz':
+                    #     TabFreqAnal.ax.set_xlabel('Frequency (Hz)',fontsize=TabFreqAnal.MPL_AxisTitle)
+                    # elif OPT.GetTFAxAxisUnit(OPT) == 'Day':
+                    #     TabFreqAnal.ax.set_xlabel('Frequency (d$^{-1}$)',fontsize=TabFreqAnal.MPL_AxisTitle)
+                    # elif OPT.GetTFAxAxisUnit(OPT) == 'Hour':
+                    #     TabFreqAnal.ax.set_xlabel('Frequency (hr$^{-1}$)',fontsize=TabFreqAnal.MPL_AxisTitle)
                     TabFreqAnal.Canvas.draw()
                     # Menu Update
                     VAR.GetiFlowSelf(VAR).Menu_RunFA.setEnabled(True)
@@ -380,14 +380,14 @@ class TabFreqAnal(PQW.QWidget):
                             TabFreqAnal.ax = TabFreqAnal.Chart_Fig.add_subplot(111)
                             # TabFreqAnal.ax.legend()
                             TabFreqAnal.ax.grid(True, which='both', axis='both', linestyle='--')
-                            TabFreqAnal.ax.set_ylabel('PSD')
-                            #
-                            if OPT.GetTFAxAxisUnit(OPT) == 'Hz':
-                                TabFreqAnal.ax.set_xlabel('Frequency (Hz)',fontsize=TabFreqAnal.MPL_AxisTitle)
-                            elif OPT.GetTFAxAxisUnit(OPT) == 'Day':
-                                TabFreqAnal.ax.set_xlabel('Frequency (d$^{-1}$)',fontsize=TabFreqAnal.MPL_AxisTitle)
-                            elif OPT.GetTFAxAxisUnit(OPT) == 'Hour':
-                                TabFreqAnal.ax.set_xlabel('Frequency (hr$^{-1}$)',fontsize=TabFreqAnal.MPL_AxisTitle)
+                            # TabFreqAnal.ax.set_ylabel('PSD')
+                            # #
+                            # if OPT.GetTFAxAxisUnit(OPT) == 'Hz':
+                            #     TabFreqAnal.ax.set_xlabel('Frequency (Hz)',fontsize=TabFreqAnal.MPL_AxisTitle)
+                            # elif OPT.GetTFAxAxisUnit(OPT) == 'Day':
+                            #     TabFreqAnal.ax.set_xlabel('Frequency (d$^{-1}$)',fontsize=TabFreqAnal.MPL_AxisTitle)
+                            # elif OPT.GetTFAxAxisUnit(OPT) == 'Hour':
+                            #     TabFreqAnal.ax.set_xlabel('Frequency (hr$^{-1}$)',fontsize=TabFreqAnal.MPL_AxisTitle)
                             #
                             if TabFreqAnal.Combobox_ChartType.currentText() == 'Frequecies vs PSD':
                                 TabFreqAnal.ax.set_ylabel('PSD',fontsize=TabFreqAnal.MPL_AxisTitle)
@@ -457,7 +457,8 @@ class TabFreqAnal(PQW.QWidget):
                                 if TabFreqAnal.Combobox_ChartType.currentText() == 'Frequecies vs PSD':
                                     pass
                                 elif TabFreqAnal.Combobox_ChartType.currentText() == 'Frequecies vs Amplitude':
-                                    pass
+                                    for Sensor in (self.df_chart.columns.tolist())[1:]:
+                                        self.df_chart[Sensor] = UNIT.ConvertTemperature(UNIT,self.df_chart[Sensor].to_numpy())
                                 elif TabFreqAnal.Combobox_ChartType.currentText() == 'Frequecies vs LogAmpRatio':
                                     WaterSensor = TabFreqAnal.Combobox_TopSensor.currentText()
                                     WaterSensorAmplitude = self.df_chart[WaterSensor].to_numpy()
@@ -485,7 +486,7 @@ class TabFreqAnal(PQW.QWidget):
                                             df_chart_temp[Sensor] = [np.nan for i in range(0,df_chart_temp.shape[0])]
                                         else:
                                             DifPhase = self.df_chart[Sensor].to_numpy() - WaterSensorPhase
-                                            df_chart_temp[Sensor] = DifPhase.tolist()
+                                            df_chart_temp[Sensor] = UNIT.ConvertAngle(UNIT,DifPhase)
                                         #
                                         if Sensor == WaterSensor:
                                             Flag = 1
@@ -559,14 +560,14 @@ class TabFreqAnal(PQW.QWidget):
                                 for i in range(0,len((self.df_chart.columns.tolist())[1:])):
                                     if TabFreqAnal.VBoxSensor.itemAt(i).widget().isChecked():
                                         if(VAR.GetChartColors(VAR) == None):
-                                            plot = TabFreqAnal.ax.plot(self.df_chart['Freq'].to_numpy(), (self.df_chart[TabFreqAnal.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), '-', label = TabFreqAnal.VBoxSensor.itemAt(i).widget().text())
+                                            plot = TabFreqAnal.ax.plot(UNIT.ConvertFrequency(UNIT,self.df_chart['Freq'].to_numpy()), (self.df_chart[TabFreqAnal.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), '-', label = TabFreqAnal.VBoxSensor.itemAt(i).widget().text())
                                             if OPT.GetHarmonicFlag(OPT) == 'True':
-                                                plot = TabFreqAnal.ax.plot(self.df_harmonics['Freq'].to_numpy(), (self.df_harmonics[TabFreqAnal.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), 'o', label = 'Harm_'+TabFreqAnal.VBoxSensor.itemAt(i).widget().text())
+                                                plot = TabFreqAnal.ax.plot(UNIT.ConvertFrequency(UNIT,self.df_harmonics['Freq'].to_numpy()), (self.df_harmonics[TabFreqAnal.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), 'o', label = 'Harm_'+TabFreqAnal.VBoxSensor.itemAt(i).widget().text())
                                             Colors.append(plot[0].get_color())
                                         else:
-                                            plot = TabFreqAnal.ax.plot(self.df_chart['Freq'].to_numpy(), (self.df_chart[TabFreqAnal.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), '-', label = TabFreqAnal.VBoxSensor.itemAt(i).widget().text(), color=Colors[i])
+                                            plot = TabFreqAnal.ax.plot(UNIT.ConvertFrequency(UNIT,self.df_chart['Freq'].to_numpy()), (self.df_chart[TabFreqAnal.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), '-', label = TabFreqAnal.VBoxSensor.itemAt(i).widget().text(), color=Colors[i])
                                             if OPT.GetHarmonicFlag(OPT) == 'True':
-                                                plot = TabFreqAnal.ax.plot(self.df_harmonics['Freq'].to_numpy(), (self.df_harmonics[TabFreqAnal.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), 'o', label = 'Harm_'+TabFreqAnal.VBoxSensor.itemAt(i).widget().text(), color=Colors[i])
+                                                plot = TabFreqAnal.ax.plot(UNIT.ConvertFrequency(UNIT,self.df_harmonics['Freq'].to_numpy()), (self.df_harmonics[TabFreqAnal.VBoxSensor.itemAt(i).widget().text()]).to_numpy(), 'o', label = 'Harm_'+TabFreqAnal.VBoxSensor.itemAt(i).widget().text(), color=Colors[i])
                                 #
                                 if len((self.df_chart.columns.tolist())[1:]) > 5:
                                     TabFreqAnal.ax.legend(ncol=int(len((self.df_chart.columns.tolist())[1:])/5+1),fontsize=TabFreqAnal.MPL_Legend)
@@ -576,24 +577,25 @@ class TabFreqAnal(PQW.QWidget):
                                 TabFreqAnal.ax.grid(True, which='both', axis='both', linestyle='--')
                                 TabFreqAnal.ax.set_ylabel('PSD',fontsize=TabFreqAnal.MPL_AxisTitle)
                                 #
-                                if OPT.GetTFAxAxisUnit(OPT) == 'Hz':
-                                    TabFreqAnal.ax.set_xlabel('Frequency (Hz)',fontsize=TabFreqAnal.MPL_AxisTitle)
-                                elif OPT.GetTFAxAxisUnit(OPT) == 'Day':
-                                    TabFreqAnal.ax.set_xlabel('Frequency (d$^{-1}$)',fontsize=TabFreqAnal.MPL_AxisTitle)
-                                elif OPT.GetTFAxAxisUnit(OPT) == 'Hour':
-                                    TabFreqAnal.ax.set_xlabel('Frequency (hr$^{-1}$)',fontsize=TabFreqAnal.MPL_AxisTitle)
+                                # if OPT.GetTFAxAxisUnit(OPT) == 'Hz':
+                                #     TabFreqAnal.ax.set_xlabel('Frequency (Hz)',fontsize=TabFreqAnal.MPL_AxisTitle)
+                                # elif OPT.GetTFAxAxisUnit(OPT) == 'Day':
+                                #     TabFreqAnal.ax.set_xlabel('Frequency (d$^{-1}$)',fontsize=TabFreqAnal.MPL_AxisTitle)
+                                # elif OPT.GetTFAxAxisUnit(OPT) == 'Hour':
+                                #     TabFreqAnal.ax.set_xlabel('Frequency (hr$^{-1}$)',fontsize=TabFreqAnal.MPL_AxisTitle)
+                                TabFreqAnal.ax.set_xlabel(UNIT.LabelFrequency(UNIT),fontsize=TabFreqAnal.MPL_AxisTitle)
                                 #
                                 if TabFreqAnal.Combobox_ChartType.currentText() == 'Frequecies vs PSD':
                                     TabFreqAnal.ax.set_ylabel('PSD',fontsize=TabFreqAnal.MPL_AxisTitle)
                                 elif TabFreqAnal.Combobox_ChartType.currentText() == 'Frequecies vs Amplitude':
-                                    TabFreqAnal.ax.set_ylabel('Amplitude',fontsize=TabFreqAnal.MPL_AxisTitle)
+                                    TabFreqAnal.ax.set_ylabel(UNIT.LabelAmplitude(UNIT),fontsize=TabFreqAnal.MPL_AxisTitle)
                                 elif TabFreqAnal.Combobox_ChartType.currentText() == 'Frequecies vs LogAmpRatio':
                                     TabFreqAnal.ax.set_xscale('log')
                                     TabFreqAnal.ax.set_yscale('log')
                                     TabFreqAnal.ax.set_ylabel('LogAmpRatio',fontsize=TabFreqAnal.MPL_AxisTitle)
                                 elif TabFreqAnal.Combobox_ChartType.currentText() == 'Frequecies vs DiffPhase':
                                     TabFreqAnal.ax.set_xscale('log')
-                                    TabFreqAnal.ax.set_ylabel('DiffPhase',fontsize=TabFreqAnal.MPL_AxisTitle)
+                                    TabFreqAnal.ax.set_ylabel(UNIT.LabelDiffPhase(UNIT),fontsize=TabFreqAnal.MPL_AxisTitle)
                                 #
                                 # if Case == 10:
                                 #     TabFreqAnal.ax.set_ylim(Ylim)

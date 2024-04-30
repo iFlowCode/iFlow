@@ -61,3 +61,38 @@ class OPT():
         return
     def GetBasicPeriod(self):
         return self.BasicPriod
+    
+    """
+    """
+    def SetScriptRun(self,value,mode):
+        if mode == "WIN":
+            self.win_script = value
+        elif mode == "LIN":
+            self.lin_script = value
+        elif mode == "MAC":
+            self.mac_script = value
+        return
+    def GetScriptRun(self,mode):
+        if mode == "WIN":
+            return self.win_script
+        elif mode == "LIN":
+            return self.lin_script
+        elif mode == "MAC":
+            return self.mac_script
+    """
+    """
+    def SetRunMode(self,value,mode):
+        if mode == "WIN":
+            self.win_mode = value
+        elif mode == "LIN":
+            self.lin_mode = value
+        elif mode == "MAC":
+            self.mac_mode = value
+        return
+    def GetRunMode(self,mode):
+        if mode == "WIN":
+            return self.win_mode
+        elif mode == "LIN":
+            return self.lin_mode
+        elif mode == "MAC":
+            return self.mac_mode
