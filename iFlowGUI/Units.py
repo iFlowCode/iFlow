@@ -8,6 +8,8 @@ class UNIT():
     def SetTime(self,value):
         self.time_unit = value
         return
+    def GetTime(self):
+        return self.time_unit
     
     def ConvertTime(self,array):
         if self.time_unit == "s":
@@ -32,6 +34,8 @@ class UNIT():
     def SetTemperature(self,value):
         self.temperature_unit = value
         return
+    def GetTemperature(self):
+        return self.temperature_unit
     
     def ConvertTemperature(self,array):
         if self.temperature_unit == "C":
@@ -68,6 +72,8 @@ class UNIT():
     def SetFrequency(self,value):
         self.frequency_unit = value
         return
+    def GetFrequency(self):
+        return self.frequency_unit
     
     def ConvertFrequency(self,array):
         if self.frequency_unit == "Hz":
@@ -88,6 +94,8 @@ class UNIT():
     def SetAngle(self,value):
         self.angle_unit = value
         return
+    def GetAngle(self):
+        return self.angle_unit
     
     def ConvertAngle(self,array):
         if self.angle_unit == "rad":
@@ -110,6 +118,8 @@ class UNIT():
     def SetLenght(self,value):
         self.lenght_unit = value
         return
+    def GetLenght(self):
+        return self.lenght_unit
     
     def ConvertLenght(self,array):
         if self.lenght_unit == "m":

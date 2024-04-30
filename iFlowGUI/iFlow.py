@@ -25,6 +25,7 @@ import TabFreqAnal as TFA
 import TabSignProc as TSP
 import TabParEst as TPE
 import TabBrede as TB
+import TabOptions as TO
 from Units import UNIT
 from loguru import logger
 import platform
@@ -135,6 +136,8 @@ class iFlowApp(PQW.QMainWindow):
         self.Tabs_iFlow.addTab(TPE.TabParEst(), 'Parameter Estimation')
         # Add Tab Bredehofet to TabWidget
         self.Tabs_iFlow.addTab(TB.TabBrede(), 'Bredehoeft')
+        # Add Tab Options to TabWidget
+        self.Tabs_iFlow.addTab(TO.TabOptions(), 'Options')
         # Insert TabWidget in the grid
         Layout_iFlow.addWidget(self.Tabs_iFlow, 0, 0)
         # Create the menubar of the main window

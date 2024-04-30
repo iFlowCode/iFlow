@@ -570,7 +570,6 @@ class TabSignProc(PQW.QWidget):
                         if TabSignProc.Combobox_ChartType.currentText() == 'SNR heatmap':
                             TabSignProc.df_chart_data = self.dfxSRN[TabSignProc.Combobox_ChartTimeFreq.currentIndex()]
                             # TabSignProc.df_chart_data = 20*np.log10(TabSignProc.df_chart_data)
-                            print(TabSignProc.df_chart_data.shape)
                             #
                             Ytemp = []
                             Heights = VAR.GetActiveParameters(VAR,7).split(',')

@@ -457,8 +457,9 @@ class TabFreqAnal(PQW.QWidget):
                                 if TabFreqAnal.Combobox_ChartType.currentText() == 'Frequecies vs PSD':
                                     pass
                                 elif TabFreqAnal.Combobox_ChartType.currentText() == 'Frequecies vs Amplitude':
-                                    for Sensor in (self.df_chart.columns.tolist())[1:]:
-                                        self.df_chart[Sensor] = UNIT.ConvertTemperature(UNIT,self.df_chart[Sensor].to_numpy())
+                                    pass
+                                    # for Sensor in (self.df_chart.columns.tolist())[1:]:
+                                    #     self.df_chart[Sensor] = UNIT.ConvertTemperature(UNIT,self.df_chart[Sensor].to_numpy())
                                 elif TabFreqAnal.Combobox_ChartType.currentText() == 'Frequecies vs LogAmpRatio':
                                     WaterSensor = TabFreqAnal.Combobox_TopSensor.currentText()
                                     WaterSensorAmplitude = self.df_chart[WaterSensor].to_numpy()
@@ -538,14 +539,14 @@ class TabFreqAnal(PQW.QWidget):
                                         Colors = []
                                         VAR.SetChartColors(VAR,None)
                                 #
-                                if OPT.GetTFAxAxisUnit(OPT) == 'Hz':
-                                    pass
-                                elif OPT.GetTFAxAxisUnit(OPT) == 'Day':
-                                    self.df_chart['Freq'] = self.df_chart['Freq'] * 86400.0
-                                    self.df_harmonics['Freq'] = self.df_harmonics['Freq'] * 86400.0
-                                elif OPT.GetTFAxAxisUnit(OPT) == 'Hour':
-                                    self.df_chart['Freq'] = self.df_chart['Freq'] * 3600.0
-                                    self.df_harmonics['Freq'] = self.df_harmonics['Freq'] * 3600.0
+                                # if OPT.GetTFAxAxisUnit(OPT) == 'Hz':
+                                #     pass
+                                # elif OPT.GetTFAxAxisUnit(OPT) == 'Day':
+                                #     self.df_chart['Freq'] = self.df_chart['Freq'] * 86400.0
+                                #     self.df_harmonics['Freq'] = self.df_harmonics['Freq'] * 86400.0
+                                # elif OPT.GetTFAxAxisUnit(OPT) == 'Hour':
+                                #     self.df_chart['Freq'] = self.df_chart['Freq'] * 3600.0
+                                #     self.df_harmonics['Freq'] = self.df_harmonics['Freq'] * 3600.0
                                 # Chart's Limits
                                 if Case != 10:
                                     MAX = self.df_chart.max().tolist()
@@ -588,7 +589,8 @@ class TabFreqAnal(PQW.QWidget):
                                 if TabFreqAnal.Combobox_ChartType.currentText() == 'Frequecies vs PSD':
                                     TabFreqAnal.ax.set_ylabel('PSD',fontsize=TabFreqAnal.MPL_AxisTitle)
                                 elif TabFreqAnal.Combobox_ChartType.currentText() == 'Frequecies vs Amplitude':
-                                    TabFreqAnal.ax.set_ylabel(UNIT.LabelAmplitude(UNIT),fontsize=TabFreqAnal.MPL_AxisTitle)
+                                    # TabFreqAnal.ax.set_ylabel(UNIT.LabelAmplitude(UNIT),fontsize=TabFreqAnal.MPL_AxisTitle)
+                                    TabFreqAnal.ax.set_ylabel("Amplitude",fontsize=TabFreqAnal.MPL_AxisTitle)
                                 elif TabFreqAnal.Combobox_ChartType.currentText() == 'Frequecies vs LogAmpRatio':
                                     TabFreqAnal.ax.set_xscale('log')
                                     TabFreqAnal.ax.set_yscale('log')
